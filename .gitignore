@@ -1,0 +1,11 @@
+# Para todos los sitios donde haya imagenes
+Thumbs.db
+
+#Visual studio
+*.sdf
+#temporary file opened only while .vcxproj/.sln is loaded to Visual Studio IDE
+*.opensdf 
+*.suo
+*.vcxproj.user
+# if your project uses Pre-compiled Headers (PCH); it is a storage for Intellisense compiler which can now utilise PCH for better performance
+ipch/
