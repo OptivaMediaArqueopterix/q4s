@@ -9,3 +9,5 @@ Thumbs.db
 *.vcxproj.user
 # if your project uses Pre-compiled Headers (PCH); it is a storage for Intellisense compiler which can now utilise PCH for better performance
 ipch/
+Debug/
+src/Q4S-client-server/Q4S-client-server.opensdf
