@@ -9,3 +9,18 @@ Propiedades->
 Propiedades de configuración->
 Conjunto de herramientas de la plataforma->
 Visual Studio 2012 - Windows XP (v110_xp)
+
+
+
+Visual C++ Express
+No me compila
+1>------ Build started: Project: Q4SVS2010Test, Configuration: Debug Win32 ------
+1>Q4SVS2010Test.obj : error LNK2005: _wmain already defined in ClientQ4S.obj
+1>LINK : fatal error LNK1123: failure during conversion to COFF: file invalid or corrupt
+========== Build: 0 succeeded, 1 failed, 0 up-to-date, 0 skipped ==========
+
+Walktroguht
+Project Properties 
+   -> Configuration Properties 
+       -> Linker (General) 
+          -> Enable Incremental Linking -> "No (/INCREMENTAL:NO)"
