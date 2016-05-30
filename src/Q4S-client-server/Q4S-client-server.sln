@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q4S-client", "Q4S-client\Q4S-client.vcxproj", "{0D4BCCF2-12EF-4941-9164-6883E987060A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q4S-server", "Q4S-server\Q4S-server.vcxproj", "{30C14E24-5FA4-420F-8FA0-43154474559D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D4BCCF2-12EF-4941-9164-6883E987060A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0D4BCCF2-12EF-4941-9164-6883E987060A}.Debug|Win32.Build.0 = Debug|Win32
+		{0D4BCCF2-12EF-4941-9164-6883E987060A}.Release|Win32.ActiveCfg = Release|Win32
+		{0D4BCCF2-12EF-4941-9164-6883E987060A}.Release|Win32.Build.0 = Release|Win32
+		{30C14E24-5FA4-420F-8FA0-43154474559D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{30C14E24-5FA4-420F-8FA0-43154474559D}.Debug|Win32.Build.0 = Debug|Win32
+		{30C14E24-5FA4-420F-8FA0-43154474559D}.Release|Win32.ActiveCfg = Release|Win32
+		{30C14E24-5FA4-420F-8FA0-43154474559D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
