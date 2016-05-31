@@ -85,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SClient.cpp" />
-    <ClCompile Include="Q4SClientState.cpp" />
     <ClCompile Include="Q4SClientStateManager.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

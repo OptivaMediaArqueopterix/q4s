@@ -25,6 +25,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	ok &= q4SClientStateManager.init();
 
+	// Test for common
 	Q4SCommon q4SCommon;
 
 //    Initialize Winsock.
