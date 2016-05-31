@@ -1,5 +1,5 @@
 // stdafx.cpp : source file that includes just the standard includes
-// Q4S-server.pch will be the pre-compiled header
+// Q4SClient.pch will be the pre-compiled header
 // stdafx.obj will contain the pre-compiled type information
 
 #include "stdafx.h"
