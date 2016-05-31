@@ -14,8 +14,12 @@ Q4SClientStateManager::~Q4SClientStateManager()
 
 bool Q4SClientStateManager::init()
 {
+	// Prevention done call
+	done();
+	
 	bool ok = true;
 
+	// Init first state
 	ok &= stateInit ( Q4SCLIENTSTATE_INIT );
 
 	return ok;
@@ -44,7 +48,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 	{
 		case Q4SCLIENTSTATE_INIT:
 			{
-
+				Q4SClientProtocol::begin();
 			}
   		break;
 

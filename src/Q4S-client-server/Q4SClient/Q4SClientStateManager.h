@@ -3,7 +3,9 @@
 
 #include "Q4SClientState.h"
 
-class Q4SClientStateManager
+#include "Q4SClientProtocol.h"
+
+class Q4SClientStateManager : Q4SClientProtocol
 {
 
 public:
@@ -28,4 +30,4 @@ private:
 	Q4SClientState q4SClientState;
 };
 
-#endif  // _Q4S-CLIENTSTATEMANAGER_H_
+#endif  // _Q4SCLIENTSTATEMANAGER_H_

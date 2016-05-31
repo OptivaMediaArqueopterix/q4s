@@ -4,5 +4,5 @@
 
 Q4SCommon::Q4SCommon()
 {
-	printf("Hello World");
+	//printf("Hello World");
 }
