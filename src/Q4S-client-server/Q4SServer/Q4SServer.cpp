@@ -4,21 +4,41 @@
 #include "stdafx.h"
 
 #include "Q4SCommon.h"
+#include "Q4SServerSocket.h"
 
 #include "windows.h"
 
+
 int _tmain(int argc, _TCHAR* argv[])
 {
-    //Initialize Winsock.
-    //Create a socket.
-    //Bind the socket.
-    //Listen on the socket for a client.
-    //Accept a connection from a client.
+
+	Q4SCommon			q4SCommon;
+	Q4SServerSocket		q4SServer;
+	bool				ok = true;
+
+	if( ok )
+	{
+		ok &= q4SServer.initializeSockets( );
+	}
+	if( ok )
+	{
+		ok &= q4SServer.createListenSocket( );
+	}
+	if( ok )
+	{
+		ok &= q4SServer.bindListenSocket( );
+	}
+	if( ok )
+	{
+		ok &= q4SServer.startListen( );
+	}
+	if( ok )
+	{
+		ok &= q4SServer.acceptClientConnection( );
+	}
+
     //Receive and send data.
     //Disconnect.
-
-
-	Q4SCommon q4SCommon;
 
 	Sleep(10000);
 	return 0;
