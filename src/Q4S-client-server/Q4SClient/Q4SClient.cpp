@@ -19,14 +19,14 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	bool ok = true;
+    bool ok = true;
 
-	Q4SClientStateManager q4SClientStateManager;
+    Q4SClientStateManager q4SClientStateManager;
 
-	ok &= q4SClientStateManager.init();
+    ok &= q4SClientStateManager.init();
 
-	// Test for common
-	Q4SCommon q4SCommon;
+    // Test for common
+    Q4SCommon q4SCommon;
 
 //    Initialize Winsock.
 //    Create a socket.
@@ -34,7 +34,7 @@ int _tmain(int argc, _TCHAR* argv[])
 //    Send and receive data.
 //    Disconnect.
 
-	Sleep(10000);
+    Sleep(10000);
 
-	return 0;
+    return 0;
 }

@@ -12,40 +12,40 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-	Q4SCommon			q4SCommon;
-	Q4SServerSocket		q4SServer;
-	bool				ok = true;
+    Q4SCommon           q4SCommon;
+    Q4SServerSocket     q4SServer;
+    bool                ok = true;
 
-	if( ok )
-	{
-		ok &= q4SServer.initializeSockets( );
-	}
-	if( ok )
-	{
-		ok &= q4SServer.createListenSocket( );
-	}
-	if( ok )
-	{
-		ok &= q4SServer.bindListenSocket( );
-	}
-	if( ok )
-	{
-		ok &= q4SServer.startListen( );
-	}
-	if( ok )
-	{
-		ok &= q4SServer.acceptClientConnection( );
-	}
-	if( ok )
-	{
-		ok &= q4SServer.receiveData( );
-	}
-	if( ok )
-	{
-		ok &= q4SServer.disconnect( );
-	}
+    if( ok )
+    {
+        ok &= q4SServer.initializeSockets( );
+    }
+    if( ok )
+    {
+        ok &= q4SServer.createListenSocket( );
+    }
+    if( ok )
+    {
+        ok &= q4SServer.bindListenSocket( );
+    }
+    if( ok )
+    {
+        ok &= q4SServer.startListen( );
+    }
+    if( ok )
+    {
+        ok &= q4SServer.acceptClientConnection( );
+    }
+    if( ok )
+    {
+        ok &= q4SServer.receiveData( );
+    }
+    if( ok )
+    {
+        ok &= q4SServer.disconnect( );
+    }
 
-	Sleep(10000);
-	return 0;
+    Sleep(10000);
+    return 0;
 }
 

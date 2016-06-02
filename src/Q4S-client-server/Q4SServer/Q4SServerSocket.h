@@ -9,29 +9,29 @@ class Q4SServerSocket
 {
 public:
 
-	// Constructor-Destructor
-	Q4SServerSocket( );
-	~Q4SServerSocket( );
+    // Constructor-Destructor
+    Q4SServerSocket( );
+    ~Q4SServerSocket( );
 
     // Init-Done
-	bool	init( );
-	void	done( );
+    bool    init( );
+    void    done( );
 
-	bool	initializeSockets( );
-	bool	createListenSocket( );
-	bool	bindListenSocket( );
-	bool	startListen( );
-	bool    acceptClientConnection( );
-	bool    receiveData( );
-	bool    disconnect( );
+    bool    initializeSockets( );
+    bool    createListenSocket( );
+    bool    bindListenSocket( );
+    bool    startListen( );
+    bool    acceptClientConnection( );
+    bool    receiveData( );
+    bool    disconnect( );
 
 private:
 
-	void	clear( );
+    void    clear( );
 
- 	SOCKET				mListenSocket;
-	SOCKET				mClientSocket;
-	struct addrinfo*	mpAddrInfoResult; 
+    SOCKET              mListenSocket;
+    SOCKET              mClientSocket;
+    struct addrinfo*    mpAddrInfoResult; 
 
 };
 

@@ -10,24 +10,24 @@ class Q4SClientStateManager : Q4SClientProtocol
 
 public:
 
-	// Constructor-Destructor
-	Q4SClientStateManager();
-	~Q4SClientStateManager();
+    // Constructor-Destructor
+    Q4SClientStateManager();
+    ~Q4SClientStateManager();
 
     // Init-Done
-	bool	init();
-	void	done();
+    bool    init();
+    void    done();
 
 private:
 
-	void	clear();
+    void    clear();
 
-	// State
+    // State
 
-    bool	stateInit   ( Q4SClientState state );
+    bool    stateInit   ( Q4SClientState state );
     void    stateDone   ( );
 
-	Q4SClientState q4SClientState;
+    Q4SClientState q4SClientState;
 };
 
 #endif  // _Q4SCLIENTSTATEMANAGER_H_

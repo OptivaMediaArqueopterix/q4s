@@ -5,25 +5,25 @@ class Q4SClientProtocol
 {
 public:
 
-	// Constructor-Destructor
-	Q4SClientProtocol ();
-	~Q4SClientProtocol ();
+    // Constructor-Destructor
+    Q4SClientProtocol ();
+    ~Q4SClientProtocol ();
 
     // Init-Done
-	bool	init();
-	void	done();
+    bool    init();
+    void    done();
 
-	// Q4S Methods
-	void	begin();
-	void	ready();
-	void	ping();
-	void	bwidth();
-	void	cancel();
-	void	alert();
+    // Q4S Methods
+    void    begin();
+    void    ready();
+    void    ping();
+    void    bwidth();
+    void    cancel();
+    void    alert();
 
 private:
 
-	void	clear();
+    void    clear();
 
 
 };

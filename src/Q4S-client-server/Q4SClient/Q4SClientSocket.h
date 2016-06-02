@@ -9,26 +9,26 @@ class Q4SClientSocket
 {
 public:
 
-	// Constructor-Destructor
-	Q4SClientSocket( );
-	~Q4SClientSocket( );
+    // Constructor-Destructor
+    Q4SClientSocket( );
+    ~Q4SClientSocket( );
 
     // Init-Done
-	bool	init( );
-	void	done( );
+    bool    init( );
+    void    done( );
 
-	bool	initializeSockets( );
-	bool	connectToServer( );
-	bool	sendData( );
-	bool    receiveData( );
-	bool    disconnect( );
+    bool    initializeSockets( );
+    bool    connectToServer( );
+    bool    sendData( );
+    bool    receiveData( );
+    bool    disconnect( );
 
 private:
 
-	void	clear( );
+    void    clear( );
 
-	SOCKET				mClientSocket;
-	struct addrinfo*	mpAddrInfoResult; 
+    SOCKET              mClientSocket;
+    struct addrinfo*    mpAddrInfoResult; 
 
 };
 

@@ -4,25 +4,25 @@
 
 Q4SClientStateManager::Q4SClientStateManager()
 {
-	clear();
+    clear();
 }
 
 Q4SClientStateManager::~Q4SClientStateManager()
 {
-	done();
+    done();
 }
 
 bool Q4SClientStateManager::init()
 {
-	// Prevention done call
-	done();
-	
-	bool ok = true;
+    // Prevention done call
+    done();
+    
+    bool ok = true;
 
-	// Init first state
-	ok &= stateInit ( Q4SCLIENTSTATE_INIT );
+    // Init first state
+    ok &= stateInit ( Q4SCLIENTSTATE_INIT );
 
-	return ok;
+    return ok;
 }
 
 void Q4SClientStateManager::done()
@@ -34,53 +34,53 @@ void Q4SClientStateManager::done()
 
 void Q4SClientStateManager::clear()
 {
-	q4SClientState = Q4SCLIENTSTATE_INVALID;
+    q4SClientState = Q4SCLIENTSTATE_INVALID;
 }
 
 
 bool Q4SClientStateManager::stateInit (Q4SClientState state)
 {
-	stateDone();
+    stateDone();
 
-	bool ok = true;
+    bool ok = true;
 
-	switch (state)
-	{
-		case Q4SCLIENTSTATE_INIT:
-			{
-				Q4SClientProtocol::begin();
-			}
-  		break;
+    switch (state)
+    {
+        case Q4SCLIENTSTATE_INIT:
+            {
+                Q4SClientProtocol::begin();
+            }
+        break;
 
-		case Q4SCLIENTSTATE_HANDSHAKE:
-			{
+        case Q4SCLIENTSTATE_HANDSHAKE:
+            {
 
-			}
-  		break;
+            }
+        break;
 
-		case Q4SCLIENTSTATE_NEGOTIATION:
-			{
+        case Q4SCLIENTSTATE_NEGOTIATION:
+            {
 
-			}
-  		break;
+            }
+        break;
 
-		case Q4SCLIENTSTATE_CONTINUITY:
-			{
+        case Q4SCLIENTSTATE_CONTINUITY:
+            {
 
-			}
-  		break;
+            }
+        break;
 
-		case Q4SCLIENTSTATE_TERMINATION:
-			{
+        case Q4SCLIENTSTATE_TERMINATION:
+            {
 
-			}
-  		break;
+            }
+        break;
 
-		default:
-			{
-				printf("Error: Wrong state for init");
-			}
-  		break;
+        default:
+            {
+                printf("Error: Wrong state for init");
+            }
+        break;
   }
 
   q4SClientState = state;
@@ -90,24 +90,24 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
 void Q4SClientStateManager::stateDone ()
 {
-	switch ( q4SClientState )
-	{
-		case Q4SCLIENTSTATE_INVALID:
-  		break;
+    switch ( q4SClientState )
+    {
+        case Q4SCLIENTSTATE_INVALID:
+        break;
 
-  		case Q4SCLIENTSTATE_INIT:
-  		break;
+        case Q4SCLIENTSTATE_INIT:
+        break;
 
-		case Q4SCLIENTSTATE_HANDSHAKE:
-		break;
+        case Q4SCLIENTSTATE_HANDSHAKE:
+        break;
 
-		case Q4SCLIENTSTATE_NEGOTIATION:
-		break;
+        case Q4SCLIENTSTATE_NEGOTIATION:
+        break;
 
-		case Q4SCLIENTSTATE_CONTINUITY:
-		break;
+        case Q4SCLIENTSTATE_CONTINUITY:
+        break;
 
-		case Q4SCLIENTSTATE_TERMINATION:
-  		break;
-	}
+        case Q4SCLIENTSTATE_TERMINATION:
+        break;
+    }
 }
