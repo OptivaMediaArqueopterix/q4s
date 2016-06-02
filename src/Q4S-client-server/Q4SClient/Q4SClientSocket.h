@@ -1,27 +1,25 @@
-#ifndef _Q4SSERVERSOCKET_H_
-#define _Q4SSERVERSOCKET_H_
+#ifndef _Q4SCLIENTSOCKET_H_
+#define _Q4SCLIENTSOCKET_H_
 
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #include <stdio.h>
 
-class Q4SServerSocket
+class Q4SClientSocket
 {
 public:
 
 	// Constructor-Destructor
-	Q4SServerSocket( );
-	~Q4SServerSocket( );
+	Q4SClientSocket( );
+	~Q4SClientSocket( );
 
     // Init-Done
 	bool	init( );
 	void	done( );
 
 	bool	initializeSockets( );
-	bool	createListenSocket( );
-	bool	bindListenSocket( );
-	bool	startListen( );
-	bool    acceptClientConnection( );
+	bool	connectToServer( );
+	bool	sendData( );
 	bool    receiveData( );
 	bool    disconnect( );
 
@@ -29,10 +27,9 @@ private:
 
 	void	clear( );
 
- 	SOCKET				mListenSocket;
 	SOCKET				mClientSocket;
 	struct addrinfo*	mpAddrInfoResult; 
 
 };
 
-#endif  // _Q4SSERVERSOCKET_H_
+#endif  // _Q4SCLIENTSOCKET_H_

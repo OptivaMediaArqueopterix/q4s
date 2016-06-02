@@ -36,9 +36,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		ok &= q4SServer.acceptClientConnection( );
 	}
-
-    //Receive and send data.
-    //Disconnect.
+	if( ok )
+	{
+		ok &= q4SServer.receiveData( );
+	}
+	if( ok )
+	{
+		ok &= q4SServer.disconnect( );
+	}
 
 	Sleep(10000);
 	return 0;
