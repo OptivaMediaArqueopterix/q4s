@@ -1,6 +1,8 @@
 #ifndef _Q4SCLIENTSOCKET_H_
 #define _Q4SCLIENTSOCKET_H_
 
+#include "Q4SSocket.h"
+
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #include <stdio.h>
@@ -18,17 +20,22 @@ public:
     void    done( );
 
     bool    initializeSockets( );
-    bool    connectToServer( );
+    bool    connectToServer( Q4SSocket* q4sSocket );
+
+    // Test methods.
+    /*
+    bool    readAndSendData( );
     bool    sendData( );
     bool    receiveData( );
     bool    disconnect( );
+    */
 
 private:
 
     void    clear( );
 
-    SOCKET              mClientSocket;
-    struct addrinfo*    mpAddrInfoResult; 
+    //SOCKET              mClientSocket;
+    //struct addrinfo*    mpAddrInfoResult; 
 
 };
 

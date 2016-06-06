@@ -34,6 +34,7 @@ void Q4SClientProtocol::begin()
     printf("METHOD: begin\n");
     
     Q4SClientSocket     clientSocket;
+    Q4SSocket           q4sSocket;
     bool                ok = true;
 
     if( ok )
@@ -42,19 +43,21 @@ void Q4SClientProtocol::begin()
     }
     if( ok )
     {
-        ok &= clientSocket.connectToServer( );
+        ok &= clientSocket.connectToServer( &q4sSocket );
     }
     if( ok )
     {
-        ok &= clientSocket.sendData( );
+        ok &= q4sSocket.sendData( "Tooooma prueba" );
     }
     if( ok )
     {
-        ok &= clientSocket.receiveData( );
+        char buffer[ 256 ];
+        ok &= q4sSocket.receiveData( buffer, sizeof( buffer ) );
+        printf( "Received: <%s>\n", buffer );
     }
     if( ok )
     {
-        ok &= clientSocket.disconnect( );
+        ok &= q4sSocket.shutDown( );
     }
 }
 

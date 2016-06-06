@@ -1,5 +1,7 @@
 #include "Q4SClientSocket.h"
 
+#include <iostream>
+
 #pragma comment(lib, "Ws2_32.lib")
 
 #define DEFAULT_BUFLEN 512
@@ -22,8 +24,7 @@ bool Q4SClientSocket::init()
     done();
 
     bool ok = true;
-
-
+    
     return ok;
 }
 
@@ -34,8 +35,8 @@ void Q4SClientSocket::done()
 
 void Q4SClientSocket::clear()
 {
-    mClientSocket = INVALID_SOCKET;
-    mpAddrInfoResult = NULL;
+    //mClientSocket = INVALID_SOCKET;
+    //mpAddrInfoResult = NULL;
 }
 
 bool Q4SClientSocket::initializeSockets( )
@@ -56,13 +57,18 @@ bool Q4SClientSocket::initializeSockets( )
     return ok;
 }
 
-bool Q4SClientSocket::connectToServer( )
+bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
 {
     //Create a socket.
     struct addrinfo hints,
-                    *ptr;
+                    *ptr,
+                    *pAddrInfoResult;
     int             iResult;
     bool            ok = true;
+    SOCKET*         socketAttempt;
+
+    q4sSocket->init( );
+    socketAttempt = q4sSocket->getSocket( );
 
     ZeroMemory( &hints, sizeof( hints ) );
     hints.ai_family = AF_UNSPEC;
@@ -70,7 +76,7 @@ bool Q4SClientSocket::connectToServer( )
     hints.ai_protocol = IPPROTO_TCP;
 
     // Resolve the local address and port to be used by the server
-    iResult = getaddrinfo( SERVER_IP, DEFAULT_PORT, &hints, &mpAddrInfoResult );
+    iResult = getaddrinfo( SERVER_IP, DEFAULT_PORT, &hints, &pAddrInfoResult );
     if( iResult != 0 ) 
     {
         printf( "getaddrinfo failed: %d\n", iResult );
@@ -81,11 +87,11 @@ bool Q4SClientSocket::connectToServer( )
     if( ok )
     {
         // Attempt to connect to an address until one succeeds
-        for( ptr = mpAddrInfoResult; ok && ( ptr != NULL ) && ( mClientSocket == INVALID_SOCKET ); ptr = ptr->ai_next ) 
+        for( ptr = pAddrInfoResult; ok && ( ptr != NULL ) && ( *socketAttempt == INVALID_SOCKET ); ptr = ptr->ai_next ) 
         {
             // Create a SOCKET for connecting to server
-            mClientSocket = socket( ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol );
-            if( mClientSocket == INVALID_SOCKET )
+            *socketAttempt = socket( ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol );
+            if( *socketAttempt == INVALID_SOCKET )
             {
                 printf( "socket failed with error: %ld\n", WSAGetLastError( ) );
                 WSACleanup( );
@@ -93,23 +99,60 @@ bool Q4SClientSocket::connectToServer( )
             }
 
             // Connect to server.
-            iResult = connect( mClientSocket, ptr->ai_addr, (int)ptr->ai_addrlen );
+            iResult = connect( *socketAttempt, ptr->ai_addr, (int)ptr->ai_addrlen );
             if( iResult == SOCKET_ERROR )
             {
-                closesocket( mClientSocket );
-                mClientSocket = INVALID_SOCKET;
+                closesocket( *socketAttempt );
+                *socketAttempt = INVALID_SOCKET;
             }
         }
 
-        freeaddrinfo( mpAddrInfoResult );
+        freeaddrinfo( pAddrInfoResult );
 
-        if( mClientSocket == INVALID_SOCKET ) 
+        if( *socketAttempt == INVALID_SOCKET ) 
         {
             printf( "Unable to connect to server!\n" );
             WSACleanup( );
             ok &= false;
         }
     }
+
+    return ok;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+/*
+bool Q4SClientSocket::readAndSendData( )
+{
+    bool    ok = true;
+    char    buf[ 256 ];
+    int     bufLen = 0;
+    int     iResult;
+    std::string  strBuf;
+
+    do
+    {
+        //scanf( "%s", buf );
+        //std::cin >> buf;
+        //std::iostream::getline( std::cin, strBuf );
+        std::cin.getline( buf, sizeof buf );
+        
+        bufLen = (int)strlen( buf );
+        if( bufLen > 0 )
+        {
+            printf( "\tSending: <%s>\n", buf );
+            iResult = send( mClientSocket, buf, bufLen, 0 );
+            if( iResult == SOCKET_ERROR )
+            {
+                printf( "send failed with error: %d\n", WSAGetLastError( ) );
+                closesocket( mClientSocket );
+                WSACleanup( );
+                ok &= false;
+            }
+        }
+
+    } while( bufLen > 0 );
 
     return ok;
 }
@@ -186,3 +229,4 @@ bool Q4SClientSocket::disconnect( )
 
     return ok;
 }
+*/
