@@ -1,10 +1,5 @@
 #include "Q4SServerSocket.h"
 
-#pragma comment(lib, "Ws2_32.lib")
-
-#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
-
 Q4SServerSocket::Q4SServerSocket ()
 {
     clear();
@@ -163,74 +158,3 @@ bool Q4SServerSocket::acceptClientConnection( Q4SSocket* q4sSocket )
 
     return ok;
 }
-
-/*
-bool Q4SServerSocket::receiveData( )
-{
-    bool    ok = true;
-    int     iResult;
-    int     iSendResult;
-    char    recvbuf[DEFAULT_BUFLEN];
-    int     recvbuflen = DEFAULT_BUFLEN;
-
-    // No longer need server socket
-    closesocket(mListenSocket);
-
-    // Receive until the peer shuts down the connection
-    do 
-    {
-        iResult = recv( mClientSocket, recvbuf, recvbuflen, 0 );
-        if( iResult > 0 )
-        {
-            printf( "Bytes received: %d\n", iResult );
-
-            // Echo the buffer back to the sender
-            iSendResult = send( mClientSocket, recvbuf, iResult, 0 );
-            if( iSendResult == SOCKET_ERROR )
-            {
-                printf( "send failed with error: %d\n", WSAGetLastError( ) );
-                closesocket( mClientSocket );
-                WSACleanup( );
-                ok &= false;
-            }
-            printf("Bytes sent: %d\n", iSendResult);
-        }
-        else if( iResult == 0 )
-        {
-            printf( "Connection closing...\n" );
-        }
-        else 
-        {
-            printf( "recv failed with error: %d\n", WSAGetLastError( ) );
-            closesocket( mClientSocket );
-            WSACleanup( );
-            ok &= false;
-        }
-
-    } while ( ( iResult > 0 ) && ( ok ) );
-
-    return ok;
-}
-
-bool Q4SServerSocket::disconnect( )
-{
-    bool    ok = true;
-    int     iResult;
-
-    // shutdown the connection since we're done
-    iResult = shutdown( mClientSocket, SD_SEND );
-    if( iResult == SOCKET_ERROR )
-    {
-        printf( "shutdown failed with error: %d\n", WSAGetLastError( ) );
-        closesocket( mClientSocket );
-        WSACleanup( );
-        ok &= false;
-    }
-
-    // cleanup
-    closesocket( mClientSocket );
-    WSACleanup( );
-
-    return ok;
-}
-*/

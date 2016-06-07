@@ -5,6 +5,8 @@
 #include <WS2tcpip.h>
 #include <stdio.h>
 
+#define DEFAULT_PORT "27015"
+
 class Q4SSocket
 {
 public:
@@ -31,4 +33,4 @@ private:
     SOCKET         mSocket;
 };
 
-#endif  // _Q4SCLIENTSOCKET_H_
+#endif  // _Q4SSOCKET_H_

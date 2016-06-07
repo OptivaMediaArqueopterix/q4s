@@ -22,15 +22,12 @@ public:
     bool    bindListenSocket( );
     bool    startListen( );
     bool    acceptClientConnection( Q4SSocket* q4sSocket );
-    //bool    receiveData( );
-    //bool    disconnect( );
 
 private:
 
     void    clear( );
 
     SOCKET              mListenSocket;
-    //SOCKET              mClientSocket;
     struct addrinfo*    mpAddrInfoResult; 
 
 };

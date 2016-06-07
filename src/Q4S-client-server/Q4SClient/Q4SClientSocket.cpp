@@ -1,7 +1,5 @@
 #include "Q4SClientSocket.h"
 
-//#define DEFAULT_BUFLEN 512
-#define DEFAULT_PORT "27015"
 #define SERVER_IP "127.0.0.1"
 
 Q4SClientSocket::Q4SClientSocket ()
@@ -32,8 +30,6 @@ void Q4SClientSocket::done()
 
 void Q4SClientSocket::clear()
 {
-    //mClientSocket = INVALID_SOCKET;
-    //mpAddrInfoResult = NULL;
 }
 
 bool Q4SClientSocket::initializeSockets( )
@@ -119,114 +115,3 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
 
     return ok;
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-/*
-bool Q4SClientSocket::readAndSendData( )
-{
-    bool    ok = true;
-    char    buf[ 256 ];
-    int     bufLen = 0;
-    int     iResult;
-    std::string  strBuf;
-
-    do
-    {
-        //scanf( "%s", buf );
-        //std::cin >> buf;
-        //std::iostream::getline( std::cin, strBuf );
-        std::cin.getline( buf, sizeof buf );
-        
-        bufLen = (int)strlen( buf );
-        if( bufLen > 0 )
-        {
-            printf( "\tSending: <%s>\n", buf );
-            iResult = send( mClientSocket, buf, bufLen, 0 );
-            if( iResult == SOCKET_ERROR )
-            {
-                printf( "send failed with error: %d\n", WSAGetLastError( ) );
-                closesocket( mClientSocket );
-                WSACleanup( );
-                ok &= false;
-            }
-        }
-
-    } while( bufLen > 0 );
-
-    return ok;
-}
-
-bool Q4SClientSocket::sendData( )
-{
-    //Bind the socket.
-    int     iResult;
-    bool    ok = true;
-    char*   sendbuf = "this is a test";
-
-    // Send an initial buffer
-    iResult = send( mClientSocket, sendbuf, (int)strlen( sendbuf ), 0 );
-    if( iResult == SOCKET_ERROR )
-    {
-        printf( "send failed with error: %d\n", WSAGetLastError( ) );
-        closesocket( mClientSocket );
-        WSACleanup( );
-        ok &= false;
-    }
-
-    printf( "Bytes Sent: %ld\n", iResult );
-
-    // shutdown the connection since no more data will be sent
-    iResult = shutdown( mClientSocket, SD_SEND );
-    if( iResult == SOCKET_ERROR )
-    {
-        printf( "shutdown failed with error: %d\n", WSAGetLastError( ) );
-        closesocket( mClientSocket );
-        WSACleanup( );
-        ok &= false;
-    }
-
-    return ok;
-}
-
-bool Q4SClientSocket::receiveData( )
-{
-    //Listen on the socket for a client.
-    bool    ok = true;
-    char    recvbuf[DEFAULT_BUFLEN];
-    int     iResult;
-    int     recvbuflen = DEFAULT_BUFLEN;
-
-    // Receive until the peer closes the connection
-    do 
-    {
-        iResult = recv( mClientSocket, recvbuf, recvbuflen, 0 );
-        if( iResult > 0 )
-        {
-            printf( "Bytes received: %d\n", iResult );
-        }
-        else if( iResult == 0 )
-        {
-            printf("Connection closed\n");
-        }
-        else
-        {
-            printf( "recv failed with error: %d\n", WSAGetLastError( ) );
-        }
-
-    } while( iResult > 0 );
-
-    return ok;
-}
-
-bool Q4SClientSocket::disconnect( )
-{
-    bool    ok = true;
-
-    // cleanup
-    closesocket( mClientSocket );
-    WSACleanup( );
-
-    return ok;
-}
-*/

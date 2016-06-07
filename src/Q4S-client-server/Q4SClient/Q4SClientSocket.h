@@ -20,20 +20,9 @@ public:
     bool    initializeSockets( );
     bool    connectToServer( Q4SSocket* q4sSocket );
 
-    // Test methods.
-    /*
-    bool    readAndSendData( );
-    bool    sendData( );
-    bool    receiveData( );
-    bool    disconnect( );
-    */
-
 private:
 
     void    clear( );
-
-    //SOCKET              mClientSocket;
-    //struct addrinfo*    mpAddrInfoResult; 
 
 };
 
