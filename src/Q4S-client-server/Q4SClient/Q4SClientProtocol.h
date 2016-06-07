@@ -1,6 +1,8 @@
 #ifndef _Q4SCLIENTPROTOCOL_H_
 #define _Q4SCLIENTPROTOCOL_H_
 
+#include "Q4SClientSocket.h"
+
 class Q4SClientProtocol
 {
 public:
@@ -25,7 +27,7 @@ private:
 
     void    clear();
 
-
+    Q4SClientSocket     mClientSocket;
 };
 
 #endif  // _Q4SCLIENTPROTOCOL_H_

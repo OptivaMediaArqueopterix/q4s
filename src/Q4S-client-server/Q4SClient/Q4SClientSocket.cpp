@@ -32,6 +32,39 @@ void Q4SClientSocket::clear()
 {
 }
 
+bool Q4SClientSocket::openConnection( )
+{
+    bool                ok = true;
+
+    if( ok )
+    {
+        ok &= initializeSockets( );
+    }
+    if( ok )
+    {
+        ok &= connectToServer( &mq4sSocket );
+    }
+
+    return ok;
+}
+
+bool Q4SClientSocket::closeConnection( )
+{
+    return mq4sSocket.shutDown( );
+}
+
+bool Q4SClientSocket::sendData( char* sendBuffer )
+{
+    return mq4sSocket.sendData( sendBuffer );
+}
+
+bool Q4SClientSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
+{
+    return mq4sSocket.receiveData( receiveBuffer, receiveBufferSize );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 bool Q4SClientSocket::initializeSockets( )
 {
     WSADATA     wsaData;
@@ -110,7 +143,6 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
             q4sSocket->init( );
             q4sSocket->setSocket( socketAttempt );
         }
-
     }
 
     return ok;

@@ -1,7 +1,5 @@
 #include "Q4SClientProtocol.h"
 
-#include "Q4SClientSocket.h"
-
 #include <stdio.h>
 
 Q4SClientProtocol::Q4SClientProtocol ()
@@ -32,7 +30,29 @@ void Q4SClientProtocol::done()
 void Q4SClientProtocol::begin()
 {
     printf("METHOD: begin\n");
+
+    bool ok = true;
     
+    if( ok )
+    {
+        ok &= mClientSocket.openConnection( );
+    }
+    if( ok )
+    {
+        ok &= mClientSocket.sendData( "Tooooma prueba" );
+    }
+    if( ok )
+    {
+        char buffer[ 256 ];
+        ok &= mClientSocket.receiveData( buffer, sizeof( buffer ) );
+        printf( "Received: <%s>\n", buffer );
+    }
+    if( ok )
+    {
+        ok &= mClientSocket.closeConnection( );
+    }
+
+    /*
     Q4SClientSocket     clientSocket;
     Q4SSocket           q4sSocket;
     bool                ok = true;
@@ -59,6 +79,7 @@ void Q4SClientProtocol::begin()
     {
         ok &= q4sSocket.shutDown( );
     }
+    */
 }
 
 void Q4SClientProtocol::ready()

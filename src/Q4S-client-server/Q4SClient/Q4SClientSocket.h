@@ -17,13 +17,19 @@ public:
     bool    init( );
     void    done( );
 
-    bool    initializeSockets( );
-    bool    connectToServer( Q4SSocket* q4sSocket );
+    bool    openConnection( );
+    bool    closeConnection( );
+    bool    sendData( char* sendBuffer );
+    bool    receiveData( char* receiveBuffer, int receiveBufferSize );
 
 private:
 
+    bool    initializeSockets( );
+    bool    connectToServer( Q4SSocket* q4sSocket );
+
     void    clear( );
 
+    Q4SSocket           mq4sSocket;
 };
 
 #endif  // _Q4SCLIENTSOCKET_H_
