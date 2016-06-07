@@ -33,11 +33,10 @@ void Q4SSocket::clear( )
     mSocket = INVALID_SOCKET;
 }
 
-SOCKET* Q4SSocket::getSocket( )
+void Q4SSocket::setSocket( SOCKET socket )
 {
-    return &mSocket;
+    mSocket = socket;
 }
-
 
 bool Q4SSocket::sendData( char* sendBuffer )
 {

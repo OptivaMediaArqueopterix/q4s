@@ -17,8 +17,7 @@ public:
     bool    init( );
     void    done( );
 
-    void    setSocket( SOCKET* socket );
-    SOCKET* getSocket( );
+    void    setSocket( SOCKET socket );
     bool    sendData( char* sendBuffer );
 
     bool    receiveData( char* receiveBuffer, int receiveBufferSize );

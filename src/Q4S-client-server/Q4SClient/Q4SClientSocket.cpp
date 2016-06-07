@@ -30,6 +30,7 @@ bool Q4SClientSocket::init()
 
 void Q4SClientSocket::done()
 {
+
 }
 
 
@@ -65,10 +66,7 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
                     *pAddrInfoResult;
     int             iResult;
     bool            ok = true;
-    SOCKET*         socketAttempt;
-
-    q4sSocket->init( );
-    socketAttempt = q4sSocket->getSocket( );
+    SOCKET          socketAttempt = INVALID_SOCKET;
 
     ZeroMemory( &hints, sizeof( hints ) );
     hints.ai_family = AF_UNSPEC;
@@ -87,11 +85,11 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
     if( ok )
     {
         // Attempt to connect to an address until one succeeds
-        for( ptr = pAddrInfoResult; ok && ( ptr != NULL ) && ( *socketAttempt == INVALID_SOCKET ); ptr = ptr->ai_next ) 
+        for( ptr = pAddrInfoResult; ok && ( ptr != NULL ) && ( socketAttempt == INVALID_SOCKET ); ptr = ptr->ai_next ) 
         {
             // Create a SOCKET for connecting to server
-            *socketAttempt = socket( ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol );
-            if( *socketAttempt == INVALID_SOCKET )
+            socketAttempt = socket( ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol );
+            if( socketAttempt == INVALID_SOCKET )
             {
                 printf( "socket failed with error: %ld\n", WSAGetLastError( ) );
                 WSACleanup( );
@@ -99,22 +97,28 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
             }
 
             // Connect to server.
-            iResult = connect( *socketAttempt, ptr->ai_addr, (int)ptr->ai_addrlen );
+            iResult = connect( socketAttempt, ptr->ai_addr, (int)ptr->ai_addrlen );
             if( iResult == SOCKET_ERROR )
             {
-                closesocket( *socketAttempt );
-                *socketAttempt = INVALID_SOCKET;
+                closesocket( socketAttempt );
+                socketAttempt = INVALID_SOCKET;
             }
         }
 
         freeaddrinfo( pAddrInfoResult );
 
-        if( *socketAttempt == INVALID_SOCKET ) 
+        if( socketAttempt == INVALID_SOCKET ) 
         {
             printf( "Unable to connect to server!\n" );
             WSACleanup( );
             ok &= false;
         }
+        else
+        {
+            q4sSocket->init( );
+            q4sSocket->setSocket( socketAttempt );
+        }
+
     }
 
     return ok;
