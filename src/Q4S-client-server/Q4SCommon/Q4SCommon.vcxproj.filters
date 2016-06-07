@@ -21,9 +21,15 @@
     <ClInclude Include="Q4SCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Q4SSocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SCommon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Q4SSocket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
