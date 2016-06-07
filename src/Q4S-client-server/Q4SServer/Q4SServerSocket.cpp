@@ -34,7 +34,6 @@ void Q4SServerSocket::done()
 void Q4SServerSocket::clear()
 {
     mListenSocket = INVALID_SOCKET;
-    mClientSocket = INVALID_SOCKET;
     mpAddrInfoResult = NULL;
 }
 
@@ -141,25 +140,31 @@ bool Q4SServerSocket::startListen( )
     return ok;
 }
 
-bool Q4SServerSocket::acceptClientConnection( )
+bool Q4SServerSocket::acceptClientConnection( Q4SSocket* q4sSocket )
 {
     //Accept a connection from a client.
-    mClientSocket = INVALID_SOCKET;
+    SOCKET attemptSocket = INVALID_SOCKET;
     bool ok = true;
 
     // Accept a client socket
-    mClientSocket = accept( mListenSocket, NULL, NULL );
-    if( mClientSocket == INVALID_SOCKET )
+    attemptSocket = accept( mListenSocket, NULL, NULL );
+    if( attemptSocket == INVALID_SOCKET )
     {
         printf( "accept failed: %d\n", WSAGetLastError( ) );
-        closesocket( mListenSocket );
+        closesocket( attemptSocket );
         WSACleanup( );
         ok &= false;
+    }
+    else
+    {
+        q4sSocket->init( );
+        q4sSocket->setSocket( attemptSocket );
     }
 
     return ok;
 }
 
+/*
 bool Q4SServerSocket::receiveData( )
 {
     bool    ok = true;
@@ -228,3 +233,4 @@ bool Q4SServerSocket::disconnect( )
 
     return ok;
 }
+*/
