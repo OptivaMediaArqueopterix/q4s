@@ -3,8 +3,6 @@
 
 #include "Q4SSocket.h"
 
-#include <winsock2.h>
-#include <WS2tcpip.h>
 #include <stdio.h>
 
 class Q4SClientSocket

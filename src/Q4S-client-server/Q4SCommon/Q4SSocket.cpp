@@ -1,8 +1,6 @@
 #include "Q4SSocket.h"
 
-#include <iostream>
-
-#define DEFAULT_BUFLEN 512
+#pragma comment(lib, "Ws2_32.lib")
 
 Q4SSocket::Q4SSocket( )
 {

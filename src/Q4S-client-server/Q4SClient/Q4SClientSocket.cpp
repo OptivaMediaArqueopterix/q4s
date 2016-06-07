@@ -1,10 +1,6 @@
 #include "Q4SClientSocket.h"
 
-#include <iostream>
-
-#pragma comment(lib, "Ws2_32.lib")
-
-#define DEFAULT_BUFLEN 512
+//#define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27015"
 #define SERVER_IP "127.0.0.1"
 
