@@ -14,44 +14,31 @@ int _tmain(int argc, _TCHAR* argv[])
 
     Q4SCommon           q4SCommon;
     Q4SServerSocket     q4SServer;
-    Q4SSocket           q4sSocket;
     bool                ok = true;
     char                buffer[ 256 ];
 
     if( ok )
     {
-        ok &= q4SServer.initializeSockets( );
+        ok &= q4SServer.waitForConnections( );
     }
     if( ok )
     {
-        ok &= q4SServer.createListenSocket( );
+        ok &= q4SServer.receiveData( buffer, sizeof( buffer ) );
     }
     if( ok )
     {
-        ok &= q4SServer.bindListenSocket( );
+        ok &= q4SServer.sendData( buffer );
     }
     if( ok )
     {
-        ok &= q4SServer.startListen( );
+        ok &= q4SServer.closeConnection( );
     }
     if( ok )
     {
-        ok &= q4SServer.acceptClientConnection( &q4sSocket );
-    }
-    if( ok )
-    {
-        ok &= q4sSocket.receiveData( buffer, sizeof( buffer ) );
-    }
-    if( ok )
-    {
-        ok &= q4sSocket.sendData( buffer );
-    }
-    if( ok )
-    {
-        ok &= q4sSocket.shutDown( );
+        ok &= q4SServer.stopWaiting( );
     }
 
     Sleep(10000);
-    return 0;
+    return ok;
 }
 

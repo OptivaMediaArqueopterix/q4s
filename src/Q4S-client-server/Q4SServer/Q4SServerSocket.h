@@ -17,18 +17,26 @@ public:
     bool    init( );
     void    done( );
 
-    bool    initializeSockets( );
-    bool    createListenSocket( );
-    bool    bindListenSocket( );
-    bool    startListen( );
-    bool    acceptClientConnection( Q4SSocket* q4sSocket );
+    bool    waitForConnections( );
+    bool    stopWaiting( );
+    bool    closeConnection( );
+    bool    sendData( char* sendBuffer );
+    bool    receiveData( char* receiveBuffer, int receiveBufferSize );
 
 private:
 
     void    clear( );
 
+    bool    initializeSockets( );
+    bool    createListenSocket( );
+    bool    bindListenSocket( );
+    bool    startListen( );
+    bool    acceptClientConnection( Q4SSocket* q4sSocket );
+    bool    closeListenSocket( );
+
     SOCKET              mListenSocket;
     struct addrinfo*    mpAddrInfoResult; 
+    Q4SSocket           mq4sSocket;
 
 };
 

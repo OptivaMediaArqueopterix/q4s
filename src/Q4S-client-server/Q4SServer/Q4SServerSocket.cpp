@@ -25,12 +25,70 @@ void Q4SServerSocket::done()
 {
 }
 
-
 void Q4SServerSocket::clear()
 {
     mListenSocket = INVALID_SOCKET;
     mpAddrInfoResult = NULL;
 }
+
+bool Q4SServerSocket::waitForConnections( )
+{
+    Q4SServerSocket     q4SServer;
+    bool                ok = true;
+
+    if( ok )
+    {
+        ok &= initializeSockets( );
+    }
+    if( ok )
+    {
+        ok &= createListenSocket( );
+    }
+    if( ok )
+    {
+        ok &= bindListenSocket( );
+    }
+    if( ok )
+    {
+        ok &= startListen( );
+    }    
+    if( ok )
+    {
+        ok &= acceptClientConnection( &mq4sSocket );
+    }
+
+    return ok;
+}
+
+bool Q4SServerSocket::stopWaiting( )
+{
+    bool                ok = true;
+
+    if( ok )
+    {
+        ok &= closeListenSocket( );
+    }
+
+    return ok;
+}
+
+bool Q4SServerSocket::closeConnection( )
+{
+    return mq4sSocket.shutDown( );
+}
+
+bool Q4SServerSocket::sendData( char* sendBuffer )
+{
+    return mq4sSocket.sendData( sendBuffer );
+}
+
+bool Q4SServerSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
+{
+    return mq4sSocket.receiveData( receiveBuffer, receiveBufferSize );
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////
 
 bool Q4SServerSocket::initializeSockets( )
 {
@@ -155,6 +213,15 @@ bool Q4SServerSocket::acceptClientConnection( Q4SSocket* q4sSocket )
         q4sSocket->init( );
         q4sSocket->setSocket( attemptSocket );
     }
+
+    return ok;
+}
+
+bool Q4SServerSocket::closeListenSocket( )
+{
+    bool ok = true;
+
+    closesocket( mListenSocket );
 
     return ok;
 }
