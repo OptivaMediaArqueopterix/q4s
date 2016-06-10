@@ -5,7 +5,8 @@
 #include <WS2tcpip.h>
 #include <stdio.h>
 
-#define DEFAULT_PORT "27015"
+#define DEFAULT_TCP_PORT "27015"
+#define DEFAULT_UDP_PORT "27016"
 
 class Q4SSocket
 {
@@ -19,7 +20,7 @@ public:
     bool    init( );
     void    done( );
 
-    void    setSocket( SOCKET socket );
+    void    setSocket( SOCKET socket, int socketType );
     bool    sendData( char* sendBuffer );
 
     bool    receiveData( char* receiveBuffer, int receiveBufferSize );
@@ -30,7 +31,12 @@ private:
 
     void    clear( );
 
-    SOCKET         mSocket;
+    SOCKET          mSocket;
+    int             mSocketType;
+
+    sockaddr_in     addrReceiver;
+    int             addrReceiverLen;
+
 };
 
 #endif  // _Q4SSOCKET_H_

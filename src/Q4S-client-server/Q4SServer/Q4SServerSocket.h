@@ -17,27 +17,30 @@ public:
     bool    init( );
     void    done( );
 
-    bool    waitForConnections( );
+    bool    waitForConnections( int socketType );
     bool    stopWaiting( );
-    bool    closeConnection( );
-    bool    sendData( char* sendBuffer );
-    bool    receiveData( char* receiveBuffer, int receiveBufferSize );
+    bool    closeConnection( int socketType );
+    bool    sendTcpData( char* sendBuffer );
+    bool    receiveTcpData( char* receiveBuffer, int receiveBufferSize );
+    bool    sendUdpData( char* sendBuffer );
+    bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize );
 
 private:
 
     void    clear( );
 
     bool    initializeSockets( );
-    bool    createListenSocket( );
-    bool    bindListenSocket( );
+    bool    createListenSocket( int socketType );
+    bool    bindListenSocket( int socketType );
     bool    startListen( );
     bool    acceptClientConnection( Q4SSocket* q4sSocket );
     bool    closeListenSocket( );
 
     SOCKET              mListenSocket;
     struct addrinfo*    mpAddrInfoResult; 
-    Q4SSocket           mq4sSocket;
 
+    Q4SSocket           mq4sTcpSocket;
+    Q4SSocket           mq4sUdpSocket;
 };
 
 #endif  // _Q4SSERVERSOCKET_H_

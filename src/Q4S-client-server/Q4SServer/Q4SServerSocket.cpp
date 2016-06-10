@@ -31,7 +31,7 @@ void Q4SServerSocket::clear()
     mpAddrInfoResult = NULL;
 }
 
-bool Q4SServerSocket::waitForConnections( )
+bool Q4SServerSocket::waitForConnections( int socketType )
 {
     Q4SServerSocket     q4SServer;
     bool                ok = true;
@@ -42,19 +42,33 @@ bool Q4SServerSocket::waitForConnections( )
     }
     if( ok )
     {
-        ok &= createListenSocket( );
+        ok &= createListenSocket( socketType );
     }
     if( ok )
     {
-        ok &= bindListenSocket( );
+        ok &= bindListenSocket( socketType );
     }
     if( ok )
     {
-        ok &= startListen( );
-    }    
-    if( ok )
-    {
-        ok &= acceptClientConnection( &mq4sSocket );
+        if( socketType == SOCK_DGRAM )
+        {
+            mq4sUdpSocket.setSocket( mListenSocket, SOCK_DGRAM );
+        }
+        else if( socketType == SOCK_STREAM )
+        {
+            if( ok )
+            {
+                ok &= startListen( );
+            }    
+            if( ok )
+            {
+                ok &= acceptClientConnection( &mq4sTcpSocket );
+            }
+        }
+        else
+        {
+            ok &= false;
+        }
     }
 
     return ok;
@@ -72,21 +86,45 @@ bool Q4SServerSocket::stopWaiting( )
     return ok;
 }
 
-bool Q4SServerSocket::closeConnection( )
+bool Q4SServerSocket::closeConnection( int socketType )
 {
-    return mq4sSocket.shutDown( );
+    bool ok = true;
+
+    if( socketType == SOCK_DGRAM )
+    {
+        ok &= mq4sUdpSocket.shutDown( );
+    }
+    else if( socketType == SOCK_STREAM )
+    {
+        ok &= mq4sTcpSocket.shutDown( );
+    }
+    else
+    {
+        ok &= false;
+    }
+
+    return ok;
 }
 
-bool Q4SServerSocket::sendData( char* sendBuffer )
+bool Q4SServerSocket::sendTcpData( char* sendBuffer )
 {
-    return mq4sSocket.sendData( sendBuffer );
+    return mq4sTcpSocket.sendData( sendBuffer );
 }
 
-bool Q4SServerSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
+bool Q4SServerSocket::receiveTcpData( char* receiveBuffer, int receiveBufferSize )
 {
-    return mq4sSocket.receiveData( receiveBuffer, receiveBufferSize );
+    return mq4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
 }
 
+bool Q4SServerSocket::sendUdpData( char* sendBuffer )
+{
+    return mq4sUdpSocket.sendData( sendBuffer );
+}
+
+bool Q4SServerSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize )
+{
+    return mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize );
+}
 
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -108,7 +146,7 @@ bool Q4SServerSocket::initializeSockets( )
     return ok;
 }
 
-bool Q4SServerSocket::createListenSocket( )
+bool Q4SServerSocket::createListenSocket( int socketType )
 {
     //Create a socket.
     struct addrinfo hints;
@@ -117,13 +155,28 @@ bool Q4SServerSocket::createListenSocket( )
     
     ZeroMemory( &hints, sizeof( hints ) );
     hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
-    hints.ai_flags = AI_PASSIVE;
 
-    // Resolve the local address and port to be used by the server
-    iResult = getaddrinfo( NULL, DEFAULT_PORT, &hints, &mpAddrInfoResult );
-    if( iResult != 0 ) 
+    if( socketType == SOCK_STREAM )
+    {
+        hints.ai_socktype = SOCK_STREAM;
+        hints.ai_protocol = IPPROTO_TCP;
+        hints.ai_flags = AI_PASSIVE;
+        // Resolve the local address and port to be used by the server
+        iResult = getaddrinfo( NULL, DEFAULT_TCP_PORT, &hints, &mpAddrInfoResult );
+    }
+    else if( socketType == SOCK_DGRAM )
+    {
+        hints.ai_socktype = SOCK_DGRAM;
+        hints.ai_protocol = IPPROTO_UDP;
+        // Resolve the local address and port to be used by the server
+        iResult = getaddrinfo( NULL, DEFAULT_UDP_PORT, &hints, &mpAddrInfoResult );
+    }
+    else
+    {
+        ok &= false;
+    }
+        
+    if( ok && ( iResult != 0 ) )
     {
         printf( "getaddrinfo failed: %d\n", iResult );
         WSACleanup( );
@@ -146,7 +199,7 @@ bool Q4SServerSocket::createListenSocket( )
     return ok;
 }
 
-bool Q4SServerSocket::bindListenSocket( )
+bool Q4SServerSocket::bindListenSocket( int socketType )
 {
     //Bind the socket.
     int     iResult;
@@ -159,18 +212,38 @@ bool Q4SServerSocket::bindListenSocket( )
     }
     else
     {
-        iResult = bind( mListenSocket, mpAddrInfoResult->ai_addr, (int)mpAddrInfoResult->ai_addrlen );
-        if( iResult == SOCKET_ERROR ) 
+        if( socketType == SOCK_STREAM )
         {
-            printf( "bind failed with error: %d\n", WSAGetLastError( ) );
-            freeaddrinfo( mpAddrInfoResult );
-            closesocket( mListenSocket );
-            WSACleanup( );
-            ok &= false;
+            iResult = bind( mListenSocket, mpAddrInfoResult->ai_addr, (int)mpAddrInfoResult->ai_addrlen );
+        }
+        else if( socketType == SOCK_DGRAM )
+        {
+            sockaddr_in    senderAddr;
+            senderAddr.sin_family = AF_INET;
+            senderAddr.sin_port = htons( atoi( DEFAULT_UDP_PORT ) );
+            senderAddr.sin_addr.s_addr = htonl( INADDR_ANY ); 
+            iResult = bind( mListenSocket, (SOCKADDR*) &senderAddr, sizeof( senderAddr ) );
         }
         else
         {
-            freeaddrinfo( mpAddrInfoResult );
+            ok &= false;
+        }
+
+        if( ok )
+        {
+
+            if( iResult == SOCKET_ERROR ) 
+            {
+                printf( "bind failed with error: %d\n", WSAGetLastError( ) );
+                freeaddrinfo( mpAddrInfoResult );
+                closesocket( mListenSocket );
+                WSACleanup( );
+                ok &= false;
+            }
+            else
+            {
+                freeaddrinfo( mpAddrInfoResult );
+            }
         }
     }
 
@@ -199,7 +272,7 @@ bool Q4SServerSocket::acceptClientConnection( Q4SSocket* q4sSocket )
     SOCKET attemptSocket = INVALID_SOCKET;
     bool ok = true;
 
-    // Accept a client socket
+    // Accept a client socket.
     attemptSocket = accept( mListenSocket, NULL, NULL );
     if( attemptSocket == INVALID_SOCKET )
     {
@@ -211,7 +284,7 @@ bool Q4SServerSocket::acceptClientConnection( Q4SSocket* q4sSocket )
     else
     {
         q4sSocket->init( );
-        q4sSocket->setSocket( attemptSocket );
+        q4sSocket->setSocket( attemptSocket, SOCK_DGRAM );
     }
 
     return ok;

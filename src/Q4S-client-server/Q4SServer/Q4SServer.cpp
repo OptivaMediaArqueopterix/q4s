@@ -15,23 +15,27 @@ int _tmain(int argc, _TCHAR* argv[])
     Q4SCommon           q4SCommon;
     Q4SServerSocket     q4SServer;
     bool                ok = true;
-    char                buffer[ 256 ];
+    char                buffer[ 65536 ];
 
     if( ok )
     {
-        ok &= q4SServer.waitForConnections( );
+        ok &= q4SServer.waitForConnections( SOCK_STREAM );
+        //ok &= q4SServer.waitForConnections( SOCK_DGRAM );
     }
     if( ok )
     {
-        ok &= q4SServer.receiveData( buffer, sizeof( buffer ) );
+        ok &= q4SServer.receiveTcpData( buffer, sizeof( buffer ) );
+        //ok &= q4SServer.receiveUdpData( buffer, sizeof( buffer ) );
     }
     if( ok )
     {
-        ok &= q4SServer.sendData( buffer );
+        ok &= q4SServer.sendTcpData( buffer );
+        //ok &= q4SServer.sendUdpData( buffer );
     }
     if( ok )
     {
-        ok &= q4SServer.closeConnection( );
+        ok &= q4SServer.closeConnection( SOCK_STREAM );
+        //ok &= q4SServer.closeConnection( SOCK_DGRAM );
     }
     if( ok )
     {

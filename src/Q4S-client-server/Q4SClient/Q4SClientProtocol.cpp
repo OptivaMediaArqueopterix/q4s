@@ -35,21 +35,33 @@ void Q4SClientProtocol::begin()
     
     if( ok )
     {
-        ok &= mClientSocket.openConnection( );
+        ok &= mClientSocket.openConnection( SOCK_STREAM );
+        //ok &= mClientSocket.openConnection( SOCK_DGRAM );
     }
     if( ok )
     {
-        ok &= mClientSocket.sendData( "Tooooma prueba" );
+        ok &= mClientSocket.sendTcpData( 
+        //ok &= mClientSocket.sendUdpData( 
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                );
     }
     if( ok )
     {
-        char buffer[ 256 ];
-        ok &= mClientSocket.receiveData( buffer, sizeof( buffer ) );
+        char buffer[ 65536 ];
+        ok &= mClientSocket.receiveTcpData( buffer, sizeof( buffer ) );
+        //ok &= mClientSocket.receiveUdpData( buffer, sizeof( buffer ) );
         printf( "Received: <%s>\n", buffer );
     }
     if( ok )
     {
-        ok &= mClientSocket.closeConnection( );
+        ok &= mClientSocket.closeConnection( SOCK_STREAM );
+        //ok &= mClientSocket.closeConnection( SOCK_DGRAM );
     }
 
     /*

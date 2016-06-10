@@ -27,12 +27,11 @@ void Q4SClientSocket::done()
 
 }
 
-
 void Q4SClientSocket::clear()
 {
 }
 
-bool Q4SClientSocket::openConnection( )
+bool Q4SClientSocket::openConnection( int socketType )
 {
     bool                ok = true;
 
@@ -42,25 +41,61 @@ bool Q4SClientSocket::openConnection( )
     }
     if( ok )
     {
-        ok &= connectToServer( &mq4sSocket );
+        if( socketType == SOCK_STREAM )
+        {
+            ok &= connectToServer( &mq4sTcpSocket, socketType );
+        }
+        else if( socketType == SOCK_DGRAM )
+        {
+            ok &= connectToServer( &mq4sUdpSocket, socketType );
+        }
+        else
+        {
+            ok &= false;
+        }
     }
 
     return ok;
 }
 
-bool Q4SClientSocket::closeConnection( )
+bool Q4SClientSocket::closeConnection( int socketType )
 {
-    return mq4sSocket.shutDown( );
+    bool ok = true;
+
+    if( socketType == SOCK_STREAM )
+    {
+        ok &= mq4sTcpSocket.shutDown( );
+    }
+    else if( socketType == SOCK_DGRAM )
+    {
+        ok &= mq4sUdpSocket.shutDown( );
+    }
+    else
+    {
+        ok &= false;
+    }
+
+    return ok;
 }
 
-bool Q4SClientSocket::sendData( char* sendBuffer )
+bool Q4SClientSocket::sendTcpData( char* sendBuffer )
 {
-    return mq4sSocket.sendData( sendBuffer );
+    return mq4sTcpSocket.sendData( sendBuffer );
 }
 
-bool Q4SClientSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
+bool Q4SClientSocket::receiveTcpData( char* receiveBuffer, int receiveBufferSize )
 {
-    return mq4sSocket.receiveData( receiveBuffer, receiveBufferSize );
+    return mq4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
+}
+
+bool Q4SClientSocket::sendUdpData( char* sendBuffer )
+{
+    return mq4sUdpSocket.sendData( sendBuffer );
+}
+
+bool Q4SClientSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize )
+{
+    return mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +118,7 @@ bool Q4SClientSocket::initializeSockets( )
     return ok;
 }
 
-bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
+bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket, int socketType )
 {
     //Create a socket.
     struct addrinfo hints,
@@ -95,12 +130,26 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
 
     ZeroMemory( &hints, sizeof( hints ) );
     hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
+    if( socketType == SOCK_STREAM )
+    {
+        hints.ai_socktype = SOCK_STREAM;
+        hints.ai_protocol = IPPROTO_TCP;
+        // Resolve the local address and port to be used by the server
+        iResult = getaddrinfo( SERVER_IP, DEFAULT_TCP_PORT, &hints, &pAddrInfoResult );
+    }
+    else if( socketType == SOCK_DGRAM )
+    {
+        hints.ai_socktype = SOCK_DGRAM;
+        hints.ai_protocol = IPPROTO_UDP;
+        // Resolve the local address and port to be used by the server
+        iResult = getaddrinfo( SERVER_IP, DEFAULT_UDP_PORT, &hints, &pAddrInfoResult );
+    }
+    else
+    {
+        ok &= false;
+    }
 
-    // Resolve the local address and port to be used by the server
-    iResult = getaddrinfo( SERVER_IP, DEFAULT_PORT, &hints, &pAddrInfoResult );
-    if( iResult != 0 ) 
+    if( ok && ( iResult != 0 ) )
     {
         printf( "getaddrinfo failed: %d\n", iResult );
         WSACleanup( );
@@ -141,7 +190,7 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket )
         else
         {
             q4sSocket->init( );
-            q4sSocket->setSocket( socketAttempt );
+            q4sSocket->setSocket( socketAttempt, socketType );
         }
     }
 

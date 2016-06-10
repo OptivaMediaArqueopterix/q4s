@@ -29,11 +29,14 @@ void Q4SSocket::done( )
 void Q4SSocket::clear( )
 {
     mSocket = INVALID_SOCKET;
+    mSocketType = 0;
+    addrReceiverLen = 0;
 }
 
-void Q4SSocket::setSocket( SOCKET socket )
+void Q4SSocket::setSocket( SOCKET socket, int socketType )
 {
     mSocket = socket;
+    mSocketType = socketType;
 }
 
 bool Q4SSocket::sendData( char* sendBuffer )
@@ -43,7 +46,19 @@ bool Q4SSocket::sendData( char* sendBuffer )
     bool    ok = true;
 
     // Send the buffer
-    iResult = send( mSocket, sendBuffer, (int)strlen( sendBuffer ), 0 );
+    if( mSocketType == SOCK_STREAM )
+    {
+        iResult = send( mSocket, sendBuffer, (int)strlen( sendBuffer ), 0 );
+    }
+    else if( mSocketType == SOCK_DGRAM )
+    {
+        iResult = sendto( mSocket, sendBuffer, (int)strlen( sendBuffer ), 0, ( SOCKADDR* )&addrReceiver, addrReceiverLen );
+    }
+    else
+    {
+        ok &= false;
+    }
+
     if( iResult == SOCKET_ERROR )
     {
         printf( "send failed with error: %d\n", WSAGetLastError( ) );
@@ -62,7 +77,21 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
     bool    ok = true;
     int     iResult;
 
-    iResult = recv( mSocket, receiveBuffer, receiveBufferSize, 0 );
+    if( mSocketType == SOCK_STREAM )
+    {
+    }
+    else if( mSocketType == SOCK_DGRAM )
+    {
+    }
+    else
+    {
+        ok &= false;
+    }
+    if( addrReceiverLen == 0 )
+    {
+        addrReceiverLen = sizeof( addrReceiver );
+    }
+    iResult = recvfrom( mSocket, receiveBuffer, receiveBufferSize, 0, ( SOCKADDR* )&addrReceiver, &addrReceiverLen );
     if( iResult > 0 )
     {
         printf( "Bytes received: %d\n", iResult );
@@ -76,8 +105,6 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
     {
         printf( "recv failed with error: %d\n", WSAGetLastError( ) );
     }
-
-
 
     return ok;
 }
