@@ -224,17 +224,24 @@ bool Q4SServerSocket::bindListenSocket( int socketType )
     bool    ok = true;
 
     // Setup the TCP listening socket
-    if( mListenSocket == INVALID_SOCKET )
+    if( socketType == SOCK_STREAM )
     {
-        ok &= false;
-    }
-    else
-    {
-        if( socketType == SOCK_STREAM )
+        if( mListenSocket == INVALID_SOCKET )
+        {
+            ok &= false;
+        }
+        else
         {
             iResult = bind( mListenSocket, mpAddrInfoResult->ai_addr, (int)mpAddrInfoResult->ai_addrlen );
         }
-        else if( socketType == SOCK_DGRAM )
+    }
+    else if( socketType == SOCK_DGRAM )
+    {
+        if( mUdpSocket == INVALID_SOCKET )
+        {
+            ok &= false;
+        }
+        else
         {
             sockaddr_in    senderAddr;
             senderAddr.sin_family = AF_INET;
@@ -242,26 +249,26 @@ bool Q4SServerSocket::bindListenSocket( int socketType )
             senderAddr.sin_addr.s_addr = htonl( INADDR_ANY ); 
             iResult = bind( mUdpSocket, ( SOCKADDR* ) &senderAddr, sizeof( senderAddr ) );
         }
-        else
+    }
+    else
+    {
+        ok &= false;
+    }
+
+    if( ok )
+    {
+
+        if( iResult == SOCKET_ERROR ) 
         {
+            printf( "bind failed with error: %d\n", WSAGetLastError( ) );
+            freeaddrinfo( mpAddrInfoResult );
+            closesocket( mListenSocket );
+            WSACleanup( );
             ok &= false;
         }
-
-        if( ok )
+        else
         {
-
-            if( iResult == SOCKET_ERROR ) 
-            {
-                printf( "bind failed with error: %d\n", WSAGetLastError( ) );
-                freeaddrinfo( mpAddrInfoResult );
-                closesocket( mListenSocket );
-                WSACleanup( );
-                ok &= false;
-            }
-            else
-            {
-                freeaddrinfo( mpAddrInfoResult );
-            }
+            freeaddrinfo( mpAddrInfoResult );
         }
     }
 
