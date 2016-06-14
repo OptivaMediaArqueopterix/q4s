@@ -36,12 +36,31 @@ void Q4SClientProtocol::begin()
     if( ok )
     {
         ok &= mClientSocket.openConnection( SOCK_STREAM );
-        //ok &= mClientSocket.openConnection( SOCK_DGRAM );
+        ok &= mClientSocket.openConnection( SOCK_DGRAM );
+    }
+    if( ok )
+    {
+        //char buffer[ 65536 ];
+        //ok &= mClientSocket.receiveTcpData( buffer, sizeof( buffer ) );
+        //printf( "Received: <%s>\n", buffer );
+        //ok &= mClientSocket.receiveUdpData( buffer, sizeof( buffer ) );
+        //printf( "Received: <%s>\n", buffer );
+
+        marrthrHandle[ 0 ] = CreateThread( 0, 0, manageUdpResponsesFn, ( LPVOID )this, 0, 0 );
+        marrthrHandle[ 1 ] = CreateThread( 0, 0, manageTcpResponsesFn, ( LPVOID )this, 0, 0 );
     }
     if( ok )
     {
         ok &= mClientSocket.sendTcpData( 
-        //ok &= mClientSocket.sendUdpData( 
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+                );
+        ok &= mClientSocket.sendUdpData( 
                 "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
                 "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
                 "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
@@ -53,15 +72,9 @@ void Q4SClientProtocol::begin()
     }
     if( ok )
     {
-        char buffer[ 65536 ];
-        ok &= mClientSocket.receiveTcpData( buffer, sizeof( buffer ) );
-        //ok &= mClientSocket.receiveUdpData( buffer, sizeof( buffer ) );
-        printf( "Received: <%s>\n", buffer );
-    }
-    if( ok )
-    {
+        WaitForMultipleObjects( 2, marrthrHandle, true, INFINITE );
         ok &= mClientSocket.closeConnection( SOCK_STREAM );
-        //ok &= mClientSocket.closeConnection( SOCK_DGRAM );
+        ok &= mClientSocket.closeConnection( SOCK_DGRAM );
     }
 
     /*
@@ -124,3 +137,36 @@ void Q4SClientProtocol::clear()
 {
 }
 
+DWORD WINAPI Q4SClientProtocol::manageTcpResponsesFn( LPVOID lpData )
+{
+    Q4SClientProtocol* q4sCP = ( Q4SClientProtocol* )lpData;
+    return q4sCP->manageTcpResponses( );
+}
+
+DWORD WINAPI Q4SClientProtocol::manageUdpResponsesFn( LPVOID lpData )
+{
+    Q4SClientProtocol* q4sCP = ( Q4SClientProtocol* )lpData;
+    return q4sCP->manageUdpResponses( );
+}
+
+bool Q4SClientProtocol::manageTcpResponses( )
+{
+    bool                ok = true;
+    char                buffer[ 65536 ];
+    
+    ok &= mClientSocket.receiveTcpData( buffer, sizeof( buffer ) );
+    printf( "Received: <%s>\n", buffer );
+
+    return ok;
+}
+
+bool Q4SClientProtocol::manageUdpResponses( )
+{
+    bool                ok = true;
+    char                buffer[ 65536 ];
+    
+    ok &= mClientSocket.receiveUdpData( buffer, sizeof( buffer ) );
+    printf( "Received: <%s>\n", buffer );
+
+    return ok;
+}

@@ -37,6 +37,7 @@ private:
     bool    closeListenSocket( );
 
     SOCKET              mListenSocket;
+    SOCKET              mUdpSocket;
     struct addrinfo*    mpAddrInfoResult; 
 
     Q4SSocket           mq4sTcpSocket;

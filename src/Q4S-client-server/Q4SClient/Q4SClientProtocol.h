@@ -27,7 +27,12 @@ private:
 
     void    clear();
 
-    Q4SClientSocket     mClientSocket;
+    Q4SClientSocket             mClientSocket;
+    HANDLE                      marrthrHandle[ 2 ];
+    bool                        manageTcpResponses( );
+    bool                        manageUdpResponses( );
+    static DWORD WINAPI         manageTcpResponsesFn( LPVOID lpData );
+    static DWORD WINAPI         manageUdpResponsesFn( LPVOID lpData );
 };
 
 #endif  // _Q4SCLIENTPROTOCOL_H_

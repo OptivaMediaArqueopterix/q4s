@@ -52,7 +52,7 @@ bool Q4SServerSocket::waitForConnections( int socketType )
     {
         if( socketType == SOCK_DGRAM )
         {
-            mq4sUdpSocket.setSocket( mListenSocket, SOCK_DGRAM );
+            mq4sUdpSocket.setSocket( mUdpSocket, SOCK_DGRAM );
         }
         else if( socketType == SOCK_STREAM )
         {
@@ -186,12 +186,30 @@ bool Q4SServerSocket::createListenSocket( int socketType )
     if( ok )
     {
         // Create a SOCKET for the server to listen for client connections
-        mListenSocket = socket( mpAddrInfoResult->ai_family, mpAddrInfoResult->ai_socktype, mpAddrInfoResult->ai_protocol );
-        if( mListenSocket == INVALID_SOCKET ) 
+        if( socketType == SOCK_STREAM )
         {
-            printf( "Error at socket(): %ld\n", WSAGetLastError( ) );
-            freeaddrinfo( mpAddrInfoResult );
-            WSACleanup( );
+            mListenSocket = socket( mpAddrInfoResult->ai_family, mpAddrInfoResult->ai_socktype, mpAddrInfoResult->ai_protocol );
+            if( mListenSocket == INVALID_SOCKET ) 
+            {
+                printf( "Error at socket(): %ld\n", WSAGetLastError( ) );
+                freeaddrinfo( mpAddrInfoResult );
+                WSACleanup( );
+                ok &= false;
+            }
+        }
+        else if( socketType == SOCK_DGRAM )
+        {
+            mUdpSocket = socket( mpAddrInfoResult->ai_family, mpAddrInfoResult->ai_socktype, mpAddrInfoResult->ai_protocol );
+            if( mUdpSocket == INVALID_SOCKET ) 
+            {
+                printf( "Error at socket(): %ld\n", WSAGetLastError( ) );
+                freeaddrinfo( mpAddrInfoResult );
+                WSACleanup( );
+                ok &= false;
+            }
+        }
+        else
+        {
             ok &= false;
         }
     }
@@ -222,7 +240,7 @@ bool Q4SServerSocket::bindListenSocket( int socketType )
             senderAddr.sin_family = AF_INET;
             senderAddr.sin_port = htons( atoi( DEFAULT_UDP_PORT ) );
             senderAddr.sin_addr.s_addr = htonl( INADDR_ANY ); 
-            iResult = bind( mListenSocket, (SOCKADDR*) &senderAddr, sizeof( senderAddr ) );
+            iResult = bind( mUdpSocket, ( SOCKADDR* ) &senderAddr, sizeof( senderAddr ) );
         }
         else
         {
@@ -284,7 +302,7 @@ bool Q4SServerSocket::acceptClientConnection( Q4SSocket* q4sSocket )
     else
     {
         q4sSocket->init( );
-        q4sSocket->setSocket( attemptSocket, SOCK_DGRAM );
+        q4sSocket->setSocket( attemptSocket, SOCK_STREAM );
     }
 
     return ok;
