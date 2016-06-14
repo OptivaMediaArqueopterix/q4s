@@ -24,3 +24,7 @@ Project Properties
    -> Configuration Properties 
        -> Linker (General) 
           -> Enable Incremental Linking -> "No (/INCREMENTAL:NO)"
+		  
+Para el formateo de strings, usamos la libería fmt:
+http://fmtlib.net/latest/index.html
+Solo meter el .h y .cc
