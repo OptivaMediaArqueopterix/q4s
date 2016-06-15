@@ -25,16 +25,5 @@ int _tmain(int argc, _TCHAR* argv[])
 
     ok &= q4SClientStateManager.init();
 
-    // Test for common
-    Q4SCommon q4SCommon;
-
-//    Initialize Winsock.
-//    Create a socket.
-//    Connect to the server.
-//    Send and receive data.
-//    Disconnect.
-
-    Sleep(10000);
-
     return 0;
 }

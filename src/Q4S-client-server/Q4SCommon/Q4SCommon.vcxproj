@@ -74,11 +74,13 @@
   <ItemGroup>
     <ClInclude Include="fmt\format.h" />
     <ClInclude Include="Q4SCommon.h" />
+    <ClInclude Include="Q4SMessageManager.h" />
     <ClInclude Include="Q4SSocket.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fmt\format.cc" />
     <ClCompile Include="Q4SCommon.cpp" />
+    <ClCompile Include="Q4SMessageManager.cpp" />
     <ClCompile Include="Q4SSocket.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

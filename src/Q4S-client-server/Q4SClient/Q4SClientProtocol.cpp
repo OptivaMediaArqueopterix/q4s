@@ -19,25 +19,28 @@ bool Q4SClientProtocol::init()
 
     bool ok = true;
 
+    ok &= openConnections();
 
     return ok;
 }
 
 void Q4SClientProtocol::done()
 {
+    //closeConnections();
 }
 
-void Q4SClientProtocol::begin()
+bool Q4SClientProtocol::openConnections()
 {
-    printf("METHOD: begin\n");
-
     bool ok = true;
-    
+
+    //open connections
     if( ok )
     {
         ok &= mClientSocket.openConnection( SOCK_STREAM );
         ok &= mClientSocket.openConnection( SOCK_DGRAM );
     }
+
+    // launch threads
     if( ok )
     {
         //char buffer[ 65536 ];
@@ -49,27 +52,14 @@ void Q4SClientProtocol::begin()
         marrthrHandle[ 0 ] = CreateThread( 0, 0, manageUdpResponsesFn, ( LPVOID )this, 0, 0 );
         marrthrHandle[ 1 ] = CreateThread( 0, 0, manageTcpResponsesFn, ( LPVOID )this, 0, 0 );
     }
-    if( ok )
-    {
-        ok &= mClientSocket.sendTcpData( 
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                );
-        ok &= mClientSocket.sendUdpData( 
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-                );
-    }
+
+    return ok;
+}
+
+void Q4SClientProtocol::closeConnections()
+{
+    bool ok = true;
+
     if( ok )
     {
         WaitForMultipleObjects( 2, marrthrHandle, true, INFINITE );
@@ -77,34 +67,44 @@ void Q4SClientProtocol::begin()
         ok &= mClientSocket.closeConnection( SOCK_DGRAM );
     }
 
-    /*
-    Q4SClientSocket     clientSocket;
-    Q4SSocket           q4sSocket;
-    bool                ok = true;
+    if (!ok)
+    {
+        //TODO: launch error
+    }
+}
 
+bool Q4SClientProtocol::begin()
+{
+    printf("METHOD: begin\n");
+
+    bool ok = true;
+    
     if( ok )
     {
-        ok &= clientSocket.initializeSockets( );
+        ok &= mClientSocket.sendTcpData( 
+                "BEGIN"
+                );
+        //ok &= mClientSocket.sendUdpData( 
+        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
+        //        );
     }
-    if( ok )
+
+    if ( ok ) 
     {
-        ok &= clientSocket.connectToServer( &q4sSocket );
+        std::string message;
+        while( !mReceivedMessages.readFirst(message))
+        {
+            //TODO: cambiar espera activa por pasiva
+        }
     }
-    if( ok )
-    {
-        ok &= q4sSocket.sendData( "Tooooma prueba" );
-    }
-    if( ok )
-    {
-        char buffer[ 256 ];
-        ok &= q4sSocket.receiveData( buffer, sizeof( buffer ) );
-        printf( "Received: <%s>\n", buffer );
-    }
-    if( ok )
-    {
-        ok &= q4sSocket.shutDown( );
-    }
-    */
+
+    return ok;
 }
 
 void Q4SClientProtocol::ready()
@@ -154,8 +154,14 @@ bool Q4SClientProtocol::manageTcpResponses( )
     bool                ok = true;
     char                buffer[ 65536 ];
     
-    ok &= mClientSocket.receiveTcpData( buffer, sizeof( buffer ) );
-    printf( "Received: <%s>\n", buffer );
+    while (ok ) 
+    {
+        ok &= mClientSocket.receiveTcpData( buffer, sizeof( buffer ) );
+        std::string message = buffer;
+        mReceivedMessages.addMessage ( message );
+        printf( "Received: <%s>\n", buffer );
+    }
+
 
     return ok;
 }

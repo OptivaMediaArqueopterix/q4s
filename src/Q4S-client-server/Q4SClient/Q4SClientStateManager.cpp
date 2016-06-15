@@ -22,6 +22,8 @@ bool Q4SClientStateManager::init()
     // Init first state
     ok &= stateInit ( Q4SCLIENTSTATE_INIT );
 
+    ok &= run();
+
     return ok;
 }
 
@@ -35,8 +37,26 @@ void Q4SClientStateManager::done()
 void Q4SClientStateManager::clear()
 {
     q4SClientState = Q4SCLIENTSTATE_INVALID;
+    nextState =  Q4SCLIENTSTATE_INVALID;
+    stop = false;
 }
 
+bool Q4SClientStateManager::run()
+{
+    bool ok = true;
+
+    // TODO: set out condition
+    while (!stop) 
+    {
+        bool stateInitOk = stateInit(nextState);
+        if ( stateInitOk )
+        {
+            q4SClientState = nextState;
+        }
+    }
+
+    return ok;
+}
 
 bool Q4SClientStateManager::stateInit (Q4SClientState state)
 {
@@ -48,19 +68,37 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
     {
         case Q4SCLIENTSTATE_INIT:
             {
-                Q4SClientProtocol::begin();
+                bool initOk = Q4SClientProtocol::init();
+                if (initOk)
+                {
+                    nextState = Q4SCLIENTSTATE_HANDSHAKE;
+                }
+                else
+                {
+                    // TODO: launch error
+                    stop = true;
+                }
             }
         break;
 
         case Q4SCLIENTSTATE_HANDSHAKE:
             {
-
+                bool beginOk = Q4SClientProtocol::begin();
+                if (beginOk)
+                {
+                    nextState = Q4SCLIENTSTATE_NEGOTIATION;
+                }
+                else
+                {
+                    // TODO: launch error
+                    stop = true;
+                }
             }
         break;
 
         case Q4SCLIENTSTATE_NEGOTIATION:
             {
-
+                printf("Hemos llegado a la negociación");
             }
         break;
 

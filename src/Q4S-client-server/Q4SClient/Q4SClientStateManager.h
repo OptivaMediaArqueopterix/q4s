@@ -22,12 +22,16 @@ private:
 
     void    clear();
 
-    // State
+    bool    run();
 
+    // State
     bool    stateInit   ( Q4SClientState state );
     void    stateDone   ( );
 
+    bool stop;
     Q4SClientState q4SClientState;
+    Q4SClientState nextState;
+    
 };
 
 #endif  // _Q4SCLIENTSTATEMANAGER_H_

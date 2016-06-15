@@ -2,6 +2,7 @@
 #define _Q4SCLIENTPROTOCOL_H_
 
 #include "Q4SClientSocket.h"
+#include "Q4SMessageManager.h"
 
 class Q4SClientProtocol
 {
@@ -16,7 +17,7 @@ public:
     void    done();
 
     // Q4S Methods
-    void    begin();
+    bool    begin();
     void    ready();
     void    ping();
     void    bwidth();
@@ -27,12 +28,17 @@ private:
 
     void    clear();
 
+    bool    openConnections();
+    void    closeConnections();
+
     Q4SClientSocket             mClientSocket;
     HANDLE                      marrthrHandle[ 2 ];
     bool                        manageTcpResponses( );
     bool                        manageUdpResponses( );
     static DWORD WINAPI         manageTcpResponsesFn( LPVOID lpData );
     static DWORD WINAPI         manageUdpResponsesFn( LPVOID lpData );
+
+    Q4SMessageManager           mReceivedMessages;
 };
 
 #endif  // _Q4SCLIENTPROTOCOL_H_

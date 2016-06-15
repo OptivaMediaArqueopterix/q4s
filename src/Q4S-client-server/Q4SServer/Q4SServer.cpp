@@ -66,13 +66,16 @@ DWORD WINAPI manageTcpData( LPVOID* lpParam )
     {
         ok &= pQ4sServer->waitForConnections( SOCK_STREAM );
     }
-    if( ok )
+    while (ok ) 
     {
-        ok &= pQ4sServer->receiveTcpData( buffer, sizeof( buffer ) );
-    }
-    if( ok )
-    {
-        ok &= pQ4sServer->sendTcpData( buffer );
+        if( ok )
+        {
+            ok &= pQ4sServer->receiveTcpData( buffer, sizeof( buffer ) );
+        }
+        if( ok )
+        {
+            ok &= pQ4sServer->sendTcpData( buffer );
+        }
     }
     if( ok )
     {
