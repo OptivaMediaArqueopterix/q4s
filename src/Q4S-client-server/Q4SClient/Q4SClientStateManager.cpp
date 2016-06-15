@@ -99,6 +99,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
         case Q4SCLIENTSTATE_NEGOTIATION:
             {
                 printf("Hemos llegado a la negociación");
+                stop = true;
             }
         break;
 
