@@ -78,13 +78,18 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Q4SServerProtocol.h" />
     <ClInclude Include="Q4SServerSocket.h" />
+    <ClInclude Include="Q4SServerState.h" />
+    <ClInclude Include="Q4SServerStateManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SServer.cpp" />
+    <ClCompile Include="Q4SServerProtocol.cpp" />
     <ClCompile Include="Q4SServerSocket.cpp" />
+    <ClCompile Include="Q4SServerStateManager.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>

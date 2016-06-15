@@ -27,6 +27,15 @@
     <ClInclude Include="Q4SServerSocket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Q4SServerState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Q4SServerStateManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Q4SServerProtocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -36,6 +45,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Q4SServerSocket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Q4SServerStateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Q4SServerProtocol.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
