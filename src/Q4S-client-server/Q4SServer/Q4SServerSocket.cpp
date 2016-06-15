@@ -28,7 +28,8 @@ void Q4SServerSocket::done()
 void Q4SServerSocket::clear()
 {
     mListenSocket = INVALID_SOCKET;
-    mpAddrInfoResult = NULL;
+    mpAddrInfoResultTcp = NULL;
+    mpAddrInfoResultUdp = NULL;
 }
 
 bool Q4SServerSocket::waitForConnections( int socketType )
@@ -162,14 +163,14 @@ bool Q4SServerSocket::createListenSocket( int socketType )
         hints.ai_protocol = IPPROTO_TCP;
         hints.ai_flags = AI_PASSIVE;
         // Resolve the local address and port to be used by the server
-        iResult = getaddrinfo( NULL, DEFAULT_TCP_PORT, &hints, &mpAddrInfoResult );
+        iResult = getaddrinfo( NULL, DEFAULT_TCP_PORT, &hints, &mpAddrInfoResultTcp );
     }
     else if( socketType == SOCK_DGRAM )
     {
         hints.ai_socktype = SOCK_DGRAM;
         hints.ai_protocol = IPPROTO_UDP;
         // Resolve the local address and port to be used by the server
-        iResult = getaddrinfo( NULL, DEFAULT_UDP_PORT, &hints, &mpAddrInfoResult );
+        iResult = getaddrinfo( NULL, DEFAULT_UDP_PORT, &hints, &mpAddrInfoResultUdp );
     }
     else
     {
@@ -188,22 +189,22 @@ bool Q4SServerSocket::createListenSocket( int socketType )
         // Create a SOCKET for the server to listen for client connections
         if( socketType == SOCK_STREAM )
         {
-            mListenSocket = socket( mpAddrInfoResult->ai_family, mpAddrInfoResult->ai_socktype, mpAddrInfoResult->ai_protocol );
+            mListenSocket = socket( mpAddrInfoResultTcp->ai_family, mpAddrInfoResultTcp->ai_socktype, mpAddrInfoResultTcp->ai_protocol );
             if( mListenSocket == INVALID_SOCKET ) 
             {
                 printf( "Error at socket(): %ld\n", WSAGetLastError( ) );
-                freeaddrinfo( mpAddrInfoResult );
+                freeaddrinfo( mpAddrInfoResultTcp );
                 WSACleanup( );
                 ok &= false;
             }
         }
         else if( socketType == SOCK_DGRAM )
         {
-            mUdpSocket = socket( mpAddrInfoResult->ai_family, mpAddrInfoResult->ai_socktype, mpAddrInfoResult->ai_protocol );
+            mUdpSocket = socket( mpAddrInfoResultUdp->ai_family, mpAddrInfoResultUdp->ai_socktype, mpAddrInfoResultUdp->ai_protocol );
             if( mUdpSocket == INVALID_SOCKET ) 
             {
                 printf( "Error at socket(): %ld\n", WSAGetLastError( ) );
-                freeaddrinfo( mpAddrInfoResult );
+                freeaddrinfo( mpAddrInfoResultUdp );
                 WSACleanup( );
                 ok &= false;
             }
@@ -232,7 +233,7 @@ bool Q4SServerSocket::bindListenSocket( int socketType )
         }
         else
         {
-            iResult = bind( mListenSocket, mpAddrInfoResult->ai_addr, (int)mpAddrInfoResult->ai_addrlen );
+            iResult = bind( mListenSocket, mpAddrInfoResultTcp->ai_addr, (int)mpAddrInfoResultTcp->ai_addrlen );
         }
     }
     else if( socketType == SOCK_DGRAM )
@@ -261,14 +262,37 @@ bool Q4SServerSocket::bindListenSocket( int socketType )
         if( iResult == SOCKET_ERROR ) 
         {
             printf( "bind failed with error: %d\n", WSAGetLastError( ) );
-            freeaddrinfo( mpAddrInfoResult );
-            closesocket( mListenSocket );
+            if( socketType == SOCK_STREAM )
+            {
+                freeaddrinfo( mpAddrInfoResultTcp );
+                closesocket( mListenSocket );
+            }
+            else if( socketType == SOCK_DGRAM )
+            {
+                freeaddrinfo( mpAddrInfoResultUdp );
+                closesocket( mUdpSocket );
+            }
+            else
+            {
+                ok &= false;
+            }
             WSACleanup( );
             ok &= false;
         }
         else
         {
-            freeaddrinfo( mpAddrInfoResult );
+            if( socketType == SOCK_STREAM )
+            {
+                freeaddrinfo( mpAddrInfoResultTcp );
+            }
+            else if( socketType == SOCK_DGRAM )
+            {
+                freeaddrinfo( mpAddrInfoResultUdp );
+            }
+            else
+            {
+                ok &= false;
+            }
         }
     }
 

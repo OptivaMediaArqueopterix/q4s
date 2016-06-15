@@ -38,7 +38,8 @@ private:
 
     SOCKET              mListenSocket;
     SOCKET              mUdpSocket;
-    struct addrinfo*    mpAddrInfoResult; 
+    struct addrinfo*    mpAddrInfoResultTcp; 
+    struct addrinfo*    mpAddrInfoResultUdp; 
 
     Q4SSocket           mq4sTcpSocket;
     Q4SSocket           mq4sUdpSocket;
