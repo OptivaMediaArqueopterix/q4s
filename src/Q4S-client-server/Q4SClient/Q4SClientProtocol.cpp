@@ -19,6 +19,7 @@ bool Q4SClientProtocol::init()
 
     bool ok = true;
 
+    mReceivedMessages.init( );
     ok &= openConnections();
 
     return ok;
@@ -27,6 +28,7 @@ bool Q4SClientProtocol::init()
 void Q4SClientProtocol::done()
 {
     //closeConnections();
+    mReceivedMessages.done( );
 }
 
 bool Q4SClientProtocol::openConnections()
@@ -87,10 +89,7 @@ bool Q4SClientProtocol::begin()
     if ( ok ) 
     {
         std::string message;
-        while( !mReceivedMessages.readFirst(message))
-        {
-            //TODO: cambiar espera activa por pasiva
-        }
+        mReceivedMessages.readFirst( message );
     }
 
     if( ok )
@@ -101,10 +100,7 @@ bool Q4SClientProtocol::begin()
     if ( ok ) 
     {
         std::string message;
-        while( !mReceivedMessages.readFirst(message))
-        {
-            //TODO: cambiar espera activa por pasiva
-        }
+        mReceivedMessages.readFirst( message );
     }
 
     return ok;

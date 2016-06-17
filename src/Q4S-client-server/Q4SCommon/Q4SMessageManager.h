@@ -29,6 +29,7 @@ private:
 
     std::list < std::string >   mMessages;
     Q4SCriticalSection          mcsMessagesAccess;
+    HANDLE                      mevMessageReady;
 };
 
 #endif  // _Q4SMESSAGEMANAGER_H_
