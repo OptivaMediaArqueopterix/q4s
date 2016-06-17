@@ -32,11 +32,18 @@ private:
     void    closeConnections();
 
     Q4SServerSocket             mServerSocket;
-    HANDLE                      marrthrHandle[ 2 ];
+    HANDLE                      marrthrListenHandle[ 2 ];
+    HANDLE                      marrthrDataHandle[ 2 ];
+
     bool                        manageTcpConnection( );
     bool                        manageUdpConnection( );
     static DWORD WINAPI         manageTcpConnectionsFn( LPVOID lpData );
     static DWORD WINAPI         manageUdpConnectionsFn( LPVOID lpData );
+
+    bool                        manageTcpReceivedData( );
+    bool                        manageUdpReceivedData( );
+    static DWORD WINAPI         manageTcpReceivedDataFn( LPVOID lpData );
+    static DWORD WINAPI         manageUdpReceivedDataFn( LPVOID lpData );
 
     Q4SMessageManager           mReceivedMessages;
 };

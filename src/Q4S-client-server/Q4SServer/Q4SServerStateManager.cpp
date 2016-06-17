@@ -98,7 +98,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
 
         case Q4SSERVERSTATE_NEGOTIATION:
             {
-                printf("Hemos llegado a la negociación");
+                printf("Hemos llegado a la negociacion");
                 stop = true;
             }
         break;

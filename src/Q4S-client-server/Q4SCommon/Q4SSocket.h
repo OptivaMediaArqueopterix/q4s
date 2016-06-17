@@ -21,7 +21,7 @@ public:
     void    done( );
 
     void    setSocket( SOCKET socket, int socketType );
-    bool    sendData( char* sendBuffer );
+    bool    sendData( const char* sendBuffer );
 
     bool    receiveData( char* receiveBuffer, int receiveBufferSize );
     bool    shutDown( );
@@ -37,6 +37,7 @@ private:
     sockaddr_in     addrReceiver;
     int             addrReceiverLen;
 
+    bool            alreadyReceived;
 };
 
 #endif  // _Q4SSOCKET_H_

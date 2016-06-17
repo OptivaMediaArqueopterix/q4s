@@ -166,7 +166,7 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket, int socketType )
             if( socketAttempt == INVALID_SOCKET )
             {
                 printf( "socket failed with error: %ld\n", WSAGetLastError( ) );
-                WSACleanup( );
+                //WSACleanup( );
                 ok &= false;
             }
 
@@ -184,7 +184,7 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket, int socketType )
         if( socketAttempt == INVALID_SOCKET ) 
         {
             printf( "Unable to connect to server!\n" );
-            WSACleanup( );
+            //WSACleanup( );
             ok &= false;
         }
         else

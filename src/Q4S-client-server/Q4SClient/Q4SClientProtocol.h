@@ -33,10 +33,10 @@ private:
 
     Q4SClientSocket             mClientSocket;
     HANDLE                      marrthrHandle[ 2 ];
-    bool                        manageTcpResponses( );
-    bool                        manageUdpResponses( );
-    static DWORD WINAPI         manageTcpResponsesFn( LPVOID lpData );
-    static DWORD WINAPI         manageUdpResponsesFn( LPVOID lpData );
+    bool                        manageTcpReceivedData( );
+    bool                        manageUdpReceivedData( );
+    static DWORD WINAPI         manageTcpReceivedDataFn( LPVOID lpData );
+    static DWORD WINAPI         manageUdpReceivedDataFn( LPVOID lpData );
 
     Q4SMessageManager           mReceivedMessages;
 };

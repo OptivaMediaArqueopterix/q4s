@@ -33,11 +33,8 @@ bool Q4SServerProtocol::openConnections()
 {
     bool ok = true;
 
-    HANDLE arrthrHandle[ 2 ];
-
-    arrthrHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpConnectionsFn, ( void* ) this, 0, 0 );
-    arrthrHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpConnectionsFn, ( void* ) this, 0, 0 );
-    WaitForMultipleObjects( 2, arrthrHandle, true, INFINITE );
+    marrthrListenHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpConnectionsFn, ( void* ) this, 0, 0 );
+    marrthrListenHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpConnectionsFn, ( void* ) this, 0, 0 );
     
     return ok;
 }
@@ -48,7 +45,7 @@ void Q4SServerProtocol::closeConnections()
 
     if( ok )
     {
-        WaitForMultipleObjects( 2, marrthrHandle, true, INFINITE );
+        WaitForMultipleObjects( 2, marrthrListenHandle, true, INFINITE );
         ok &= mServerSocket.closeConnection( SOCK_STREAM );
         ok &= mServerSocket.closeConnection( SOCK_DGRAM );
     }
@@ -62,32 +59,34 @@ void Q4SServerProtocol::closeConnections()
 bool Q4SServerProtocol::begin()
 {
     printf("METHOD: begin\n");
+    std::string message;
 
     bool ok = true;
     
-    if( ok )
-    {
-        ok &= mServerSocket.sendTcpData( 
-                "BEGIN"
-                );
-        //ok &= mClientSocket.sendUdpData( 
-        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-        //        "Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba Tooooma prueba "
-        //        );
-    }
-
     if ( ok ) 
     {
-        std::string message;
         while( !mReceivedMessages.readFirst(message))
         {
             //TODO: cambiar espera activa por pasiva
         }
+    }
+
+    if( ok )
+    {
+        ok &= mServerSocket.sendTcpData( "200 OK TCP" );
+    }
+
+    if ( ok ) 
+    {
+        while( !mReceivedMessages.readFirst(message))
+        {
+            //TODO: cambiar espera activa por pasiva
+        }
+    }
+
+    if( ok )
+    {
+        ok &= mServerSocket.sendUdpData( "200 OK UDP" );
     }
 
     return ok;
@@ -146,6 +145,10 @@ bool Q4SServerProtocol::manageTcpConnection( )
         ok &= mServerSocket.waitForConnections( SOCK_STREAM );
     }
 
+    if( ok )
+    {
+        marrthrDataHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpReceivedDataFn, ( void* ) this, 0, 0 );
+    }
     //while (ok ) 
     //{
     //    if( ok )
@@ -181,11 +184,57 @@ bool Q4SServerProtocol::manageUdpConnection( )
     {
         ok &= mServerSocket.waitForConnections( SOCK_DGRAM );
     }
+    if( ok )
+    {
+        marrthrDataHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpReceivedDataFn, ( void* ) this, 0, 0 );
+    }
 
     //char                buffer[ 65536 ];
     //
     //ok &= mServerSocket.receiveUdpData( buffer, sizeof( buffer ) );
     //printf( "Received: <%s>\n", buffer );
+
+    return ok;
+}
+
+DWORD WINAPI Q4SServerProtocol::manageTcpReceivedDataFn( LPVOID lpData )
+{
+    Q4SServerProtocol* q4sCP = ( Q4SServerProtocol* )lpData;
+    return q4sCP->manageTcpReceivedData( );
+}
+
+DWORD WINAPI Q4SServerProtocol::manageUdpReceivedDataFn( LPVOID lpData )
+{
+    Q4SServerProtocol* q4sCP = ( Q4SServerProtocol* )lpData;
+    return q4sCP->manageUdpReceivedData( );
+}
+
+bool Q4SServerProtocol::manageTcpReceivedData( )
+{
+    bool                ok = true;
+    char                buffer[ 65536 ];
+    
+    while (ok ) 
+    {
+        ok &= mServerSocket.receiveTcpData( buffer, sizeof( buffer ) );
+        std::string message = buffer;
+        mReceivedMessages.addMessage ( message );
+        printf( "Received: <%s>\n", buffer );
+    }
+
+
+    return ok;
+}
+
+bool Q4SServerProtocol::manageUdpReceivedData( )
+{
+    bool                ok = true;
+    char                buffer[ 65536 ];
+    
+    ok &= mServerSocket.receiveUdpData( buffer, sizeof( buffer ) );
+    std::string message = buffer;
+    mReceivedMessages.addMessage ( message );
+    printf( "Received: <%s>\n", buffer );
 
     return ok;
 }

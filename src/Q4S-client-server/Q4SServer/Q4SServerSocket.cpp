@@ -107,7 +107,7 @@ bool Q4SServerSocket::closeConnection( int socketType )
     return ok;
 }
 
-bool Q4SServerSocket::sendTcpData( char* sendBuffer )
+bool Q4SServerSocket::sendTcpData( const char* sendBuffer )
 {
     return mq4sTcpSocket.sendData( sendBuffer );
 }
@@ -117,7 +117,7 @@ bool Q4SServerSocket::receiveTcpData( char* receiveBuffer, int receiveBufferSize
     return mq4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
 }
 
-bool Q4SServerSocket::sendUdpData( char* sendBuffer )
+bool Q4SServerSocket::sendUdpData( const char* sendBuffer )
 {
     return mq4sUdpSocket.sendData( sendBuffer );
 }

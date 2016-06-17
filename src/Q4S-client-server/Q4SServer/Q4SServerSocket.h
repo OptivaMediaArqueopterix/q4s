@@ -20,9 +20,9 @@ public:
     bool    waitForConnections( int socketType );
     bool    stopWaiting( );
     bool    closeConnection( int socketType );
-    bool    sendTcpData( char* sendBuffer );
+    bool    sendTcpData( const char* sendBuffer );
     bool    receiveTcpData( char* receiveBuffer, int receiveBufferSize );
-    bool    sendUdpData( char* sendBuffer );
+    bool    sendUdpData( const char* sendBuffer );
     bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize );
 
 private:

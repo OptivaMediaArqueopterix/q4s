@@ -44,6 +44,7 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage)
     if ( mMessages.size() > 0 )
     {
         firstMessage = mMessages.front();
+        mMessages.pop_front();
     }
     else
     {

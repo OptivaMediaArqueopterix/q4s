@@ -2,6 +2,8 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
+#define SERVER_IP "127.0.0.1"
+
 Q4SSocket::Q4SSocket( )
 {
     clear();
@@ -31,6 +33,7 @@ void Q4SSocket::clear( )
     mSocket = INVALID_SOCKET;
     mSocketType = 0;
     addrReceiverLen = 0;
+    alreadyReceived = false;
 }
 
 void Q4SSocket::setSocket( SOCKET socket, int socketType )
@@ -39,7 +42,7 @@ void Q4SSocket::setSocket( SOCKET socket, int socketType )
     mSocketType = socketType;
 }
 
-bool Q4SSocket::sendData( char* sendBuffer )
+bool Q4SSocket::sendData( const char* sendBuffer )
 {
     //Bind the socket.
     int     iResult;
@@ -52,6 +55,13 @@ bool Q4SSocket::sendData( char* sendBuffer )
     }
     else if( mSocketType == SOCK_DGRAM )
     {
+        if( alreadyReceived == false )
+        {
+            addrReceiver.sin_family = AF_INET;
+            addrReceiver.sin_port = htons( atoi( DEFAULT_UDP_PORT ) );
+            addrReceiver.sin_addr.s_addr = inet_addr( SERVER_IP );
+            addrReceiverLen = sizeof( addrReceiver );
+        }
         iResult = sendto( mSocket, sendBuffer, (int)strlen( sendBuffer ), 0, ( SOCKADDR* )&addrReceiver, addrReceiverLen );
     }
     else
@@ -94,16 +104,26 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
     iResult = recvfrom( mSocket, receiveBuffer, receiveBufferSize, 0, ( SOCKADDR* )&addrReceiver, &addrReceiverLen );
     if( iResult > 0 )
     {
-        printf( "Bytes received: %d\n", iResult );
+        if( mSocketType == SOCK_STREAM )
+        {
+            printf( "Bytes received by Tcp: %d\n", iResult );
+        }
+        else if( mSocketType == SOCK_DGRAM )
+        {
+            printf( "Bytes received by Udp: %d\n", iResult );
+        }
         receiveBuffer[ iResult ] = '\0';
+        alreadyReceived = true;
     }
     else if( iResult == 0 )
     {
         printf( "Connection closed\n" );
+        ok &= false;
     }
     else
     {
         printf( "recv failed with error: %d\n", WSAGetLastError( ) );
+        ok &= false;
     }
 
     return ok;
@@ -132,7 +152,7 @@ bool Q4SSocket::disconnect( )
 
     // cleanup
     closesocket( mSocket );
-    WSACleanup( );
+    //WSACleanup( );
 
     return ok;
 }

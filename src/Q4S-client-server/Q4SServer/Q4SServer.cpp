@@ -3,8 +3,10 @@
 
 #include "stdafx.h"
 
-#include "Q4SCommon.h"
-#include "Q4SServerSocket.h"
+#include "Q4SServerStateManager.h"
+
+//#include "Q4SCommon.h"
+//#include "Q4SServerSocket.h"
 
 #include "windows.h"
 
@@ -13,17 +15,24 @@ DWORD WINAPI manageUdpData( LPVOID* lpParam );
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    bool ok = true;
 
-    Q4SCommon           q4SCommon;
-    Q4SServerSocket     q4SServer;
-    bool                ok = true;
+    Q4SServerStateManager q4SServerStateManager;
+
+    ok &= q4SServerStateManager.init();
+
+    //Q4SCommon           q4SCommon;
+    //Q4SServerSocket     q4SServer;
+    //bool                ok = true;
+
+
     //char                buffer[ 65536 ];
     //HANDLE              thrHandle;
-    HANDLE              arrthrHandle[ 2 ];
+    //HANDLE              arrthrHandle[ 2 ];
 
-    arrthrHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpData, ( void* ) &q4SServer, 0, 0 );
-    arrthrHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpData, ( void* ) &q4SServer, 0, 0 );
-    WaitForMultipleObjects( 2, arrthrHandle, true, INFINITE );
+    //arrthrHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpData, ( void* ) &q4SServer, 0, 0 );
+    //arrthrHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpData, ( void* ) &q4SServer, 0, 0 );
+    //WaitForMultipleObjects( 2, arrthrHandle, true, INFINITE );
 
 
     //if( ok )
@@ -51,8 +60,9 @@ int _tmain(int argc, _TCHAR* argv[])
     //    ok &= q4SServer.stopWaiting( );
     //}
 
-    Sleep(10000);
-    return ok;
+    //Sleep(10000);
+
+    return 0;
 }
 
 DWORD WINAPI manageTcpData( LPVOID* lpParam )
