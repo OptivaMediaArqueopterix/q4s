@@ -30,6 +30,9 @@
     <ClInclude Include="Q4SMessageManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Q4SCriticalSection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SCommon.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Q4SMessageManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Q4SCriticalSection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

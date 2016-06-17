@@ -214,7 +214,7 @@ bool Q4SServerProtocol::manageTcpReceivedData( )
     bool                ok = true;
     char                buffer[ 65536 ];
     
-    while (ok ) 
+    while( ok ) 
     {
         ok &= mServerSocket.receiveTcpData( buffer, sizeof( buffer ) );
         std::string message = buffer;

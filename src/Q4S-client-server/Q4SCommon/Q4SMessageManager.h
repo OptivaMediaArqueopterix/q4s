@@ -1,6 +1,8 @@
 #ifndef _Q4SMESSAGEMANAGER_H_
 #define _Q4SMESSAGEMANAGER_H_
 
+#include "Q4SCriticalSection.h"
+
 #include <list>
 #include <string>
 
@@ -25,7 +27,8 @@ private:
 
     void    clear( );
 
-    std::list < std::string > mMessages;
+    std::list < std::string >   mMessages;
+    Q4SCriticalSection          mcsMessagesAccess;
 };
 
 #endif  // _Q4SMESSAGEMANAGER_H_
