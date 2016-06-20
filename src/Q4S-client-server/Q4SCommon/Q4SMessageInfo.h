@@ -3,6 +3,7 @@
 
 #include <string>
 
+// Info to store alongside with a received message.
 struct Q4SMessageInfo 
 {
     std::string     message;
