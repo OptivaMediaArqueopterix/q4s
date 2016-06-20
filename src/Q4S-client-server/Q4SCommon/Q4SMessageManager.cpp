@@ -50,7 +50,7 @@ void Q4SMessageManager::addMessage( std::string &message )
     mcsMessagesAccess.leave( );
 }
 
-bool Q4SMessageManager::readFirst( std::string &firstMessage)
+bool Q4SMessageManager::readFirst( std::string &firstMessage )
 {
     bool    ok = true;
     DWORD   waitResult;
@@ -72,6 +72,33 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage)
         if( mMessages.size( ) == 0 )
         {
             ResetEvent( mevMessageReady );
+        }
+    }
+
+    mcsMessagesAccess.leave( );
+
+    return ok;
+}
+
+bool Q4SMessageManager::readMessage( std::string& pattern, std::string& message )
+{
+    bool    ok = true;
+    DWORD   waitResult;
+    int     j = 0,
+            jmax = 0;
+    std::list< std::string >::iterator  itr_msg;
+
+    waitResult = WaitForSingleObject( mevMessageReady, INFINITE );
+    mcsMessagesAccess.enter( );
+
+    ok = false;
+    for( itr_msg = mMessages.begin( ); ( ok == false ) && ( itr_msg != mMessages.end( ) ); itr_msg++ )
+    {
+        if( itr_msg->substr( 0, pattern.size( ) ).compare( pattern ) == 0 )
+        {
+            // Message found.
+            ok = true;
+            message = *itr_msg;
         }
     }
 

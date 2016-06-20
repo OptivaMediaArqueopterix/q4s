@@ -21,7 +21,8 @@ class Q4SMessageManager
     // Add message
     void addMessage( std::string &message );
 
-    bool readFirst( std::string &firstMessage);
+    bool readFirst( std::string &firstMessage );
+    bool readMessage( std::string& pattern, std::string& message );
 
 private:
 

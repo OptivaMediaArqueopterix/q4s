@@ -33,6 +33,9 @@
     <ClInclude Include="Q4SCriticalSection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ETime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SCommon.cpp">
@@ -48,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Q4SCriticalSection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ETime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

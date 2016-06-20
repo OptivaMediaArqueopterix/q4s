@@ -1,5 +1,7 @@
 #include "Q4SServerProtocol.h"
 
+#include "ETime.h"
+
 #include <stdio.h>
 
 Q4SServerProtocol::Q4SServerProtocol ()
@@ -96,14 +98,40 @@ bool Q4SServerProtocol::ready()
         ok &= mServerSocket.sendTcpData( "200 OK" );
     }
 
-    Sleep( 20000 );
-
     return ok;
 }
 
 bool Q4SServerProtocol::ping()
 {
     printf("METHOD: ping\n");
+
+    bool            ok = true;
+    std::string     message;
+
+    if ( ok ) 
+    {
+        ok &= mReceivedMessages.readMessage( std::string( "PING 0" ), message );
+    }
+
+    if( ok )
+    {
+        int     j = 0,
+                jmax = 20;
+        char    buffer[ 256 ];
+        if( ok )
+        {
+            for( j = 0; j < jmax; j++ )
+            {
+                unsigned long timestamp = ETime_getTime( );
+                printf( "Ping %d at %d\n", j, timestamp );
+                sprintf_s( buffer, "PING %d %ld", j, timestamp );
+                ok &= mServerSocket.sendUdpData( buffer );
+                Sleep( 200 );
+            }
+        }
+    }
+
+    Sleep( 20000 );
 
     return 0;
 }
@@ -237,10 +265,13 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
     bool                ok = true;
     char                buffer[ 65536 ];
     
-    ok &= mServerSocket.receiveUdpData( buffer, sizeof( buffer ) );
-    std::string message = buffer;
-    mReceivedMessages.addMessage ( message );
-    printf( "Received: <%s>\n", buffer );
+    while( ok ) 
+    {
+        ok &= mServerSocket.receiveUdpData( buffer, sizeof( buffer ) );
+        std::string message = buffer;
+        mReceivedMessages.addMessage ( message );
+        printf( "Received: <%s>\n", buffer );
+    }
 
     return ok;
 }

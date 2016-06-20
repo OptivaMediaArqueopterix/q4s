@@ -1,5 +1,7 @@
 #include "Q4SClientProtocol.h"
 
+#include "ETime.h"
+
 #include <stdio.h>
 
 Q4SClientProtocol::Q4SClientProtocol ()
@@ -127,10 +129,9 @@ bool Q4SClientProtocol::ping()
     {
         for( j = 0; j < jmax; j++ )
         {
-            LARGE_INTEGER   prueba;
-            QueryPerformanceCounter( &prueba );
-            printf( "Ping %d at %ld\n", j, prueba.QuadPart );
-            sprintf_s( buffer, "PING %d %ld", j, prueba.QuadPart );
+            unsigned long timestamp = ETime_getTime( );
+            printf( "Ping %d at %d\n", j, timestamp );
+            sprintf_s( buffer, "PING %d %ld", j, timestamp );
             ok &= mClientSocket.sendUdpData( buffer );
             Sleep( 200 );
         }
