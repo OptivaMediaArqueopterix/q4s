@@ -42,12 +42,12 @@ void Q4SMessageManager::addMessage( std::string &message )
         signal = true;
     }
     //printf( "Writing first message\n" );
-    mcsMessagesAccess.leave( );
     if( signal == true )
     {
         SetEvent( mevMessageReady );
     }
     mMessages.push_back( message );
+    mcsMessagesAccess.leave( );
 }
 
 bool Q4SMessageManager::readFirst( std::string &firstMessage)
@@ -60,10 +60,20 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage)
     mcsMessagesAccess.enter( );
 
     //printf( "Reading first message\n" );
-    firstMessage = mMessages.front();
-    //printf( "First message: <%s>\n", firstMessage.c_str( ) );
-    mMessages.pop_front();
-    ResetEvent( mevMessageReady );
+    if( mMessages.size( ) == 0 )
+    {
+        printf( "FATAL ERROR. Message available but stolen by another thread.\n" );
+    }
+    else
+    {
+        firstMessage = mMessages.front();
+        //printf( "First message: <%s>\n", firstMessage.c_str( ) );
+        mMessages.pop_front();
+        if( mMessages.size( ) == 0 )
+        {
+            ResetEvent( mevMessageReady );
+        }
+    }
 
     mcsMessagesAccess.leave( );
 
