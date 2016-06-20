@@ -136,7 +136,7 @@ bool Q4SClientProtocol::ping()
             Sleep( 200 );
         }
     }
-
+    
     return ok;
 }
 
