@@ -83,18 +83,7 @@ bool Q4SClientProtocol::begin()
     
     if( ok )
     {
-        ok &= mClientSocket.sendTcpData( "BEGIN TCP" );
-    }
-
-    if ( ok ) 
-    {
-        std::string message;
-        mReceivedMessages.readFirst( message );
-    }
-
-    if( ok )
-    {
-        ok &= mClientSocket.sendUdpData( "BEGIN UDP" );
+        ok &= mClientSocket.sendTcpData( "BEGIN" );
     }
 
     if ( ok ) 
@@ -106,14 +95,48 @@ bool Q4SClientProtocol::begin()
     return ok;
 }
 
-void Q4SClientProtocol::ready()
+bool Q4SClientProtocol::ready()
 {
     printf("METHOD: ready\n");
+
+    bool ok = true;
+    
+    if( ok )
+    {
+        ok &= mClientSocket.sendTcpData( "READY" );
+    }
+
+    if ( ok ) 
+    {
+        std::string message;
+        mReceivedMessages.readFirst( message );
+    }
+
+    return ok;
 }
 
-void Q4SClientProtocol::ping()
+bool Q4SClientProtocol::ping()
 {
     printf("METHOD: ping\n");
+
+    bool    ok = true;
+    int     j = 0,
+            jmax = 20;
+    char    buffer[ 256 ];
+    if( ok )
+    {
+        for( j = 0; j < jmax; j++ )
+        {
+            LARGE_INTEGER   prueba;
+            QueryPerformanceCounter( &prueba );
+            printf( "Ping %d at %ld\n", j, prueba.QuadPart );
+            sprintf_s( buffer, "PING %d %ld", j, prueba.QuadPart );
+            ok &= mClientSocket.sendUdpData( buffer );
+            Sleep( 200 );
+        }
+    }
+
+    return ok;
 }
 
 void Q4SClientProtocol::bwidth()
@@ -171,6 +194,8 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
     char                buffer[ 65536 ];
     
     ok &= mClientSocket.receiveUdpData( buffer, sizeof( buffer ) );
+    std::string message = buffer;
+    mReceivedMessages.addMessage ( message );
     printf( "Received Udp: <%s>\n", buffer );
 
     return ok;

@@ -18,8 +18,8 @@ public:
 
     // Q4S Methods
     bool    begin();
-    void    ready();
-    void    ping();
+    bool    ready();
+    bool    ping();
     void    bwidth();
     void    cancel();
     void    alert();

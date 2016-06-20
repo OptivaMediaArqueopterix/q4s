@@ -73,8 +73,18 @@ bool Q4SServerProtocol::begin()
 
     if( ok )
     {
-        ok &= mServerSocket.sendTcpData( "200 OK TCP" );
+        ok &= mServerSocket.sendTcpData( "200 OK" );
     }
+
+    return ok;
+}
+
+bool Q4SServerProtocol::ready()
+{
+    printf("METHOD: ready\n");
+    std::string message;
+
+    bool ok = true;
 
     if ( ok ) 
     {
@@ -83,20 +93,19 @@ bool Q4SServerProtocol::begin()
 
     if( ok )
     {
-        ok &= mServerSocket.sendUdpData( "200 OK UDP" );
+        ok &= mServerSocket.sendTcpData( "200 OK" );
     }
+
+    Sleep( 20000 );
 
     return ok;
 }
 
-void Q4SServerProtocol::ready()
-{
-    printf("METHOD: ready\n");
-}
-
-void Q4SServerProtocol::ping()
+bool Q4SServerProtocol::ping()
 {
     printf("METHOD: ping\n");
+
+    return 0;
 }
 
 void Q4SServerProtocol::bwidth()

@@ -98,14 +98,27 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_NEGOTIATION:
             {
-                printf("Hemos llegado a la negociacion");
-                stop = true;
+                bool readyOk = Q4SClientProtocol::ready();
+                if( readyOk )
+                {
+                    readyOk &= Q4SClientProtocol::ping();
+                }
+                if (readyOk)
+                {
+                    nextState = Q4SCLIENTSTATE_CONTINUITY;
+                }
+                else
+                {
+                    // TODO: launch error
+                    stop = true;
+                }
             }
         break;
 
         case Q4SCLIENTSTATE_CONTINUITY:
             {
-
+                printf("Hemos llegado a la continuidad");
+                stop = true;
             }
         break;
 
