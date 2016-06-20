@@ -76,6 +76,7 @@
     <ClInclude Include="fmt\format.h" />
     <ClInclude Include="Q4SCommon.h" />
     <ClInclude Include="Q4SCriticalSection.h" />
+    <ClInclude Include="Q4SMessageInfo.h" />
     <ClInclude Include="Q4SMessageManager.h" />
     <ClInclude Include="Q4SSocket.h" />
   </ItemGroup>
