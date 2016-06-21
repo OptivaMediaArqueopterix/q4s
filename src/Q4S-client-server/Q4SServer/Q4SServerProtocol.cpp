@@ -135,7 +135,7 @@ bool Q4SServerProtocol::ping()
                 printf( "Ping %d at %d\n", j, timeStamp );
                 sprintf_s( buffer, "PING %d %ld", j, timeStamp );
                 ok &= mServerSocket.sendUdpData( buffer );
-                arrPings[ j ] = timeStamp;
+                arrPings.push_back( timeStamp );
                 Sleep( 200 );
             }
 
@@ -148,7 +148,7 @@ bool Q4SServerProtocol::ping()
                 if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
                 {
                     latency = messageInfo.timeStamp - arrPings[ j ];
-                    printf( "PING latency: %d", latency );
+                    printf( "PING %d latency: %d\n", j, latency );
                 }
             }
         }
