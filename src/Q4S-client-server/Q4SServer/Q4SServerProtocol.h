@@ -47,7 +47,7 @@ private:
 
     Q4SMessageManager           mReceivedMessages;
 
-    bool                        isPingMessage(std::string message, int *pingNumber, unsigned long *timeStamp);
+    bool                        isPingMessage(std::string message, int *pingNumber);
 };
 
 #endif  // _Q4SSERVERPROTOCOL_H_

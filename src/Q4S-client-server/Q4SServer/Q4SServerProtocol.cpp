@@ -292,15 +292,14 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
         std::string message = udpBuffer;
 
         int pingNumber = 0;
-        unsigned long timeStamp = 0;
 
         // Comprobar que es un ping
-        if ( isPingMessage(udpBuffer, &pingNumber, &timeStamp) )
+        if ( isPingMessage(udpBuffer, &pingNumber) )
         {
-            printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, timeStamp);
+            printf( "Received Ping, number:%d\n", pingNumber);
 
             // encolar el ping y el timestamp
-            mReceivedMessages.addMessage(message, timeStamp);
+            mReceivedMessages.addMessage(message, ETime_getTime());
 
             // mandar respuesta del ping
             char buffer[ 256 ];
@@ -315,7 +314,7 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
     return ok;
 }
 
-bool Q4SServerProtocol::isPingMessage(std::string message, int *pingNumber, unsigned long *timeStamp)
+bool Q4SServerProtocol::isPingMessage(std::string message, int *pingNumber)
 {
     bool ok = true;
 
@@ -344,14 +343,5 @@ bool Q4SServerProtocol::isPingMessage(std::string message, int *pingNumber, unsi
         *pingNumber = atoi(stringPingNumber.c_str());       
     }
     
-    if ( ok )
-    {
-        std::string stringTimeStamp;
-        std::getline(messageStream, stringTimeStamp, ' ');
-
-        *timeStamp= atoi(stringTimeStamp.c_str());
-    }
-
     return ok;
-
 }
