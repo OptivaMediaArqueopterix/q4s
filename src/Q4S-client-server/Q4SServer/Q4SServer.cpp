@@ -21,46 +21,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     ok &= q4SServerStateManager.init();
 
-    //Q4SCommon           q4SCommon;
-    //Q4SServerSocket     q4SServer;
-    //bool                ok = true;
-
-
-    //char                buffer[ 65536 ];
-    //HANDLE              thrHandle;
-    //HANDLE              arrthrHandle[ 2 ];
-
-    //arrthrHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpData, ( void* ) &q4SServer, 0, 0 );
-    //arrthrHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpData, ( void* ) &q4SServer, 0, 0 );
-    //WaitForMultipleObjects( 2, arrthrHandle, true, INFINITE );
-
-
-    //if( ok )
-    //{
-    //    ok &= q4SServer.waitForConnections( SOCK_STREAM );
-    //    //ok &= q4SServer.waitForConnections( SOCK_DGRAM );
-    //}
-    //if( ok )
-    //{
-    //    ok &= q4SServer.receiveTcpData( buffer, sizeof( buffer ) );
-    //    //ok &= q4SServer.receiveUdpData( buffer, sizeof( buffer ) );
-    //}
-    //if( ok )
-    //{
-    //    ok &= q4SServer.sendTcpData( buffer );
-    //    //ok &= q4SServer.sendUdpData( buffer );
-    //}
-    //if( ok )
-    //{
-    //    ok &= q4SServer.closeConnection( SOCK_STREAM );
-    //    //ok &= q4SServer.closeConnection( SOCK_DGRAM );
-    //}
-    //if( ok )
-    //{
-    //    ok &= q4SServer.stopWaiting( );
-    //}
-
-    //Sleep(10000);
+    Sleep( 20000 );
 
     return 0;
 }

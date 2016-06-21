@@ -25,5 +25,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     ok &= q4SClientStateManager.init();
 
+    Sleep (20000);
+
     return 0;
 }

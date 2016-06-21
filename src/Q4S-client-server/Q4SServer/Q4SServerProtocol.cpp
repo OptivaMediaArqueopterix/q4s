@@ -132,8 +132,6 @@ bool Q4SServerProtocol::ping()
         }
     }
 
-    Sleep( 20000 );
-
     return 0;
 }
 
