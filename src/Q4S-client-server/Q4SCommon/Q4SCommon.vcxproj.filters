@@ -39,6 +39,9 @@
     <ClInclude Include="Q4SMessageInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Q4SMathUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SCommon.cpp">
@@ -57,6 +60,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ETime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Q4SMathUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
