@@ -107,10 +107,11 @@ bool Q4SServerProtocol::ping()
 
     bool            ok = true;
     std::string     message;
+    Q4SMessageInfo  messageInfo;
 
     if ( ok ) 
     {
-        ok &= mReceivedMessages.readMessage( std::string( "PING 0" ), message );
+        ok &= mReceivedMessages.readMessage( std::string( "PING 0" ), messageInfo );
     }
 
     if( ok )

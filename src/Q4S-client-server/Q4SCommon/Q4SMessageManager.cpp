@@ -33,7 +33,7 @@ void Q4SMessageManager::clear( )
 }
 
 
-void Q4SMessageManager::addMessage( std::string &message )
+void Q4SMessageManager::addMessage( std::string &message, unsigned long timestamp )
 {
     bool signal = false;
     mcsMessagesAccess.enter( );
@@ -46,7 +46,10 @@ void Q4SMessageManager::addMessage( std::string &message )
     {
         SetEvent( mevMessageReady );
     }
-    mMessages.push_back( message );
+    Q4SMessageInfo messageInfo;
+    messageInfo.message = message;
+    messageInfo.timeStamp = timestamp;
+    mMessages.push_back( messageInfo );
     mcsMessagesAccess.leave( );
 }
 
@@ -66,7 +69,7 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage )
     }
     else
     {
-        firstMessage = mMessages.front();
+        firstMessage = mMessages.front().message;
         //printf( "First message: <%s>\n", firstMessage.c_str( ) );
         mMessages.pop_front();
         if( mMessages.size( ) == 0 )
@@ -80,13 +83,13 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage )
     return ok;
 }
 
-bool Q4SMessageManager::readMessage( std::string& pattern, std::string& message )
+bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messageInfo )
 {
     bool    ok = true;
     DWORD   waitResult;
     int     j = 0,
             jmax = 0;
-    std::list< std::string >::iterator  itr_msg;
+    std::list< Q4SMessageInfo >::iterator  itr_msg;
 
     waitResult = WaitForSingleObject( mevMessageReady, INFINITE );
     mcsMessagesAccess.enter( );
@@ -94,11 +97,12 @@ bool Q4SMessageManager::readMessage( std::string& pattern, std::string& message 
     ok = false;
     for( itr_msg = mMessages.begin( ); ( ok == false ) && ( itr_msg != mMessages.end( ) ); itr_msg++ )
     {
-        if( itr_msg->substr( 0, pattern.size( ) ).compare( pattern ) == 0 )
+        if( itr_msg->message.substr( 0, pattern.size( ) ).compare( pattern ) == 0 )
         {
             // Message found.
             ok = true;
-            message = *itr_msg;
+            messageInfo.message = itr_msg->message;
+            messageInfo.timeStamp = itr_msg->timeStamp;
         }
     }
 

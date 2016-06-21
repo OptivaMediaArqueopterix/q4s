@@ -2,6 +2,7 @@
 #define _Q4SMESSAGEMANAGER_H_
 
 #include "Q4SCriticalSection.h"
+#include "Q4SMessageInfo.h"
 
 #include <list>
 #include <string>
@@ -19,18 +20,18 @@ class Q4SMessageManager
     void    done( );
 
     // Add message
-    void addMessage( std::string &message );
+    void addMessage( std::string &message, unsigned long timestamp = 0 );
 
     bool readFirst( std::string &firstMessage );
-    bool readMessage( std::string& pattern, std::string& message );
+    bool readMessage( std::string& pattern, Q4SMessageInfo& message );
 
 private:
 
     void    clear( );
 
-    std::list < std::string >   mMessages;
-    Q4SCriticalSection          mcsMessagesAccess;
-    HANDLE                      mevMessageReady;
+    std::list < Q4SMessageInfo >    mMessages;
+    Q4SCriticalSection              mcsMessagesAccess;
+    HANDLE                          mevMessageReady;
 };
 
 #endif  // _Q4SMESSAGEMANAGER_H_
