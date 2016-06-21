@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <sstream>
 
 Q4SServerProtocol::Q4SServerProtocol ()
 {
@@ -153,8 +154,6 @@ bool Q4SServerProtocol::ping()
         }
     }
 
-    Sleep( 20000 );
-
     return 0;
 }
 
@@ -194,7 +193,7 @@ bool Q4SServerProtocol::manageTcpConnection( )
 {
     bool                ok = true;
 
-    char                buffer[ 65536 ];
+    //char                buffer[ 65536 ];
 
     if( ok )
     {
@@ -285,15 +284,74 @@ bool Q4SServerProtocol::manageTcpReceivedData( )
 bool Q4SServerProtocol::manageUdpReceivedData( )
 {
     bool                ok = true;
-    char                buffer[ 65536 ];
-    
-    while( ok ) 
+    char                udpBuffer[ 65536 ];
+
+    while ( ok )
     {
-        ok &= mServerSocket.receiveUdpData( buffer, sizeof( buffer ) );
-        std::string message = buffer;
-        mReceivedMessages.addMessage ( message );
-        printf( "Received: <%s>\n", buffer );
+        ok &= mServerSocket.receiveUdpData( udpBuffer, sizeof( udpBuffer ) );
+        std::string message = udpBuffer;
+
+        int pingNumber = 0;
+        unsigned long timeStamp = 0;
+
+        // Comprobar que es un ping
+        if ( isPingMessage(udpBuffer, &pingNumber, &timeStamp) )
+        {
+            printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, timeStamp);
+
+            // encolar el ping y el timestamp
+            mReceivedMessages.addMessage(message, timeStamp);
+
+            // mandar respuesta del ping
+            char buffer[ 256 ];
+            printf( "Ping responsed %d\n", pingNumber);
+            sprintf_s( buffer, "200 OK %d", pingNumber );
+            ok &= mServerSocket.sendUdpData( buffer );
+        }
+
+        printf( "Received Udp: <%s>\n", udpBuffer );
     }
 
     return ok;
+}
+
+bool Q4SServerProtocol::isPingMessage(std::string message, int *pingNumber, unsigned long *timeStamp)
+{
+    bool ok = true;
+
+    // Convert message to a stringstream 
+    std::istringstream messageStream (message);
+
+    std::string method;
+
+    // Get method from message
+    if ( ok )
+    {
+        std::getline(messageStream, method, ' ');
+        // Check if method is ping
+        if ( method.compare("PING") != 0)
+        {
+            ok = false;
+        }
+    }
+
+    // Get pingNumberfrom message
+    if ( ok )
+    {
+        std::string stringPingNumber;
+        std::getline(messageStream, stringPingNumber, ' ');
+
+        *pingNumber = atoi(stringPingNumber.c_str());       
+    }
+    
+    if ( ok )
+    {
+        std::string stringTimeStamp;
+        std::getline(messageStream, stringTimeStamp, ' ');
+
+        *timeStamp= atoi(stringTimeStamp.c_str());
+    }
+
+    return ok;
+
 }
