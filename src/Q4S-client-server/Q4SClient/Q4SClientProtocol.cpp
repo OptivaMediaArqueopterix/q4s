@@ -274,11 +274,6 @@ bool Q4SClientProtocol::isPingMessage(std::string message, int *pingNumber, unsi
         *pingNumber = atoi(stringPingNumber.c_str());       
     }
     
-
-    ok &= mClientSocket.receiveUdpData( buffer, sizeof( buffer ) );
-    std::string message = buffer;
-    mReceivedMessages.addMessage ( message );
-    printf( "Received Udp: <%s>\n", buffer );
     if ( ok )
     {
         std::string stringTimeStamp;
