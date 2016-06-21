@@ -143,7 +143,7 @@ bool Q4SServerProtocol::ping()
 
             for( j = 0; j < jmax; j++ )
             {
-                sprintf_s( buffer, "PING %d", j );
+                sprintf_s( buffer, "200 OK %d", j );
                 pattern = buffer;
                 if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
                 {

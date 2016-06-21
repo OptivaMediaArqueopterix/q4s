@@ -131,15 +131,15 @@ bool Q4SClientProtocol::ping()
     std::vector< unsigned long >    arrPings;
     Q4SMessageInfo                  messageInfo;
     std::string                     pattern;
-    unsigned long   latency;
+    float           latency;
 
     if( ok )
     {
         for( j = 0; j < jmax; j++ )
         {
             unsigned long timeStamp = ETime_getTime( );
-            printf( "Ping %d at %d\n", j, timeStamp );
-            sprintf_s( buffer, "PING %d", j, timeStamp );
+            printf( "--- EMITING ping %d at %d\n", j, timeStamp );
+            sprintf_s( buffer, "PING %d", j );
             ok &= mClientSocket.sendUdpData( buffer );
             arrPings.push_back( timeStamp );
             Sleep( 200 );
@@ -149,12 +149,13 @@ bool Q4SClientProtocol::ping()
 
         for( j = 0; j < jmax; j++ )
         {
-            sprintf_s( buffer, "PING %d", j );
+            sprintf_s( buffer, "200 OK %d", j );
             pattern = buffer;
             if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
             {
-                latency = messageInfo.timeStamp - arrPings[ j ];
-                printf( "PING %d latency: %d\n", j, latency );
+                printf( "Processing ping %d at %d answered at %d\n", j, arrPings[ j ], messageInfo.timeStamp );
+                latency = ( messageInfo.timeStamp - arrPings[ j ] ) / 2.0;
+                printf( "PING %d latency: %1.2f\n", j, latency );
             }
         }
     }
