@@ -74,6 +74,7 @@
   <ItemGroup>
     <ClInclude Include="ETime.h" />
     <ClInclude Include="fmt\format.h" />
+    <ClInclude Include="Q4SMathUtils.h" />
     <ClInclude Include="Q4SCommon.h" />
     <ClInclude Include="Q4SCriticalSection.h" />
     <ClInclude Include="Q4SMessageInfo.h" />
@@ -85,6 +86,7 @@
     <ClCompile Include="fmt\format.cc" />
     <ClCompile Include="Q4SCommon.cpp" />
     <ClCompile Include="Q4SCriticalSection.cpp" />
+    <ClCompile Include="Q4SMathUtils.cpp" />
     <ClCompile Include="Q4SMessageManager.cpp" />
     <ClCompile Include="Q4SSocket.cpp" />
   </ItemGroup>

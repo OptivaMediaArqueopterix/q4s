@@ -220,24 +220,32 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
     while ( ok )
     {
         ok &= mClientSocket.receiveUdpData( udpBuffer, sizeof( udpBuffer ) );
+
+        unsigned long actualTimeStamp = ETime_getTime();
+
         std::string message = udpBuffer;
 
         int pingNumber = 0;
-        unsigned long timeStamp = 0;
+        unsigned long recivedTimeStamp = 0;
 
         // Comprobar que es un ping
-        if ( isPingMessage(udpBuffer, &pingNumber) )
+        if ( isPingMessage(udpBuffer, &pingNumber, &recivedTimeStamp) )
         {
-            printf( "Received Ping, number:%d\n", pingNumber);
-
-            // encolar el ping y el timestamp
-            mReceivedMessages.addMessage(message, ETime_getTime());
+            printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, recivedTimeStamp);
 
             // mandar respuesta del ping
             char buffer[ 256 ];
             printf( "Ping responsed %d\n", pingNumber);
             sprintf_s( buffer, "200 OK %d", pingNumber );
             ok &= mClientSocket.sendUdpData( buffer );
+            
+            // encolar el ping y el timestamp para el calculo del jitter
+            mReceivedMessages.addMessage(message, recivedTimeStamp);
+        }
+        else
+        {
+            // encolar el 200 ok y el timestamp actual para el calculo de la latencia
+            mReceivedMessages.addMessage(message, actualTimeStamp);
         }
 
         printf( "Received Udp: <%s>\n", udpBuffer );
@@ -246,7 +254,7 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
     return ok;
 }
 
-bool Q4SClientProtocol::isPingMessage(std::string message, int *pingNumber)
+bool Q4SClientProtocol::isPingMessage(std::string message, int *pingNumber, unsigned long *timeStamp)
 {
     bool ok = true;
 
@@ -273,6 +281,14 @@ bool Q4SClientProtocol::isPingMessage(std::string message, int *pingNumber)
         std::getline(messageStream, stringPingNumber, ' ');
 
         *pingNumber = atoi(stringPingNumber.c_str());       
+    }
+    
+    if ( ok )
+    {
+        std::string stringTimeStamp;
+        std::getline(messageStream, stringTimeStamp, ' ');
+
+        *timeStamp= atoi(stringTimeStamp.c_str());
     }
 
     return ok;
