@@ -3,6 +3,7 @@
 #include "ETime.h"
 
 #include <stdio.h>
+#include <vector>
 
 Q4SServerProtocol::Q4SServerProtocol ()
 {
@@ -119,15 +120,35 @@ bool Q4SServerProtocol::ping()
         int     j = 0,
                 jmax = 20;
         char    buffer[ 256 ];
+        unsigned long   timeStamp = 0;
+        std::vector< unsigned long >    arrPings;
+        Q4SMessageInfo                  messageInfo;
+        std::string                     pattern;
+        unsigned long   latency;
+
         if( ok )
         {
             for( j = 0; j < jmax; j++ )
             {
-                unsigned long timestamp = ETime_getTime( );
-                printf( "Ping %d at %d\n", j, timestamp );
-                sprintf_s( buffer, "PING %d %ld", j, timestamp );
+                timeStamp = ETime_getTime( );
+                printf( "Ping %d at %d\n", j, timeStamp );
+                sprintf_s( buffer, "PING %d %ld", j, timeStamp );
                 ok &= mServerSocket.sendUdpData( buffer );
+                arrPings[ j ] = timeStamp;
                 Sleep( 200 );
+            }
+
+            Sleep( 2000 );
+
+            for( j = 0; j < jmax; j++ )
+            {
+                sprintf_s( buffer, "PING %d", j );
+                pattern = buffer;
+                if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
+                {
+                    latency = messageInfo.timeStamp - arrPings[ j ];
+                    printf( "PING latency: %d", latency );
+                }
             }
         }
     }
