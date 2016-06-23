@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <vector>
 #include <sstream>
-#include <algorithm>
 
 Q4SClientProtocol::Q4SClientProtocol ()
 {
@@ -142,7 +141,6 @@ bool Q4SClientProtocol::ping()
         for( j = 0; j < jmax; j++ )
         {
             unsigned long timeStamp = ETime_getTime( );
-            printf( "--- EMITING ping %d at %d\n", j, timeStamp );
             sprintf_s( buffer, "PING %d %d", j, timeStamp );
             ok &= mClientSocket.sendUdpData( buffer );
             arrPingTimestamps.push_back( timeStamp );
