@@ -35,7 +35,7 @@ float EMathUtils_mean( std::vector < float > &vector)
         total += element;
     });
 
-    mean = total/vector.size();
+    mean = total/(float)vector.size();
             
     return mean;
 }

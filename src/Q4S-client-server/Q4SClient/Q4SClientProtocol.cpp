@@ -130,37 +130,61 @@ bool Q4SClientProtocol::ping()
     char            buffer[ 256 ];
 
     unsigned long                   timeStamp = 0;
-    std::vector< unsigned long >    arrPingTimestamps;
+    std::vector< unsigned long >    arrSentPingTimestamps;
     Q4SMessageInfo                  messageInfo;
     std::string                     pattern;
     float                           latency;
     std::vector< float >            arrPingLatencies;
+    float                           jitter;
+    std::vector< unsigned long >    arrReceivedPingTimestamps;
+    std::vector< float >            arrPingJitters;
 
     if( ok )
     {
         for( j = 0; j < jmax; j++ )
         {
-            unsigned long timeStamp = ETime_getTime( );
+            timeStamp = ETime_getTime( );
             sprintf_s( buffer, "PING %d %d", j, timeStamp );
             ok &= mClientSocket.sendUdpData( buffer );
-            arrPingTimestamps.push_back( timeStamp );
+            arrSentPingTimestamps.push_back( timeStamp );
             Sleep( 200 );
         }
 
         Sleep( 2000 );
 
+        // Latency calculation.
         for( j = 0; j < jmax; j++ )
         {
             sprintf_s( buffer, "200 OK %d", j );
             pattern = buffer;
             if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
             {
-                latency = ( messageInfo.timeStamp - arrPingTimestamps[ j ] ) / 2.0f;
+                latency = ( messageInfo.timeStamp - arrSentPingTimestamps[ j ] ) / 2.0f;
                 arrPingLatencies.push_back( latency );
                 printf( "PING %d latency: %.2f\n", j, latency );
             }
         }
         printf( "Latencies median: %.3f\n", EMathUtils_median( arrPingLatencies ) );
+
+        // Jitter calculation.
+        for( j = 0; j < jmax; j++ )
+        {
+            sprintf_s( buffer, "PING %d", j );
+            pattern = buffer;
+            if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
+            {
+                arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
+                if( j > 0 )
+                {
+                    jitter = ( arrReceivedPingTimestamps[ j ] - arrReceivedPingTimestamps[ j - 1 ] );
+                    arrPingJitters.push_back( jitter );
+                    printf( "PING %d ET: %.2f\n", j, jitter );
+                }
+            }
+        }
+        float ets = EMathUtils_mean( arrPingJitters );
+        printf( "Latencies mean ET: %.3f; jitter: %.3f\n", ets, ets - 200 );
+
     }
     
     return ok;
@@ -229,12 +253,12 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
         std::string message = udpBuffer;
 
         int pingNumber = 0;
-        unsigned long recivedTimeStamp = 0;
+        unsigned long receivedTimeStamp = 0;
 
         // Comprobar que es un ping
-        if ( isPingMessage(udpBuffer, &pingNumber, &recivedTimeStamp) )
+        if ( isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
         {
-            printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, recivedTimeStamp);
+            printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, receivedTimeStamp);
 
             // mandar respuesta del ping
             char buffer[ 256 ];
@@ -243,7 +267,7 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
             ok &= mClientSocket.sendUdpData( buffer );
             
             // encolar el ping y el timestamp para el calculo del jitter
-            mReceivedMessages.addMessage(message, recivedTimeStamp);
+            mReceivedMessages.addMessage(message, actualTimeStamp);
         }
         else
         {
