@@ -2,11 +2,11 @@
 
 #include <algorithm>
 
-float EMathUtils_median( std::vector <unsigned long> &vector)
+float EMathUtils_median( std::vector < float > &vector)
 {
     float median = 0.f;
 
-    std::vector <unsigned long> vectorToSort (vector);
+    std::vector < float > vectorToSort (vector);
 
     std::sort( vectorToSort.begin(), vectorToSort.end());
 
@@ -15,7 +15,7 @@ float EMathUtils_median( std::vector <unsigned long> &vector)
     // size is even
     if ( size%2 == 0 )
     {
-        median = vectorToSort[size/2] + vectorToSort[(size/2) - 1] / 2.0f;
+        median = ( vectorToSort[size/2] + vectorToSort[(size/2) - 1] ) / 2.0f;
     }
     else
     {
@@ -25,13 +25,13 @@ float EMathUtils_median( std::vector <unsigned long> &vector)
     return median;
 }
 
-unsigned long EMathUtils_mean( std::vector <unsigned long> &vector)
+float EMathUtils_mean( std::vector < float > &vector)
 {
-    unsigned long mean = 0;
+    float mean = 0;
 
-    unsigned long total = 0;
+    float total = 0;
 
-    std::for_each(vector.begin(), vector.end(), [&](int element) {
+    std::for_each(vector.begin(), vector.end(), [&](float element) {
         total += element;
     });
 

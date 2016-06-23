@@ -1,10 +1,12 @@
 #include "Q4SClientProtocol.h"
 
 #include "ETime.h"
+#include "Q4SMathUtils.h"
 
 #include <stdio.h>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 Q4SClientProtocol::Q4SClientProtocol ()
 {
@@ -127,11 +129,13 @@ bool Q4SClientProtocol::ping()
     int             j = 0,
                     jmax = 20;
     char            buffer[ 256 ];
-    unsigned long   timeStamp = 0;
-    std::vector< unsigned long >    arrPings;
+
+    unsigned long                   timeStamp = 0;
+    std::vector< unsigned long >    arrPingTimestamps;
     Q4SMessageInfo                  messageInfo;
     std::string                     pattern;
-    float           latency;
+    float                           latency;
+    std::vector< float >            arrPingLatencies;
 
     if( ok )
     {
@@ -139,9 +143,9 @@ bool Q4SClientProtocol::ping()
         {
             unsigned long timeStamp = ETime_getTime( );
             printf( "--- EMITING ping %d at %d\n", j, timeStamp );
-            sprintf_s( buffer, "PING %d", j );
+            sprintf_s( buffer, "PING %d %d", j, timeStamp );
             ok &= mClientSocket.sendUdpData( buffer );
-            arrPings.push_back( timeStamp );
+            arrPingTimestamps.push_back( timeStamp );
             Sleep( 200 );
         }
 
@@ -153,11 +157,12 @@ bool Q4SClientProtocol::ping()
             pattern = buffer;
             if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
             {
-                printf( "Processing ping %d at %d answered at %d\n", j, arrPings[ j ], messageInfo.timeStamp );
-                latency = ( messageInfo.timeStamp - arrPings[ j ] ) / 2.0;
-                printf( "PING %d latency: %1.2f\n", j, latency );
+                latency = ( messageInfo.timeStamp - arrPingTimestamps[ j ] ) / 2.0f;
+                arrPingLatencies.push_back( latency );
+                printf( "PING %d latency: %.2f\n", j, latency );
             }
         }
+        printf( "Latencies median: %.3f\n", EMathUtils_median( arrPingLatencies ) );
     }
     
     return ok;

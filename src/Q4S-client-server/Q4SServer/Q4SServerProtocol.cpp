@@ -1,6 +1,7 @@
 #include "Q4SServerProtocol.h"
 
 #include "ETime.h"
+#include "Q4SMathUtils.h"
 
 #include <stdio.h>
 #include <vector>
@@ -122,10 +123,11 @@ bool Q4SServerProtocol::ping()
                 jmax = 20;
         char    buffer[ 256 ];
         unsigned long   timeStamp = 0;
-        std::vector< unsigned long >    arrPings;
+        std::vector< unsigned long >    arrPingTimestamps;
         Q4SMessageInfo                  messageInfo;
         std::string                     pattern;
-        unsigned long   latency;
+        float                           latency;
+        std::vector< float >            arrPingLatencies;
 
         if( ok )
         {
@@ -133,9 +135,9 @@ bool Q4SServerProtocol::ping()
             {
                 timeStamp = ETime_getTime( );
                 printf( "Ping %d at %d\n", j, timeStamp );
-                sprintf_s( buffer, "PING %d %ld", j, timeStamp );
+                sprintf_s( buffer, "PING %d %d", j, timeStamp );
                 ok &= mServerSocket.sendUdpData( buffer );
-                arrPings.push_back( timeStamp );
+                arrPingTimestamps.push_back( timeStamp );
                 Sleep( 200 );
             }
 
@@ -147,10 +149,13 @@ bool Q4SServerProtocol::ping()
                 pattern = buffer;
                 if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
                 {
-                    latency = messageInfo.timeStamp - arrPings[ j ];
-                    printf( "PING %d latency: %d\n", j, latency );
+                    latency = ( messageInfo.timeStamp - arrPingTimestamps[ j ] ) / 2.0f;
+                    arrPingLatencies.push_back( latency );
+                    printf( "PING %d latency: %.2f\n", j, latency );
                 }
             }
+
+            printf( "Latencies median: %.3f\n", EMathUtils_median( arrPingLatencies ) );
         }
     }
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-float           EMathUtils_median   ( std::vector <unsigned long> &vector);
-unsigned long   EMathUtils_mean     ( std::vector <unsigned long> &vector);
+float           EMathUtils_median   ( std::vector < float > &vector);
+float           EMathUtils_mean     ( std::vector < float > &vector);
 
 #endif //_EMATHUTILS_H_
