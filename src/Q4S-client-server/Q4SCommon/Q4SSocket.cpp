@@ -2,8 +2,6 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-#define SERVER_IP "127.0.0.1"
-
 Q4SSocket::Q4SSocket( )
 {
     clear();

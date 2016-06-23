@@ -1,12 +1,12 @@
 #ifndef _Q4SSOCKET_H_
 #define _Q4SSOCKET_H_
 
+#include "Config.h"
+
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #include <stdio.h>
 
-#define DEFAULT_TCP_PORT "27015"
-#define DEFAULT_UDP_PORT "27016"
 
 class Q4SSocket
 {

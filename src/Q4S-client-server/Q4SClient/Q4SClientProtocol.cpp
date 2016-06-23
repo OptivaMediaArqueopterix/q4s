@@ -147,10 +147,10 @@ bool Q4SClientProtocol::ping()
             sprintf_s( buffer, "PING %d %d", j, timeStamp );
             ok &= mClientSocket.sendUdpData( buffer );
             arrSentPingTimestamps.push_back( timeStamp );
-            Sleep( 200 );
+            Sleep( TIME_BETWEEN_PINGS );
         }
 
-        Sleep( 2000 );
+        Sleep( TIME_START_CALC );
 
         // Latency calculation.
         for( j = 0; j < jmax; j++ )
@@ -183,7 +183,7 @@ bool Q4SClientProtocol::ping()
             }
         }
         float ets = EMathUtils_mean( arrPingJitters );
-        printf( "Latencies mean ET: %.3f; jitter: %.3f\n", ets, ets - 200 );
+        printf( "Latencies mean ET: %.3f; jitter: %.3f\n", ets, ets - TIME_BETWEEN_PINGS );
 
     }
     

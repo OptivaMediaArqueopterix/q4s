@@ -1,7 +1,5 @@
 #include "Q4SClientSocket.h"
 
-#define SERVER_IP "127.0.0.1"
-
 Q4SClientSocket::Q4SClientSocket ()
 {
     clear();
