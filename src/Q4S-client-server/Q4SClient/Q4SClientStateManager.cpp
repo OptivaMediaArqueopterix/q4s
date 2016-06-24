@@ -117,14 +117,16 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_CONTINUITY:
             {
-                printf("Hemos llegado a la continuidad");
-                stop = true;
+                printf("Hemos llegado a la continuidad\n");
+                nextState = Q4SCLIENTSTATE_TERMINATION;
             }
         break;
 
         case Q4SCLIENTSTATE_TERMINATION:
             {
-
+                printf("Termination state\n");
+                Q4SClientProtocol::done( );
+                stop = true;
             }
         break;
 

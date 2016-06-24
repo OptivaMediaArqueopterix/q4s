@@ -117,7 +117,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
 
         case Q4SSERVERSTATE_CONTINUITY:
             {
-                printf("Hemos llegado a la continuidad");
+                printf("Hemos llegado a la continuidad\n");
                 stop = true;
             }
         break;

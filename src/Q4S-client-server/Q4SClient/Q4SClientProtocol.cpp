@@ -32,7 +32,7 @@ bool Q4SClientProtocol::init()
 
 void Q4SClientProtocol::done()
 {
-    //closeConnections();
+    closeConnections();
     mReceivedMessages.done( );
 }
 
@@ -213,13 +213,15 @@ void Q4SClientProtocol::clear()
 DWORD WINAPI Q4SClientProtocol::manageTcpReceivedDataFn( LPVOID lpData )
 {
     Q4SClientProtocol* q4sCP = ( Q4SClientProtocol* )lpData;
-    return q4sCP->manageTcpReceivedData( );
+    bool ret = q4sCP->manageTcpReceivedData( );
+    return ret;
 }
 
 DWORD WINAPI Q4SClientProtocol::manageUdpReceivedDataFn( LPVOID lpData )
 {
     Q4SClientProtocol* q4sCP = ( Q4SClientProtocol* )lpData;
-    return q4sCP->manageUdpReceivedData( );
+    bool ret = q4sCP->manageUdpReceivedData( );
+    return ret;
 }
 
 bool Q4SClientProtocol::manageTcpReceivedData( )
@@ -230,9 +232,12 @@ bool Q4SClientProtocol::manageTcpReceivedData( )
     while (ok) 
     {
         ok &= mClientSocket.receiveTcpData( buffer, sizeof( buffer ) );
-        std::string message = buffer;
-        mReceivedMessages.addMessage ( message );
-        printf( "Received Tcp: <%s>\n", buffer );
+        if( ok )
+        {
+            std::string message = buffer;
+            mReceivedMessages.addMessage ( message );
+            printf( "Received Tcp: <%s>\n", buffer );
+        }
     }
 
 
@@ -248,34 +253,37 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
     {
         ok &= mClientSocket.receiveUdpData( udpBuffer, sizeof( udpBuffer ) );
 
-        unsigned long actualTimeStamp = ETime_getTime();
-
-        std::string message = udpBuffer;
-
-        int pingNumber = 0;
-        unsigned long receivedTimeStamp = 0;
-
-        // Comprobar que es un ping
-        if ( isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
+        if( ok )
         {
-            printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, receivedTimeStamp);
+            unsigned long actualTimeStamp = ETime_getTime();
 
-            // mandar respuesta del ping
-            char buffer[ 256 ];
-            printf( "Ping responsed %d\n", pingNumber);
-            sprintf_s( buffer, "200 OK %d", pingNumber );
-            ok &= mClientSocket.sendUdpData( buffer );
+            std::string message = udpBuffer;
+
+            int pingNumber = 0;
+            unsigned long receivedTimeStamp = 0;
+
+            // Comprobar que es un ping
+            if ( isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
+            {
+                printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, receivedTimeStamp);
+
+                // mandar respuesta del ping
+                char buffer[ 256 ];
+                printf( "Ping responsed %d\n", pingNumber);
+                sprintf_s( buffer, "200 OK %d", pingNumber );
+                ok &= mClientSocket.sendUdpData( buffer );
             
-            // encolar el ping y el timestamp para el calculo del jitter
-            mReceivedMessages.addMessage(message, actualTimeStamp);
-        }
-        else
-        {
-            // encolar el 200 ok y el timestamp actual para el calculo de la latencia
-            mReceivedMessages.addMessage(message, actualTimeStamp);
-        }
+                // encolar el ping y el timestamp para el calculo del jitter
+                mReceivedMessages.addMessage(message, actualTimeStamp);
+            }
+            else
+            {
+                // encolar el 200 ok y el timestamp actual para el calculo de la latencia
+                mReceivedMessages.addMessage(message, actualTimeStamp);
+            }
 
-        printf( "Received Udp: <%s>\n", udpBuffer );
+            printf( "Received Udp: <%s>\n", udpBuffer );
+        }
     }
 
     return ok;

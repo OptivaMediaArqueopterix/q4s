@@ -133,12 +133,15 @@ bool Q4SSocket::shutDown( )
     bool    ok = true;
 
     // shutdown the connection since no more data will be sent
-    iResult = shutdown( mSocket, SD_SEND );
-    if( iResult == SOCKET_ERROR )
+    if( mSocket != INVALID_SOCKET )
     {
-        printf( "shutdown failed with error: %d\n", WSAGetLastError( ) );
-        disconnect( );
-        ok &= false;
+        iResult = shutdown( mSocket, SD_SEND );
+        if( iResult == SOCKET_ERROR )
+        {
+            printf( "shutdown failed with error: %d\n", WSAGetLastError( ) );
+            disconnect( );
+            ok &= false;
+        }
     }
 
     return ok;
