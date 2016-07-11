@@ -220,8 +220,6 @@ bool Q4SServerProtocol::manageTcpConnection( )
 {
     bool                ok = true;
 
-    //char                buffer[ 65536 ];
-
     if( ok )
     {
         ok &= mServerSocket.waitForConnections( SOCK_STREAM );
@@ -231,28 +229,6 @@ bool Q4SServerProtocol::manageTcpConnection( )
     {
         marrthrDataHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpReceivedDataFn, ( void* ) this, 0, 0 );
     }
-    //while (ok ) 
-    //{
-    //    if( ok )
-    //    {
-    //        ok &= mServerSocket.receiveTcpData( buffer, sizeof( buffer ) );
-    //        std::string message = buffer;
-    //        mReceivedMessages.addMessage ( message );
-    //        printf( "Received: <%s>\n", buffer );
-    //    }
-    //    if( ok )
-    //    {
-    //        ok &= mServerSocket.sendTcpData( buffer );
-    //    }
-    //}
-    //if( ok )
-    //{
-    //    ok &= mServerSocket.closeConnection( SOCK_STREAM );
-    //}
-    //if( ok )
-    //{
-    //    ok &= mServerSocket.stopWaiting( );
-    //}
 
     return ok;
 }
@@ -270,11 +246,6 @@ bool Q4SServerProtocol::manageUdpConnection( )
     {
         marrthrDataHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpReceivedDataFn, ( void* ) this, 0, 0 );
     }
-
-    //char                buffer[ 65536 ];
-    //
-    //ok &= mServerSocket.receiveUdpData( buffer, sizeof( buffer ) );
-    //printf( "Received: <%s>\n", buffer );
 
     return ok;
 }
@@ -306,8 +277,7 @@ bool Q4SServerProtocol::manageTcpReceivedData( )
             printf( "Received: <%s>\n", buffer );
         }
     }
-
-
+    
     return ok;
 }
 
