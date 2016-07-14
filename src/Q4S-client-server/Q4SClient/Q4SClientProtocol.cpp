@@ -32,7 +32,6 @@ bool Q4SClientProtocol::init()
 
 void Q4SClientProtocol::done()
 {
-    closeConnections();
     mReceivedMessages.done( );
 }
 
@@ -69,9 +68,9 @@ void Q4SClientProtocol::closeConnections()
 
     if( ok )
     {
-        WaitForMultipleObjects( 2, marrthrHandle, true, INFINITE );
         ok &= mClientSocket.closeConnection( SOCK_STREAM );
         ok &= mClientSocket.closeConnection( SOCK_DGRAM );
+        WaitForMultipleObjects( 2, marrthrHandle, true, INFINITE );
     }
 
     if (!ok)
@@ -205,6 +204,10 @@ void Q4SClientProtocol::alert()
     printf("METHOD: alert\n");
 }
 
+void Q4SClientProtocol::end()
+{
+    closeConnections();
+}
 
 void Q4SClientProtocol::clear()
 {

@@ -85,6 +85,7 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
     bool    ok = true;
     int     iResult;
 
+
     if( mSocketType == SOCK_STREAM )
     {
     }
@@ -100,6 +101,7 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
         addrReceiverLen = sizeof( addrReceiver );
     }
     iResult = recvfrom( mSocket, receiveBuffer, receiveBufferSize, 0, ( SOCKADDR* )&addrReceiver, &addrReceiverLen );
+    printf( "Exiting from receive in %d type\n", mSocketType );
     if( iResult > 0 )
     {
         if( mSocketType == SOCK_STREAM )
@@ -120,8 +122,16 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
     }
     else
     {
-        printf( "recv failed with error: %d\n", WSAGetLastError( ) );
         ok &= false;
+        int lastError = WSAGetLastError( );
+        if( lastError == WSAEINTR )
+        {
+            printf( "%s recv interrupted\n", ( mSocketType == 1 ? "TCP" : ( mSocketType == 2 ? "UDP" : "UNK" ) ) );
+        }
+        else
+        {
+            printf( "recv failed with error: %d\n",lastError );
+        }
     }
 
     return ok;
@@ -135,13 +145,14 @@ bool Q4SSocket::shutDown( )
     // shutdown the connection since no more data will be sent
     if( mSocket != INVALID_SOCKET )
     {
+        printf( "Shutting down socket...\n" );
         iResult = shutdown( mSocket, SD_SEND );
         if( iResult == SOCKET_ERROR )
         {
             printf( "shutdown failed with error: %d\n", WSAGetLastError( ) );
-            disconnect( );
             ok &= false;
         }
+        disconnect( );
     }
 
     return ok;
@@ -153,7 +164,6 @@ bool Q4SSocket::disconnect( )
 
     // cleanup
     closesocket( mSocket );
-    //WSACleanup( );
 
     return ok;
 }

@@ -33,7 +33,6 @@ bool Q4SServerProtocol::init()
 
 void Q4SServerProtocol::done()
 {
-    closeConnections();
     mReceivedMessages.done( );
 }
 
@@ -53,9 +52,9 @@ void Q4SServerProtocol::closeConnections()
 
     if( ok )
     {
-        WaitForMultipleObjects( 2, marrthrListenHandle, true, INFINITE );
         ok &= mServerSocket.closeConnection( SOCK_STREAM );
         ok &= mServerSocket.closeConnection( SOCK_DGRAM );
+        WaitForMultipleObjects( 2, marrthrListenHandle, true, INFINITE );
     }
 
     if (!ok)
@@ -199,6 +198,12 @@ void Q4SServerProtocol::alert()
     printf("METHOD: alert\n");
 }
 
+void Q4SServerProtocol::end()
+{
+    mServerSocket.closeConnection( SOCK_STREAM );
+    mServerSocket.closeConnection( SOCK_DGRAM );
+    WaitForMultipleObjects( 2, marrthrDataHandle, true, INFINITE );
+}
 
 void Q4SServerProtocol::clear()
 {

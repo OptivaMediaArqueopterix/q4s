@@ -17,6 +17,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
     Sleep( TIME_END_APP );
 
+    printf( "Saliendo de Server\n" );
+
+    WSACleanup( );
+
     return 0;
 }
 

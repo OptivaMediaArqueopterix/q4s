@@ -27,6 +27,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
     Sleep (TIME_END_APP);
 
-    printf( "Saliendo de Client" );
+    printf( "Saliendo de Client\n" );
+
+    WSACleanup( );
+
     return 0;
 }
