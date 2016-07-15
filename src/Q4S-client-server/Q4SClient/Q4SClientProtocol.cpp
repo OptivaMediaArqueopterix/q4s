@@ -35,6 +35,10 @@ void Q4SClientProtocol::done()
     mReceivedMessages.done( );
 }
 
+void Q4SClientProtocol::clear()
+{
+}
+
 bool Q4SClientProtocol::openConnections()
 {
     bool ok = true;
@@ -46,15 +50,9 @@ bool Q4SClientProtocol::openConnections()
         ok &= mClientSocket.openConnection( SOCK_DGRAM );
     }
 
-    // launch threads
+    // launch received data managing threads.
     if( ok )
     {
-        //char buffer[ 65536 ];
-        //ok &= mClientSocket.receiveTcpData( buffer, sizeof( buffer ) );
-        //printf( "Received: <%s>\n", buffer );
-        //ok &= mClientSocket.receiveUdpData( buffer, sizeof( buffer ) );
-        //printf( "Received: <%s>\n", buffer );
-
         marrthrHandle[ 0 ] = CreateThread( 0, 0, manageUdpReceivedDataFn, ( LPVOID )this, 0, 0 );
         marrthrHandle[ 1 ] = CreateThread( 0, 0, manageTcpReceivedDataFn, ( LPVOID )this, 0, 0 );
     }
@@ -73,11 +71,15 @@ void Q4SClientProtocol::closeConnections()
         WaitForMultipleObjects( 2, marrthrHandle, true, INFINITE );
     }
 
-    if (!ok)
+    if( !ok )
     {
         //TODO: launch error
+        printf( "Error closing connections.\n" );
     }
 }
+
+
+// State managing functions.
 
 bool Q4SClientProtocol::begin()
 {
@@ -209,9 +211,8 @@ void Q4SClientProtocol::end()
     closeConnections();
 }
 
-void Q4SClientProtocol::clear()
-{
-}
+
+// Received data managing functions.
 
 DWORD WINAPI Q4SClientProtocol::manageTcpReceivedDataFn( LPVOID lpData )
 {
