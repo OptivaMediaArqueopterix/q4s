@@ -4,6 +4,7 @@
 #include "Q4SSocket.h"
 
 #include <stdio.h>
+#include <list>
 
 class Q4SServerSocket
 {
@@ -17,24 +18,36 @@ public:
     bool    init( );
     void    done( );
 
-    bool    waitForConnections( int socketType );
+    bool    startTcpListening( );
+    bool    waitForTcpConnection( );
+    bool    waitForUdpConnections( );
     bool    stopWaiting( );
     bool    closeConnection( int socketType );
     bool    sendTcpData( const char* sendBuffer );
-    bool    receiveTcpData( char* receiveBuffer, int receiveBufferSize );
+    bool    receiveTcpData( int connId, char* receiveBuffer, int receiveBufferSize );
     bool    sendUdpData( const char* sendBuffer );
     bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize );
 
 private:
 
+    struct Q4SConnectionInfo 
+    {
+        int             id;
+        int             udpId;
+        Q4SSocket       mq4sTcpSocket;
+        sockaddr_in     peerAddrInfo;
+    };
+
     void    clear( );
 
     bool    initializeSockets( );
-    bool    createListenSocket( int socketType );
-    bool    bindListenSocket( int socketType );
+    bool    createListenSocket( );
+    bool    bindListenSocket( );
     bool    startListen( );
-    bool    acceptClientConnection( Q4SSocket* q4sSocket );
+    bool    acceptClientConnection( Q4SConnectionInfo* connectionInfo );
     bool    closeListenSocket( );
+    bool    createUdpSocket( );
+    bool    bindUdpSocket( );
 
     SOCKET              mListenSocket;
     SOCKET              mUdpSocket;
@@ -43,6 +56,8 @@ private:
 
     Q4SSocket           mq4sTcpSocket;
     Q4SSocket           mq4sUdpSocket;
+
+    std::list< Q4SConnectionInfo* >         listConnectionInfo;
 };
 
 #endif  // _Q4SSERVERSOCKET_H_

@@ -29,7 +29,8 @@ private:
 
     void    clear();
 
-    bool    openConnections();
+    bool    openConnectionListening();
+    void    closeConnectionListening();
     void    closeConnections();
 
     Q4SServerSocket             mServerSocket;
@@ -40,8 +41,13 @@ private:
     bool                        manageUdpConnection( );
     static DWORD WINAPI         manageTcpConnectionsFn( LPVOID lpData );
     static DWORD WINAPI         manageUdpConnectionsFn( LPVOID lpData );
+    struct ManageTcpConnectionsFnInfo
+    {
+        Q4SServerProtocol*      pThis;
+        int                     connId;
+    };
 
-    bool                        manageTcpReceivedData( );
+    bool                        manageTcpReceivedData( int connId );
     bool                        manageUdpReceivedData( );
     static DWORD WINAPI         manageTcpReceivedDataFn( LPVOID lpData );
     static DWORD WINAPI         manageUdpReceivedDataFn( LPVOID lpData );

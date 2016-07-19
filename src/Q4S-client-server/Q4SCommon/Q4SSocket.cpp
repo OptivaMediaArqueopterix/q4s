@@ -30,8 +30,8 @@ void Q4SSocket::clear( )
 {
     mSocket = INVALID_SOCKET;
     mSocketType = 0;
-    addrReceiverLen = 0;
-    alreadyReceived = false;
+    mPeerAddrInfoLen = 0;
+    mAlreadyReceived = false;
 }
 
 void Q4SSocket::setSocket( SOCKET socket, int socketType )
@@ -40,7 +40,7 @@ void Q4SSocket::setSocket( SOCKET socket, int socketType )
     mSocketType = socketType;
 }
 
-bool Q4SSocket::sendData( const char* sendBuffer )
+bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo )
 {
     //Bind the socket.
     int     iResult;
@@ -53,14 +53,27 @@ bool Q4SSocket::sendData( const char* sendBuffer )
     }
     else if( mSocketType == SOCK_DGRAM )
     {
-        if( alreadyReceived == false )
+        SOCKADDR*   addrInfoToUse;
+        int         addrInfoLenToUse;
+        // In client connections, we send prior to receive, we haven't peer info. We define it.
+        if( pAddrInfo != NULL )
         {
-            addrReceiver.sin_family = AF_INET;
-            addrReceiver.sin_port = htons( atoi( DEFAULT_UDP_PORT ) );
-            addrReceiver.sin_addr.s_addr = inet_addr( SERVER_IP );
-            addrReceiverLen = sizeof( addrReceiver );
+            addrInfoToUse = ( SOCKADDR* )pAddrInfo;
+            addrInfoLenToUse = sizeof( *pAddrInfo );
         }
-        iResult = sendto( mSocket, sendBuffer, (int)strlen( sendBuffer ), 0, ( SOCKADDR* )&addrReceiver, addrReceiverLen );
+        else 
+        {
+            if( mAlreadyReceived == false )
+            {
+                mPeerAddrInfo.sin_family = AF_INET;
+                mPeerAddrInfo.sin_port = htons( atoi( DEFAULT_UDP_PORT ) );
+                mPeerAddrInfo.sin_addr.s_addr = inet_addr( SERVER_IP );
+                mPeerAddrInfoLen = sizeof( mPeerAddrInfo );
+            }
+            addrInfoToUse = ( SOCKADDR* )&mPeerAddrInfo;
+            addrInfoLenToUse = mPeerAddrInfoLen;
+        }
+        iResult = sendto( mSocket, sendBuffer, (int)strlen( sendBuffer ), 0, addrInfoToUse, addrInfoLenToUse );
     }
     else
     {
@@ -96,11 +109,11 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
     {
         ok &= false;
     }
-    if( addrReceiverLen == 0 )
+    if( mPeerAddrInfoLen == 0 )
     {
-        addrReceiverLen = sizeof( addrReceiver );
+        mPeerAddrInfoLen = sizeof( mPeerAddrInfo );
     }
-    iResult = recvfrom( mSocket, receiveBuffer, receiveBufferSize, 0, ( SOCKADDR* )&addrReceiver, &addrReceiverLen );
+    iResult = recvfrom( mSocket, receiveBuffer, receiveBufferSize, 0, ( SOCKADDR* )&mPeerAddrInfo, &mPeerAddrInfoLen );
     printf( "Exiting from receive in %d type\n", mSocketType );
     if( iResult > 0 )
     {
@@ -113,7 +126,7 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
             printf( "Bytes received by Udp: %d\n", iResult );
         }
         receiveBuffer[ iResult ] = '\0';
-        alreadyReceived = true;
+        mAlreadyReceived = true;
     }
     else if( iResult == 0 )
     {

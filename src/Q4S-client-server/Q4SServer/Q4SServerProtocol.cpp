@@ -26,24 +26,47 @@ bool Q4SServerProtocol::init()
 
     mReceivedMessages.init( );
 
-    ok &= openConnections();
+    ok &= openConnectionListening();
 
     return ok;
 }
 
 void Q4SServerProtocol::done()
 {
+    closeConnectionListening();
     mReceivedMessages.done( );
 }
 
-bool Q4SServerProtocol::openConnections()
+void Q4SServerProtocol::clear()
+{
+}
+
+bool Q4SServerProtocol::openConnectionListening()
 {
     bool ok = true;
 
     marrthrListenHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpConnectionsFn, ( void* ) this, 0, 0 );
-    marrthrListenHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpConnectionsFn, ( void* ) this, 0, 0 );
+    //marrthrListenHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpConnectionsFn, ( void* ) this, 0, 0 );
+    mServerSocket.waitForUdpConnections( );
+    marrthrListenHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpReceivedDataFn, ( void* ) this, 0, 0 );
     
     return ok;
+}
+
+void Q4SServerProtocol::closeConnectionListening()
+{
+    bool ok = true;
+
+    if( ok )
+    {
+        WaitForMultipleObjects( 2, marrthrListenHandle, true, INFINITE );
+    }
+
+    if( !ok )
+    {
+        //TODO: launch error
+        printf( "Error closing connections.\n" );
+    }
 }
 
 void Q4SServerProtocol::closeConnections()
@@ -54,14 +77,18 @@ void Q4SServerProtocol::closeConnections()
     {
         ok &= mServerSocket.closeConnection( SOCK_STREAM );
         ok &= mServerSocket.closeConnection( SOCK_DGRAM );
-        WaitForMultipleObjects( 2, marrthrListenHandle, true, INFINITE );
+        WaitForMultipleObjects( 2, marrthrDataHandle, true, INFINITE );
     }
 
-    if (!ok)
+    if( !ok )
     {
         //TODO: launch error
+        printf( "Error closing connections.\n" );
     }
 }
+
+
+// State managing functions.
 
 bool Q4SServerProtocol::begin()
 {
@@ -200,14 +227,11 @@ void Q4SServerProtocol::alert()
 
 void Q4SServerProtocol::end()
 {
-    mServerSocket.closeConnection( SOCK_STREAM );
-    mServerSocket.closeConnection( SOCK_DGRAM );
-    WaitForMultipleObjects( 2, marrthrDataHandle, true, INFINITE );
+    closeConnections();
 }
 
-void Q4SServerProtocol::clear()
-{
-}
+
+// Incoming connection managing functions.
 
 DWORD WINAPI Q4SServerProtocol::manageTcpConnectionsFn( LPVOID lpData )
 {
@@ -215,11 +239,11 @@ DWORD WINAPI Q4SServerProtocol::manageTcpConnectionsFn( LPVOID lpData )
     return q4sCP->manageTcpConnection( );
 }
 
-DWORD WINAPI Q4SServerProtocol::manageUdpConnectionsFn( LPVOID lpData )
-{
-    Q4SServerProtocol* q4sCP = ( Q4SServerProtocol* )lpData;
-    return q4sCP->manageUdpConnection( );
-}
+//DWORD WINAPI Q4SServerProtocol::manageUdpConnectionsFn( LPVOID lpData )
+//{
+//    Q4SServerProtocol* q4sCP = ( Q4SServerProtocol* )lpData;
+//    return q4sCP->manageUdpConnection( );
+//}
 
 bool Q4SServerProtocol::manageTcpConnection( )
 {
@@ -227,38 +251,47 @@ bool Q4SServerProtocol::manageTcpConnection( )
 
     if( ok )
     {
-        ok &= mServerSocket.waitForConnections( SOCK_STREAM );
+        ok &= mServerSocket.startTcpListening( );
     }
 
-    if( ok )
+    while( ok )
     {
-        marrthrDataHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpReceivedDataFn, ( void* ) this, 0, 0 );
+        ok &= mServerSocket.waitForTcpConnection( );
+        if( ok )
+        {
+            ManageTcpConnectionsFnInfo  fnInfo;
+            fnInfo.pThis = this;
+            fnInfo.connId = 0;
+            marrthrDataHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpReceivedDataFn, ( void* ) &fnInfo, 0, 0 );
+        }
     }
 
     return ok;
 }
 
-bool Q4SServerProtocol::manageUdpConnection( )
-{
-    bool                ok = true;
+//bool Q4SServerProtocol::manageUdpConnection( )
+//{
+//    bool                ok = true;
+//    
+//    if( ok )
+//    {
+//        ok &= mServerSocket.waitForConnections( SOCK_DGRAM );
+//    }
+//    if( ok )
+//    {
+//        marrthrDataHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpReceivedDataFn, ( void* ) this, 0, 0 );
+//    }
+//
+//    return ok;
+//}
 
 
-    if( ok )
-    {
-        ok &= mServerSocket.waitForConnections( SOCK_DGRAM );
-    }
-    if( ok )
-    {
-        marrthrDataHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpReceivedDataFn, ( void* ) this, 0, 0 );
-    }
-
-    return ok;
-}
+// Received data managing functions.
 
 DWORD WINAPI Q4SServerProtocol::manageTcpReceivedDataFn( LPVOID lpData )
 {
-    Q4SServerProtocol* q4sCP = ( Q4SServerProtocol* )lpData;
-    return q4sCP->manageTcpReceivedData( );
+    ManageTcpConnectionsFnInfo* q4sCFI = ( ManageTcpConnectionsFnInfo* )lpData;
+    return q4sCFI->pThis->manageTcpReceivedData( q4sCFI->connId );
 }
 
 DWORD WINAPI Q4SServerProtocol::manageUdpReceivedDataFn( LPVOID lpData )
@@ -267,14 +300,14 @@ DWORD WINAPI Q4SServerProtocol::manageUdpReceivedDataFn( LPVOID lpData )
     return q4sCP->manageUdpReceivedData( );
 }
 
-bool Q4SServerProtocol::manageTcpReceivedData( )
+bool Q4SServerProtocol::manageTcpReceivedData( int connId )
 {
     bool                ok = true;
     char                buffer[ 65536 ];
     
     while( ok ) 
     {
-        ok &= mServerSocket.receiveTcpData( buffer, sizeof( buffer ) );
+        ok &= mServerSocket.receiveTcpData( connId, buffer, sizeof( buffer ) );
         if( ok )
         {
             std::string message = buffer;
