@@ -57,7 +57,7 @@ bool Q4SServerSocket::startTcpListening( )
     return ok;
 }
 
-bool Q4SServerSocket::waitForTcpConnection( )
+bool Q4SServerSocket::waitForTcpConnection( int connectionId )
 {
     //Q4SServerSocket     q4SServer;
     bool                ok = true;
@@ -65,6 +65,10 @@ bool Q4SServerSocket::waitForTcpConnection( )
     if( ok )
     {
         Q4SConnectionInfo* connectionInfo = new Q4SConnectionInfo( );
+        connectionInfo->id = connectionId;
+        connectionInfo->udpId = 0;
+        ZeroMemory( &( connectionInfo->peerTcpAddrInfo ), sizeof( connectionInfo->peerTcpAddrInfo ) );
+        ZeroMemory( &( connectionInfo->peerUdpAddrInfo ), sizeof( connectionInfo->peerUdpAddrInfo ) );
         ok &= acceptClientConnection( connectionInfo );
     }
 
@@ -128,27 +132,141 @@ bool Q4SServerSocket::closeConnection( int socketType )
     return ok;
 }
 
-bool Q4SServerSocket::sendTcpData( const char* sendBuffer )
+bool Q4SServerSocket::sendTcpData( int connId, const char* sendBuffer )
 {
     //return mq4sTcpSocket.sendData( sendBuffer );
-    return listConnectionInfo.front( )->mq4sTcpSocket.sendData( sendBuffer );
+    
+    //// TODO, acceed correct socket. Not kapone.
+    //return listConnectionInfo.front( )->q4sTcpSocket.sendData( sendBuffer );
+
+    bool        ok = true;
+    Q4SSocket*  pQ4SSocket;
+
+    ok &= getTcpSocket( connId, pQ4SSocket );
+    if( ok )
+    {
+        ok &= pQ4SSocket->sendData( sendBuffer );
+    }
+
+    return ok;
 }
 
 bool Q4SServerSocket::receiveTcpData( int connId, char* receiveBuffer, int receiveBufferSize )
 {
-    // TODO, acceed correct socket. Not kapone.
     //return mq4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
-    return listConnectionInfo.front( )->mq4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
+    
+    //// TODO, acceed correct socket. Not kapone.
+    //return listConnectionInfo.front( )->q4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
+
+    bool        ok = true;
+    Q4SSocket*  pQ4SSocket;
+
+    ok &= getTcpSocket( connId, pQ4SSocket );
+    if( ok )
+    {
+        ok &= pQ4SSocket->receiveData( receiveBuffer, receiveBufferSize );
+    }
+
+    return ok;
 }
 
-bool Q4SServerSocket::sendUdpData( const char* sendBuffer )
+bool Q4SServerSocket::sendUdpData( int connectionId, const char* sendBuffer )
 {
-    return mq4sUdpSocket.sendData( sendBuffer );
+    //return mq4sUdpSocket.sendData( sendBuffer );
+
+    bool                ok = true;
+    Q4SConnectionInfo*  pQ4SConnInfo;
+
+    ok &= getConnectionInfo( connectionId, pQ4SConnInfo );
+    if( ok )
+    {
+        ok &= mq4sUdpSocket.sendData( sendBuffer, &( pQ4SConnInfo->peerUdpAddrInfo ) );
+    }
+
+    return ok;
 }
 
-bool Q4SServerSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize )
+bool Q4SServerSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId )
 {
-    return mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize );
+    //return mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, &addrInfo );
+
+    bool                ok = true;
+    Q4SConnectionInfo*  pQ4SConnInfo;
+    sockaddr_in         addrInfo;
+
+    //ok &= getConnectionInfo( connectionId, pQ4SConnInfo );
+    if( ok )
+    {
+        ok &= mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, &addrInfo );
+    }
+    if( ok )
+    {
+        ok &= getConnectionInfo( addrInfo, pQ4SConnInfo );
+    }
+    if( ok )
+    {
+        connectionId = pQ4SConnInfo->id;
+        memcpy( &( pQ4SConnInfo->peerUdpAddrInfo ), &addrInfo, sizeof( addrInfo ) );
+    }
+    
+    return ok;
+}
+
+bool Q4SServerSocket::getTcpSocket( int connectionId, Q4SSocket*& pQ4SSocket )
+{
+    bool ok = false;
+
+    std::list< Q4SConnectionInfo* >::iterator   itr_conn;
+    pQ4SSocket = NULL;
+
+    for( itr_conn = listConnectionInfo.begin( ); ( pQ4SSocket == NULL ) && ( itr_conn != listConnectionInfo.end( ) ); itr_conn++ )
+    {
+        if( ( *itr_conn )->id == connectionId )
+        {
+            pQ4SSocket = &( ( *itr_conn )->q4sTcpSocket );
+            ok = true;
+        }
+    }
+
+    return ok;
+}
+
+bool Q4SServerSocket::getConnectionInfo( int connectionId, Q4SConnectionInfo*& pQ4SConnInfo )
+{
+    bool ok = false;
+
+    std::list< Q4SConnectionInfo* >::iterator   itr_conn;
+    pQ4SConnInfo = NULL;
+
+    for( itr_conn = listConnectionInfo.begin( ); ( pQ4SConnInfo == NULL ) && ( itr_conn != listConnectionInfo.end( ) ); itr_conn++ )
+    {
+        if( ( *itr_conn )->id == connectionId )
+        {
+            pQ4SConnInfo = ( *itr_conn );
+            ok = true;
+        }
+    }
+
+    return ok;
+}
+
+bool Q4SServerSocket::getConnectionInfo( sockaddr_in& connectionInfo, Q4SConnectionInfo*& pQ4SConnInfo )
+{
+    bool ok = false;
+
+    std::list< Q4SConnectionInfo* >::iterator   itr_conn;
+    pQ4SConnInfo = NULL;
+
+    for( itr_conn = listConnectionInfo.begin( ); ( pQ4SConnInfo == NULL ) && ( itr_conn != listConnectionInfo.end( ) ); itr_conn++ )
+    {
+        if( ( *itr_conn )->peerTcpAddrInfo.sin_addr.S_un.S_addr == connectionInfo.sin_addr.S_un.S_addr )
+        {
+            pQ4SConnInfo = ( *itr_conn );
+            ok = true;
+        }
+    }
+
+    return ok;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -269,9 +387,9 @@ bool Q4SServerSocket::acceptClientConnection( Q4SConnectionInfo* connectionInfo 
     bool    ok = true;
     int     addrlen;
 
-    addrlen = sizeof( connectionInfo->peerAddrInfo );
+    addrlen = sizeof( connectionInfo->peerTcpAddrInfo );
     // Accept a client socket.
-    attemptSocket = accept( mListenSocket, ( SOCKADDR* )&( connectionInfo->peerAddrInfo ), &addrlen );
+    attemptSocket = accept( mListenSocket, ( SOCKADDR* )&( connectionInfo->peerTcpAddrInfo ), &addrlen );
     if( attemptSocket == INVALID_SOCKET )
     {
         printf( "accept failed: %d\n", WSAGetLastError( ) );
@@ -281,8 +399,8 @@ bool Q4SServerSocket::acceptClientConnection( Q4SConnectionInfo* connectionInfo 
     }
     else
     {
-        connectionInfo->mq4sTcpSocket.init( );
-        connectionInfo->mq4sTcpSocket.setSocket( attemptSocket, SOCK_STREAM );
+        connectionInfo->q4sTcpSocket.init( );
+        connectionInfo->q4sTcpSocket.setSocket( attemptSocket, SOCK_STREAM );
         listConnectionInfo.push_back( connectionInfo );
     }
 

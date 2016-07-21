@@ -7,6 +7,8 @@
 #include <vector>
 #include <sstream>
 
+#define     DEFAULT_CONN_ID     1
+
 Q4SServerProtocol::Q4SServerProtocol ()
 {
     clear();
@@ -104,7 +106,7 @@ bool Q4SServerProtocol::begin()
 
     if( ok )
     {
-        ok &= mServerSocket.sendTcpData( "200 OK" );
+        ok &= mServerSocket.sendTcpData( DEFAULT_CONN_ID, "200 OK" );
     }
 
     return ok;
@@ -124,7 +126,7 @@ bool Q4SServerProtocol::ready()
 
     if( ok )
     {
-        ok &= mServerSocket.sendTcpData( "200 OK" );
+        ok &= mServerSocket.sendTcpData( DEFAULT_CONN_ID, "200 OK" );
     }
 
     return ok;
@@ -165,7 +167,7 @@ bool Q4SServerProtocol::ping()
             {
                 timeStamp = ETime_getTime( );
                 sprintf_s( buffer, "PING %d %d", j, timeStamp );
-                ok &= mServerSocket.sendUdpData( buffer );
+                ok &= mServerSocket.sendUdpData( DEFAULT_CONN_ID, buffer );
                 arrSentPingTimestamps.push_back( timeStamp );
                 Sleep( TIME_BETWEEN_PINGS );
             }
@@ -247,7 +249,8 @@ DWORD WINAPI Q4SServerProtocol::manageTcpConnectionsFn( LPVOID lpData )
 
 bool Q4SServerProtocol::manageTcpConnection( )
 {
-    bool                ok = true;
+    bool        ok = true;
+    int         newConnId = 1;
 
     if( ok )
     {
@@ -256,14 +259,15 @@ bool Q4SServerProtocol::manageTcpConnection( )
 
     while( ok )
     {
-        ok &= mServerSocket.waitForTcpConnection( );
+        ok &= mServerSocket.waitForTcpConnection( newConnId );
         if( ok )
         {
             ManageTcpConnectionsFnInfo  fnInfo;
             fnInfo.pThis = this;
-            fnInfo.connId = 0;
+            fnInfo.connId = newConnId;
             marrthrDataHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpReceivedDataFn, ( void* ) &fnInfo, 0, 0 );
         }
+        newConnId++;
     }
 
     return ok;
@@ -323,10 +327,11 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
 {
     bool                ok = true;
     char                udpBuffer[ 65536 ];
+    int                 connId;
 
     while ( ok )
     {
-        ok &= mServerSocket.receiveUdpData( udpBuffer, sizeof( udpBuffer ) );
+        ok &= mServerSocket.receiveUdpData( udpBuffer, sizeof( udpBuffer ), connId );
 
         if( ok )
         {
@@ -346,7 +351,7 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
                 char buffer[ 256 ];
                 printf( "Ping responsed %d\n", pingNumber);
                 sprintf_s( buffer, "200 OK %d", pingNumber );
-                ok &= mServerSocket.sendUdpData( buffer );
+                ok &= mServerSocket.sendUdpData( connId, buffer );
             
                 // encolar el ping y el timestamp para el calculo del jitter
                 mReceivedMessages.addMessage(message, receivedTimeStamp);

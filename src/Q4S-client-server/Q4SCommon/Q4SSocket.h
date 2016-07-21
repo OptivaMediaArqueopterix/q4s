@@ -23,7 +23,7 @@ public:
     void    setSocket( SOCKET socket, int socketType );
     bool    sendData( const char* sendBuffer, sockaddr_in* pAddrInfo = NULL );
 
-    bool    receiveData( char* receiveBuffer, int receiveBufferSize );
+    bool    receiveData( char* receiveBuffer, int receiveBufferSize, sockaddr_in* pAddrInfo = NULL );
     bool    shutDown( );
     bool    disconnect( );
 

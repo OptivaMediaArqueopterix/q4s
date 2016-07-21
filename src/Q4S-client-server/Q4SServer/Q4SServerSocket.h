@@ -19,14 +19,14 @@ public:
     void    done( );
 
     bool    startTcpListening( );
-    bool    waitForTcpConnection( );
+    bool    waitForTcpConnection( int connectionId );
     bool    waitForUdpConnections( );
     bool    stopWaiting( );
     bool    closeConnection( int socketType );
-    bool    sendTcpData( const char* sendBuffer );
-    bool    receiveTcpData( int connId, char* receiveBuffer, int receiveBufferSize );
-    bool    sendUdpData( const char* sendBuffer );
-    bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize );
+    bool    sendTcpData( int connectionId, const char* sendBuffer );
+    bool    receiveTcpData( int connectionId, char* receiveBuffer, int receiveBufferSize );
+    bool    sendUdpData( int connectionId, const char* sendBuffer );
+    bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId );
 
 private:
 
@@ -34,8 +34,9 @@ private:
     {
         int             id;
         int             udpId;
-        Q4SSocket       mq4sTcpSocket;
-        sockaddr_in     peerAddrInfo;
+        Q4SSocket       q4sTcpSocket;
+        sockaddr_in     peerTcpAddrInfo;
+        sockaddr_in     peerUdpAddrInfo;
     };
 
     void    clear( );
@@ -48,6 +49,10 @@ private:
     bool    closeListenSocket( );
     bool    createUdpSocket( );
     bool    bindUdpSocket( );
+
+    bool    getTcpSocket( int connectionId, Q4SSocket*& pQ4SSocket );
+    bool    getConnectionInfo( int connectionId, Q4SConnectionInfo*& pQ4SConnInfo );
+    bool    getConnectionInfo( sockaddr_in& connectionInfo, Q4SConnectionInfo*& pQ4SConnInfo );
 
     SOCKET              mListenSocket;
     SOCKET              mUdpSocket;

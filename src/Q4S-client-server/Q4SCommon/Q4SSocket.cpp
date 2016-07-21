@@ -58,8 +58,10 @@ bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo )
         // In client connections, we send prior to receive, we haven't peer info. We define it.
         if( pAddrInfo != NULL )
         {
-            addrInfoToUse = ( SOCKADDR* )pAddrInfo;
-            addrInfoLenToUse = sizeof( *pAddrInfo );
+            //addrInfoToUse = ( SOCKADDR* )pAddrInfo;
+            //addrInfoLenToUse = sizeof( *pAddrInfo );
+            addrInfoToUse = ( SOCKADDR* )&mPeerAddrInfo;
+            addrInfoLenToUse = mPeerAddrInfoLen;
         }
         else 
         {
@@ -92,7 +94,7 @@ bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo )
     return ok;
 }
 
-bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
+bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize, sockaddr_in* pAddrInfo )
 {
     //Listen on the socket for a client.
     bool    ok = true;
@@ -114,6 +116,10 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize )
         mPeerAddrInfoLen = sizeof( mPeerAddrInfo );
     }
     iResult = recvfrom( mSocket, receiveBuffer, receiveBufferSize, 0, ( SOCKADDR* )&mPeerAddrInfo, &mPeerAddrInfoLen );
+    if( pAddrInfo != NULL )
+    {
+        memcpy( pAddrInfo, &mPeerAddrInfo, sizeof( mPeerAddrInfo ) );
+    }
     printf( "Exiting from receive in %d type\n", mSocketType );
     if( iResult > 0 )
     {
