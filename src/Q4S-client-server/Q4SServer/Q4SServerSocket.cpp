@@ -255,15 +255,37 @@ bool Q4SServerSocket::getConnectionInfo( sockaddr_in& connectionInfo, Q4SConnect
     bool ok = false;
 
     std::list< Q4SConnectionInfo* >::iterator   itr_conn;
+    Q4SConnectionInfo*                          pQ4SConnInfoFromTcp;
+
     pQ4SConnInfo = NULL;
+    pQ4SConnInfoFromTcp = NULL;
 
     for( itr_conn = listConnectionInfo.begin( ); ( pQ4SConnInfo == NULL ) && ( itr_conn != listConnectionInfo.end( ) ); itr_conn++ )
     {
-        if( ( *itr_conn )->peerTcpAddrInfo.sin_addr.S_un.S_addr == connectionInfo.sin_addr.S_un.S_addr )
+        if( ( ( *itr_conn )->peerUdpAddrInfo.sin_addr.S_un.S_addr != 0 ) &&
+            ( ( *itr_conn )->peerUdpAddrInfo.sin_addr.S_un.S_addr == connectionInfo.sin_addr.S_un.S_addr ) &&
+            ( ( *itr_conn )->peerUdpAddrInfo.sin_port == connectionInfo.sin_port ) )
         {
+            // First we try to get connection according to udp peer address information.
             pQ4SConnInfo = ( *itr_conn );
             ok = true;
         }
+        else
+        {
+            // There's no udp address information. Perhaps it can be a new tcp connection that fits.
+            if( ( pQ4SConnInfoFromTcp == NULL ) &&
+                ( ( *itr_conn )->peerTcpAddrInfo.sin_addr.S_un.S_addr == connectionInfo.sin_addr.S_un.S_addr ) )
+            {
+                pQ4SConnInfoFromTcp = ( *itr_conn );
+            }
+        }
+    }
+
+    if( ( pQ4SConnInfo == NULL ) &&
+        ( pQ4SConnInfoFromTcp != NULL) )
+    {
+        pQ4SConnInfo = pQ4SConnInfoFromTcp;
+        ok = true;
     }
 
     return ok;
