@@ -212,6 +212,8 @@ bool Q4SServerSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize
     return ok;
 }
 
+// Functions to manage connection info list.
+
 bool Q4SServerSocket::getTcpSocket( int connectionId, Q4SSocket*& pQ4SSocket )
 {
     bool ok = false;
