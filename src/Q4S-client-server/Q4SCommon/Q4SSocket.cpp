@@ -58,10 +58,8 @@ bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo )
         // In client connections, we send prior to receive, we haven't peer info. We define it.
         if( pAddrInfo != NULL )
         {
-            //addrInfoToUse = ( SOCKADDR* )pAddrInfo;
-            //addrInfoLenToUse = sizeof( *pAddrInfo );
-            addrInfoToUse = ( SOCKADDR* )&mPeerAddrInfo;
-            addrInfoLenToUse = mPeerAddrInfoLen;
+            addrInfoToUse = ( SOCKADDR* )pAddrInfo;
+            addrInfoLenToUse = sizeof( *pAddrInfo );
         }
         else 
         {

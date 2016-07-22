@@ -66,7 +66,7 @@ bool Q4SServerSocket::waitForTcpConnection( int connectionId )
     {
         Q4SConnectionInfo* connectionInfo = new Q4SConnectionInfo( );
         connectionInfo->id = connectionId;
-        connectionInfo->udpId = 0;
+        //connectionInfo->udpId = 0;
         ZeroMemory( &( connectionInfo->peerTcpAddrInfo ), sizeof( connectionInfo->peerTcpAddrInfo ) );
         ZeroMemory( &( connectionInfo->peerUdpAddrInfo ), sizeof( connectionInfo->peerUdpAddrInfo ) );
         ok &= acceptClientConnection( connectionInfo );

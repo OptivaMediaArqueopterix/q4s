@@ -33,7 +33,7 @@ private:
     struct Q4SConnectionInfo 
     {
         int             id;
-        int             udpId;
+        //int             udpId;
         Q4SSocket       q4sTcpSocket;
         sockaddr_in     peerTcpAddrInfo;
         sockaddr_in     peerUdpAddrInfo;
