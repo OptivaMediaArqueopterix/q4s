@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="ConfigFile.h" />
     <ClInclude Include="ETime.h" />
     <ClInclude Include="fmt\format.h" />
     <ClInclude Include="Q4SMathUtils.h" />
@@ -83,6 +84,7 @@
     <ClInclude Include="Q4SSocket.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigFile.cpp" />
     <ClCompile Include="ETime.cpp" />
     <ClCompile Include="fmt\format.cc" />
     <ClCompile Include="Q4SCommon.cpp" />
