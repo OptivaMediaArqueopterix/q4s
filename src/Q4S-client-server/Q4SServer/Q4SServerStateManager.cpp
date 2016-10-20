@@ -126,6 +126,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
             {
                 printf("Hemos llegado a la terminacion\n");
                 Q4SServerProtocol::end();
+                Q4SServerProtocol::done();
                 stop = true;
             }
         break;

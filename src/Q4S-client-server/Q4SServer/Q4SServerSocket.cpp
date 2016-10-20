@@ -75,7 +75,7 @@ bool Q4SServerSocket::waitForTcpConnection( int connectionId )
     return ok;
 }
 
-bool Q4SServerSocket::waitForUdpConnections( )
+bool Q4SServerSocket::startUdpListening( )
 {
     Q4SServerSocket     q4SServer;
     bool                ok = true;
@@ -122,7 +122,8 @@ bool Q4SServerSocket::closeConnection( int socketType )
     }
     else if( socketType == SOCK_STREAM )
     {
-        ok &= mq4sTcpSocket.shutDown( );
+        //ok &= mq4sTcpSocket.shutDown( );
+        listConnectionInfo.front( )->q4sTcpSocket.shutDown( );
     }
     else
     {
@@ -416,7 +417,15 @@ bool Q4SServerSocket::acceptClientConnection( Q4SConnectionInfo* connectionInfo 
     attemptSocket = accept( mListenSocket, ( SOCKADDR* )&( connectionInfo->peerTcpAddrInfo ), &addrlen );
     if( attemptSocket == INVALID_SOCKET )
     {
-        printf( "accept failed: %d\n", WSAGetLastError( ) );
+        int lastError = WSAGetLastError( );
+        if( lastError == WSAEINTR )
+        {
+            printf( "accept interrupted\n" );
+        }
+        else
+        {
+            printf( "accept failed with error: %d\n",lastError );
+        }
         closesocket( attemptSocket );
         //WSACleanup( );
         ok &= false;

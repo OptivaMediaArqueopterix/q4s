@@ -49,7 +49,6 @@ bool Q4SServerProtocol::openConnectionListening()
 
     marrthrListenHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpConnectionsFn, ( void* ) this, 0, 0 );
     //marrthrListenHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpConnectionsFn, ( void* ) this, 0, 0 );
-    mServerSocket.waitForUdpConnections( );
     marrthrListenHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpReceivedDataFn, ( void* ) this, 0, 0 );
     
     return ok;
@@ -59,6 +58,10 @@ void Q4SServerProtocol::closeConnectionListening()
 {
     bool ok = true;
 
+    if( ok )
+    {
+        mServerSocket.stopWaiting( );
+    }
     if( ok )
     {
         WaitForMultipleObjects( 2, marrthrListenHandle, true, INFINITE );
@@ -308,7 +311,7 @@ bool Q4SServerProtocol::manageTcpReceivedData( int connId )
 {
     bool                ok = true;
     char                buffer[ 65536 ];
-    
+
     while( ok ) 
     {
         ok &= mServerSocket.receiveTcpData( connId, buffer, sizeof( buffer ) );
@@ -328,6 +331,8 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
     bool                ok = true;
     char                udpBuffer[ 65536 ];
     int                 connId;
+
+    mServerSocket.startUdpListening( );
 
     while ( ok )
     {

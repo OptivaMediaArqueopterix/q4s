@@ -20,7 +20,7 @@ public:
 
     bool    startTcpListening( );
     bool    waitForTcpConnection( int connectionId );
-    bool    waitForUdpConnections( );
+    bool    startUdpListening( );
     bool    stopWaiting( );
     bool    closeConnection( int socketType );
     bool    sendTcpData( int connectionId, const char* sendBuffer );
