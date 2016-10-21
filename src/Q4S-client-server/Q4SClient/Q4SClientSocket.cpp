@@ -1,4 +1,5 @@
 #include "Q4SClientSocket.h"
+#include "Q4SClientConfigFile.h"
 
 Q4SClientSocket::Q4SClientSocket ()
 {
@@ -133,14 +134,14 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket, int socketType )
         hints.ai_socktype = SOCK_STREAM;
         hints.ai_protocol = IPPROTO_TCP;
         // Resolve the local address and port to be used by the server
-        iResult = getaddrinfo( SERVER_IP, DEFAULT_TCP_PORT, &hints, &pAddrInfoResult );
+        iResult = getaddrinfo( q4SClientConfigFile.serverIP.c_str(), DEFAULT_TCP_PORT, &hints, &pAddrInfoResult );
     }
     else if( socketType == SOCK_DGRAM )
     {
         hints.ai_socktype = SOCK_DGRAM;
         hints.ai_protocol = IPPROTO_UDP;
         // Resolve the local address and port to be used by the server
-        iResult = getaddrinfo( SERVER_IP, DEFAULT_UDP_PORT, &hints, &pAddrInfoResult );
+        iResult = getaddrinfo( q4SClientConfigFile.serverIP.c_str(), DEFAULT_UDP_PORT, &hints, &pAddrInfoResult );
     }
     else
     {

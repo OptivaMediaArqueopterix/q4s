@@ -78,6 +78,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Q4SClientConfigFile.h" />
     <ClInclude Include="Q4SClientProtocol.h" />
     <ClInclude Include="Q4SClientSocket.h" />
     <ClInclude Include="Q4SClientState.h" />
@@ -87,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SClient.cpp" />
+    <ClCompile Include="Q4SClientConfigFile.cpp" />
     <ClCompile Include="Q4SClientProtocol.cpp" />
     <ClCompile Include="Q4SClientSocket.cpp" />
     <ClCompile Include="Q4SClientStateManager.cpp" />
