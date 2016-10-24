@@ -189,7 +189,18 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket, int socketType )
         else
         {
             q4sSocket->init( );
-            q4sSocket->setSocket( socketAttempt, socketType );
+            if( socketType == SOCK_STREAM )
+            {
+                q4sSocket->setSocket( socketAttempt, socketType );
+            }
+            else if( socketType == SOCK_DGRAM )
+            {
+                q4sSocket->setSocket( socketAttempt, socketType, &q4SClientConfigFile.serverIP );
+            }
+            else
+            {
+                ok &= false;
+            }
         }
     }
 

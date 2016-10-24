@@ -34,10 +34,11 @@ void Q4SSocket::clear( )
     mAlreadyReceived = false;
 }
 
-void Q4SSocket::setSocket( SOCKET socket, int socketType )
+void Q4SSocket::setSocket( SOCKET socket, int socketType, std::string* connectToIP)
 {
     mSocket = socket;
     mSocketType = socketType;
+    mSocketUDPConnectToIP = connectToIP;
 }
 
 bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo )
@@ -67,7 +68,7 @@ bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo )
             {
                 mPeerAddrInfo.sin_family = AF_INET;
                 mPeerAddrInfo.sin_port = htons( atoi( DEFAULT_UDP_PORT ) );
-                mPeerAddrInfo.sin_addr.s_addr = inet_addr( SERVER_IP );
+                mPeerAddrInfo.sin_addr.s_addr = inet_addr( mSocketUDPConnectToIP->c_str() );
                 mPeerAddrInfoLen = sizeof( mPeerAddrInfo );
             }
             addrInfoToUse = ( SOCKADDR* )&mPeerAddrInfo;
