@@ -1,11 +1,12 @@
 #include "Q4SServerProtocol.h"
 
-#include "ETime.h"
-#include "Q4SMathUtils.h"
-
 #include <stdio.h>
 #include <vector>
 #include <sstream>
+
+#include "ETime.h"
+#include "Q4SMathUtils.h"
+#include "Q4SServerConfigFile.h"
 
 #define     DEFAULT_CONN_ID     1
 
@@ -172,7 +173,7 @@ bool Q4SServerProtocol::ping()
                 sprintf_s( buffer, "PING %d %d", j, timeStamp );
                 ok &= mServerSocket.sendUdpData( DEFAULT_CONN_ID, buffer );
                 arrSentPingTimestamps.push_back( timeStamp );
-                Sleep( TIME_BETWEEN_PINGS );
+                Sleep( (DWORD)q4SServerConfigFile.timeBetweenPings );
             }
 
             Sleep( TIME_START_CALC );
@@ -208,7 +209,7 @@ bool Q4SServerProtocol::ping()
                 }
             }
             float ets = EMathUtils_mean( arrPingJitters );
-            printf( "Latencies mean ET: %.3f; jitter: %.3f\n", ets, ets - TIME_BETWEEN_PINGS );
+            printf( "Latencies mean ET: %.3f; jitter: %.3f\n", ets, ets - q4SServerConfigFile.timeBetweenPings );
         }
     }
 
