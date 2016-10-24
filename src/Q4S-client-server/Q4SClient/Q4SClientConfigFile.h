@@ -10,8 +10,8 @@ public:
     Q4SClientConfigFile(const std::string &fName);
 
     std::string serverIP;
-    double defaultTCPPort;
-    double defaultTUPPort;
+    std::string defaultTCPPort;
+    std::string defaultUDPPort;
     double timeBetweenPings;
 //#define TIME_START_CALC     2000
 //#define TIME_END_APP        10000
