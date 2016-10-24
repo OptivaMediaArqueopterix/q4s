@@ -20,7 +20,7 @@ public:
     bool    init( );
     void    done( );
 
-    void    setSocket( SOCKET socket, int socketType, std::string* connectToIP = NULL);
+    void    setSocket( SOCKET socket, int socketType, std::string* connectToIP = NULL, std::string* connectToUDPPort = NULL);
     bool    sendData( const char* sendBuffer, sockaddr_in* pAddrInfo = NULL );
 
     bool    receiveData( char* receiveBuffer, int receiveBufferSize, sockaddr_in* pAddrInfo = NULL );
@@ -34,6 +34,7 @@ private:
     SOCKET          mSocket;
     int             mSocketType;
     std::string*    mSocketUDPConnectToIP;
+    std::string*    mSocketUDPConnectToPort;
 
     sockaddr_in     mPeerAddrInfo;
     int             mPeerAddrInfoLen;

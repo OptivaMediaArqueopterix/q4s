@@ -1,4 +1,5 @@
 #include "Q4SServerSocket.h"
+#include "Q4SServerConfigFile.h"
 
 Q4SServerSocket::Q4SServerSocket ()
 {
@@ -328,7 +329,7 @@ bool Q4SServerSocket::createListenSocket( )
     hints.ai_protocol = IPPROTO_TCP;
     hints.ai_flags = AI_PASSIVE;
     // Resolve the local address and port to be used by the server
-    iResult = getaddrinfo( NULL, DEFAULT_TCP_PORT, &hints, &mpAddrInfoResultTcp );
+    iResult = getaddrinfo( NULL, q4SServerConfigFile.defaultTCPPort.c_str(), &hints, &mpAddrInfoResultTcp );
 
     if( ok && ( iResult != 0 ) )
     {
@@ -462,7 +463,7 @@ bool Q4SServerSocket::createUdpSocket( )
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_protocol = IPPROTO_UDP;
     // Resolve the local address and port to be used by the server
-    iResult = getaddrinfo( NULL, DEFAULT_UDP_PORT, &hints, &mpAddrInfoResultUdp );
+    iResult = getaddrinfo( NULL, q4SServerConfigFile.defaultUDPPort.c_str(), &hints, &mpAddrInfoResultUdp );
         
     if( ok && ( iResult != 0 ) )
     {
@@ -500,7 +501,7 @@ bool Q4SServerSocket::bindUdpSocket( )
     {
         sockaddr_in    senderAddr;
         senderAddr.sin_family = AF_INET;
-        senderAddr.sin_port = htons( atoi( DEFAULT_UDP_PORT ) );
+        senderAddr.sin_port = htons( atoi( q4SServerConfigFile.defaultUDPPort.c_str() ) );
         senderAddr.sin_addr.s_addr = htonl( INADDR_ANY ); 
         iResult = bind( mUdpSocket, ( SOCKADDR* ) &senderAddr, sizeof( senderAddr ) );
     }

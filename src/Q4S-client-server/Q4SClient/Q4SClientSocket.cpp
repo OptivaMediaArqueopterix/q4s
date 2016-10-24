@@ -195,7 +195,7 @@ bool Q4SClientSocket::connectToServer( Q4SSocket* q4sSocket, int socketType )
             }
             else if( socketType == SOCK_DGRAM )
             {
-                q4sSocket->setSocket( socketAttempt, socketType, &q4SClientConfigFile.serverIP );
+                q4sSocket->setSocket( socketAttempt, socketType, &q4SClientConfigFile.serverIP, &q4SClientConfigFile.defaultUDPPort );
             }
             else
             {
