@@ -5,7 +5,7 @@
 
 #include "Q4SServerStateManager.h"
 
-#include "windows.h"
+//#include "windows.h"
 
 #include "Q4SServerConfigFile.h"
 

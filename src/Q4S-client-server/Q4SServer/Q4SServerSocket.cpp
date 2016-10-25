@@ -29,8 +29,11 @@ void Q4SServerSocket::done()
 void Q4SServerSocket::clear()
 {
     mListenSocket = INVALID_SOCKET;
+    mUdpSocket = INVALID_SOCKET;
+    mAgentSocket = INVALID_SOCKET;
     mpAddrInfoResultTcp = NULL;
     mpAddrInfoResultUdp = NULL;
+    mpAddrInfoResultAgent = NULL;
 }
 
 bool Q4SServerSocket::startTcpListening( )
@@ -214,6 +217,24 @@ bool Q4SServerSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize
     return ok;
 }
 
+bool Q4SServerSocket::openConnection()
+{
+    bool                ok = true;
+
+    if( ok )
+    {
+        ok &= initializeSockets( );
+    }
+    if( ok )
+    {
+        ok &= connectToServer( &mq4sUdpSocket, SOCK_DGRAM );
+    }
+
+    return ok;
+}
+
+
+
 // Functions to manage connection info list.
 
 bool Q4SServerSocket::getTcpSocket( int connectionId, Q4SSocket*& pQ4SSocket )
@@ -294,6 +315,72 @@ bool Q4SServerSocket::getConnectionInfo( sockaddr_in& connectionInfo, Q4SConnect
 
     return ok;
 }
+
+bool Q4SServerSocket::connectToServer( Q4SSocket* q4sSocket, int socketType )
+{
+    //Create a socket.
+    struct addrinfo hints,
+                    *ptr,
+                    *pAddrInfoResult;
+    int             iResult;
+    bool            ok = true;
+    SOCKET          socketAttempt = INVALID_SOCKET;
+
+    ZeroMemory( &hints, sizeof( hints ) );
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    // Resolve the local address and port to be used by the server
+    iResult = getaddrinfo( q4SServerConfigFile.agentIP.c_str(), q4SServerConfigFile.agentPort.c_str(), &hints, &pAddrInfoResult );
+
+    if( ok && ( iResult != 0 ) )
+    {
+        printf( "getaddrinfo failed: %d\n", iResult );
+        WSACleanup( );
+        ok &= false;
+    }
+
+    if( ok )
+    {
+        // Attempt to connect to an address until one succeeds
+        for( ptr = pAddrInfoResult; ok && ( ptr != NULL ) && ( socketAttempt == INVALID_SOCKET ); ptr = ptr->ai_next ) 
+        {
+            // Create a SOCKET for connecting to server
+            socketAttempt = socket( ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol );
+            if( socketAttempt == INVALID_SOCKET )
+            {
+                printf( "socket failed with error: %ld\n", WSAGetLastError( ) );
+                //WSACleanup( );
+                ok &= false;
+            }
+
+            // Connect to server.
+            iResult = connect( socketAttempt, ptr->ai_addr, (int)ptr->ai_addrlen );
+            if( iResult == SOCKET_ERROR )
+            {
+                closesocket( socketAttempt );
+                socketAttempt = INVALID_SOCKET;
+            }
+        }
+
+        freeaddrinfo( pAddrInfoResult );
+
+        if( socketAttempt == INVALID_SOCKET ) 
+        {
+            printf( "Unable to connect to server!\n" );
+            //WSACleanup( );
+            ok &= false;
+        }
+        else
+        {
+            q4sSocket->init( );
+            q4sSocket->setSocket( socketAttempt, socketType, &q4SServerConfigFile.agentIP, &q4SServerConfigFile.agentPort);
+        }
+    }
+
+    return ok;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 

@@ -27,6 +27,7 @@ public:
     bool    receiveTcpData( int connectionId, char* receiveBuffer, int receiveBufferSize );
     bool    sendUdpData( int connectionId, const char* sendBuffer );
     bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId );
+    bool    openConnection( );
 
 private:
 
@@ -37,6 +38,7 @@ private:
         Q4SSocket       q4sTcpSocket;
         sockaddr_in     peerTcpAddrInfo;
         sockaddr_in     peerUdpAddrInfo;
+        sockaddr_in     peerAgentAddrInfo;
     };
 
     void    clear( );
@@ -54,13 +56,18 @@ private:
     bool    getConnectionInfo( int connectionId, Q4SConnectionInfo*& pQ4SConnInfo );
     bool    getConnectionInfo( sockaddr_in& connectionInfo, Q4SConnectionInfo*& pQ4SConnInfo );
 
+    bool    connectToServer( Q4SSocket* q4sSocket, int socketType );
+
     SOCKET              mListenSocket;
     SOCKET              mUdpSocket;
+    SOCKET              mAgentSocket;
     struct addrinfo*    mpAddrInfoResultTcp; 
     struct addrinfo*    mpAddrInfoResultUdp; 
+    struct addrinfo*    mpAddrInfoResultAgent; 
 
     Q4SSocket           mq4sTcpSocket;
     Q4SSocket           mq4sUdpSocket;
+    Q4SSocket           mq4sAgentSocket;
 
     std::list< Q4SConnectionInfo* >         listConnectionInfo;
 };
