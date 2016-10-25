@@ -72,7 +72,6 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigFile.h" />
     <ClInclude Include="ETime.h" />
     <ClInclude Include="fmt\format.h" />

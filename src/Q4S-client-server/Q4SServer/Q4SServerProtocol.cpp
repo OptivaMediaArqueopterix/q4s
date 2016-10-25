@@ -176,7 +176,7 @@ bool Q4SServerProtocol::ping()
                 Sleep( (DWORD)q4SServerConfigFile.timeBetweenPings );
             }
 
-            Sleep( TIME_START_CALC );
+            Sleep( (DWORD)q4SServerConfigFile.timeStartCalc);
 
             // Latency calculation.
             for( j = 0; j < jmax; j++ )

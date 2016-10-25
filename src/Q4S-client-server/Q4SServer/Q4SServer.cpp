@@ -17,7 +17,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
     ok &= q4SServerStateManager.init();
 
-    Sleep( TIME_END_APP );
+    Sleep( (DWORD)q4SServerConfigFile.timeEndApp);
 
     printf( "Saliendo de Server\n" );
 

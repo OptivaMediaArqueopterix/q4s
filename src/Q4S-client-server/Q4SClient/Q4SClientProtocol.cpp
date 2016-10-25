@@ -149,10 +149,10 @@ bool Q4SClientProtocol::ping()
             sprintf_s( buffer, "PING %d %d", j, timeStamp );
             ok &= mClientSocket.sendUdpData( buffer );
             arrSentPingTimestamps.push_back( timeStamp );
-            Sleep( q4SClientConfigFile.timeBetweenPings );
+            Sleep( (DWORD)q4SClientConfigFile.timeBetweenPings );
         }
 
-        Sleep( TIME_START_CALC );
+        Sleep( (DWORD)q4SClientConfigFile.timeStartCalc);
 
         // Latency calculation.
         for( j = 0; j < jmax; j++ )

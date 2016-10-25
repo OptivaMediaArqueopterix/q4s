@@ -19,22 +19,15 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
-//Q4SClientConfigFile configFile("Config.txt");
-
 int _tmain(int argc, _TCHAR* argv[])
 {
     bool ok = true;
-
-    {
-        //std::cout << "SERVER_IP: " << configFile.serverIP << "\n";
-        //std::cout << "defaultTCPPort: " << configFile.defaultTCPPort << "\n";
-    }
 
     Q4SClientStateManager q4SClientStateManager;
 
     ok &= q4SClientStateManager.init();
 
-    Sleep (TIME_END_APP);
+    Sleep ( (DWORD)q4SClientConfigFile.timeEndApp);
 
     printf( "Saliendo de Client\n" );
 

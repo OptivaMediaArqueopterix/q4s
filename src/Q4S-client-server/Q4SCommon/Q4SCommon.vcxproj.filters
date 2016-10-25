@@ -42,9 +42,6 @@
     <ClInclude Include="Q4SMathUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConfigFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
