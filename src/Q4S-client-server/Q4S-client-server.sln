@@ -7,6 +7,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q4SCommon", "Q4SCommon\Q4SC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q4SServer", "Q4SServer\Q4SServer.vcxproj", "{95A5C86A-DDDF-4504-ABDC-56B5E9525DBC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Q4SAgent", "Q4SAgent\Q4SAgent.vcxproj", "{880ECBC9-991F-4A75-83FD-036DEE46C62D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{023EA7CE-85C1-4DFD-8510-435CFC864E04} = {023EA7CE-85C1-4DFD-8510-435CFC864E04}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -25,6 +30,10 @@ Global
 		{95A5C86A-DDDF-4504-ABDC-56B5E9525DBC}.Debug|Win32.Build.0 = Debug|Win32
 		{95A5C86A-DDDF-4504-ABDC-56B5E9525DBC}.Release|Win32.ActiveCfg = Release|Win32
 		{95A5C86A-DDDF-4504-ABDC-56B5E9525DBC}.Release|Win32.Build.0 = Release|Win32
+		{880ECBC9-991F-4A75-83FD-036DEE46C62D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{880ECBC9-991F-4A75-83FD-036DEE46C62D}.Debug|Win32.Build.0 = Debug|Win32
+		{880ECBC9-991F-4A75-83FD-036DEE46C62D}.Release|Win32.ActiveCfg = Release|Win32
+		{880ECBC9-991F-4A75-83FD-036DEE46C62D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,6 +9,7 @@
 
 #include "Q4SServerConfigFile.h"
 
+
 int _tmain(int argc, _TCHAR* argv[])
 {
     bool ok = true;
