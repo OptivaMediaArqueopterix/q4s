@@ -11,6 +11,8 @@ public:
 
     std::string defaultTCPPort;
     std::string defaultUDPPort;
+    std::string agentIP;
+    std::string agentPort;
     double timeBetweenPings;
     double timeStartCalc;
     double timeEndApp;
