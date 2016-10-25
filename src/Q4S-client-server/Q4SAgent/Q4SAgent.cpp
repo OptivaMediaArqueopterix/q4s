@@ -3,12 +3,23 @@
 
 #include "stdafx.h"
 
-//#include "windows.h"
-
+#include "Q4SAgentStateManager.h"
 #include "Q4SAgentConfigFile.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	return 0;
+    bool ok = true;
+
+    Q4SAgentStateManager q4SAgentStateManager;
+
+    ok &= q4SAgentStateManager.init();
+
+    Sleep( (DWORD)q4SAgentConfigFile.timeEndApp);
+
+    printf( "Saliendo de Server\n" );
+
+    WSACleanup( );
+
+    return 0;
 }
 

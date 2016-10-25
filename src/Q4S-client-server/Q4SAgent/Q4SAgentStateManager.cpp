@@ -68,6 +68,31 @@ bool Q4SAgentStateManager::stateInit (Q4SAgentState state)
     {
         case Q4SAGENTSTATE_INIT:
             {
+                bool initOk = Q4SAgentProtocol::init();
+                if (initOk)
+                {
+                    nextState = Q4SAGENTSTATE_LISTEN;
+                }
+                else
+                {
+                    // TODO: launch error
+                    stop = true;
+                }
+            }
+        break;
+    
+        case Q4SAGENTSTATE_LISTEN:
+            {
+                bool initOk = Q4SAgentProtocol::listen();
+                if (initOk)
+                {
+                    nextState = Q4SAGENTSTATE_INVALID;
+                }
+                else
+                {
+                    // TODO: launch error
+                    stop = true;
+                }
             }
         break;
 

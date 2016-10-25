@@ -11,6 +11,7 @@ public:
 
     std::string ganyConnectorIp;
     std::string ganyConnectorPort;
+    double timeEndApp;
 };
 
 extern Q4SAgentConfigFile q4SAgentConfigFile;

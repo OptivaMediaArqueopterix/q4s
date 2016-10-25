@@ -4,6 +4,7 @@
 #include "Q4SAgentSocket.h"
 #include "Q4SMessageManager.h"
 
+
 class Q4SAgentProtocol
 {
 public:
@@ -17,7 +18,7 @@ public:
     void    done();
 
     // Q4S Methods
-    bool    begin();
+    bool    listen();
     void    end();
 
 private:

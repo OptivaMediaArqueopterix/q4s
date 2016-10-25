@@ -3,7 +3,9 @@
 
 #include "Q4SAgentState.h"
 
-class Q4SAgentStateManager
+#include "Q4SAgentProtocol.h"
+
+class Q4SAgentStateManager : Q4SAgentProtocol
 {
 
 public:

@@ -93,7 +93,7 @@ void Q4SAgentProtocol::closeConnections()
 
 // State managing functions.
 
-bool Q4SAgentProtocol::begin()
+bool Q4SAgentProtocol::listen()
 {
     printf("METHOD: begin\n");
     std::string message;
