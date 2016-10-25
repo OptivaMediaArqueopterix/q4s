@@ -234,7 +234,7 @@ bool Q4SAgentSocket::createUdpSocket( )
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_protocol = IPPROTO_UDP;
     // Resolve the local address and port to be used by the server
-    iResult = getaddrinfo( NULL, q4SAgentConfigFile.ganyConnectorPort.c_str(), &hints, &mpAddrInfoResultUdp );
+    iResult = getaddrinfo( NULL, q4SAgentConfigFile.listenUDPPort.c_str(), &hints, &mpAddrInfoResultUdp );
         
     if( ok && ( iResult != 0 ) )
     {
@@ -272,7 +272,7 @@ bool Q4SAgentSocket::bindUdpSocket( )
     {
         sockaddr_in    senderAddr;
         senderAddr.sin_family = AF_INET;
-        senderAddr.sin_port = htons( atoi( q4SAgentConfigFile.ganyConnectorPort.c_str() ) );
+        senderAddr.sin_port = htons( atoi( q4SAgentConfigFile.listenUDPPort.c_str() ) );
         senderAddr.sin_addr.s_addr = htonl( INADDR_ANY ); 
         iResult = bind( mUdpSocket, ( SOCKADDR* ) &senderAddr, sizeof( senderAddr ) );
     }

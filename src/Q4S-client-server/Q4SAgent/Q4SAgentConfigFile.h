@@ -11,6 +11,7 @@ public:
 
     std::string ganyConnectorIp;
     std::string ganyConnectorPort;
+    std::string listenUDPPort;
     double timeEndApp;
 };
 
