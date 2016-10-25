@@ -79,6 +79,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Q4SAgentConfigFile.h" />
+    <ClInclude Include="Q4SAgentProtocol.h" />
+    <ClInclude Include="Q4SAgentSocket.h" />
     <ClInclude Include="Q4SAgentState.h" />
     <ClInclude Include="Q4SAgentStateManager.h" />
     <ClInclude Include="stdafx.h" />
@@ -87,6 +89,8 @@
   <ItemGroup>
     <ClCompile Include="Q4SAgent.cpp" />
     <ClCompile Include="Q4SAgentConfigFile.cpp" />
+    <ClCompile Include="Q4SAgentProtocol.cpp" />
+    <ClCompile Include="Q4SAgentSocket.cpp" />
     <ClCompile Include="Q4SAgentStateManager.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

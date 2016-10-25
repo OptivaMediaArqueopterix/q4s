@@ -33,6 +33,12 @@
     <ClInclude Include="Q4SAgentStateManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Q4SAgentProtocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Q4SAgentSocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +51,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Q4SAgentStateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Q4SAgentProtocol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Q4SAgentSocket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
