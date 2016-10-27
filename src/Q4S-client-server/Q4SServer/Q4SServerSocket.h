@@ -18,22 +18,27 @@ public:
     bool    init( );
     void    done( );
 
+    // TCP
     bool    startTcpListening( );
     bool    waitForTcpConnection( int connectionId );
-    bool    startUdpListening( );
     bool    stopWaiting( );
-    bool    closeConnection( int socketType );
     bool    sendTcpData( int connectionId, const char* sendBuffer );
     bool    receiveTcpData( int connectionId, char* receiveBuffer, int receiveBufferSize );
+
+    // UDP
+    bool    startUdpListening( );
     bool    sendUdpData( int connectionId, const char* sendBuffer );
     bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId );
+
+    // TCP/UDP
+    bool    closeConnection( int socketType );
+
 
 private:
 
     struct Q4SConnectionInfo 
     {
         int             id;
-        //int             udpId;
         Q4SSocket       q4sTcpSocket;
         sockaddr_in     peerTcpAddrInfo;
         sockaddr_in     peerUdpAddrInfo;
@@ -41,12 +46,17 @@ private:
 
     void    clear( );
 
+    // TCP/UDP
     bool    initializeSockets( );
+
+    // TCP
     bool    createListenSocket( );
     bool    bindListenSocket( );
     bool    startListen( );
     bool    acceptClientConnection( Q4SConnectionInfo* connectionInfo );
     bool    closeListenSocket( );
+
+    //UDP
     bool    createUdpSocket( );
     bool    bindUdpSocket( );
 
@@ -54,12 +64,13 @@ private:
     bool    getConnectionInfo( int connectionId, Q4SConnectionInfo*& pQ4SConnInfo );
     bool    getConnectionInfo( sockaddr_in& connectionInfo, Q4SConnectionInfo*& pQ4SConnInfo );
 
+    // TCP
     SOCKET              mListenSocket;
-    SOCKET              mUdpSocket;
     struct addrinfo*    mpAddrInfoResultTcp; 
-    struct addrinfo*    mpAddrInfoResultUdp; 
 
-    Q4SSocket           mq4sTcpSocket;
+    // UDP
+    SOCKET              mUdpSocket;
+    struct addrinfo*    mpAddrInfoResultUdp; 
     Q4SSocket           mq4sUdpSocket;
 
     std::list< Q4SConnectionInfo* >         listConnectionInfo;

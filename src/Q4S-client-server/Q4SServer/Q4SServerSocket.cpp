@@ -124,7 +124,6 @@ bool Q4SServerSocket::closeConnection( int socketType )
     }
     else if( socketType == SOCK_STREAM )
     {
-        //ok &= mq4sTcpSocket.shutDown( );
         listConnectionInfo.front( )->q4sTcpSocket.shutDown( );
     }
     else
@@ -137,11 +136,6 @@ bool Q4SServerSocket::closeConnection( int socketType )
 
 bool Q4SServerSocket::sendTcpData( int connId, const char* sendBuffer )
 {
-    //return mq4sTcpSocket.sendData( sendBuffer );
-    
-    //// TODO, acceed correct socket. Not kapone.
-    //return listConnectionInfo.front( )->q4sTcpSocket.sendData( sendBuffer );
-
     bool        ok = true;
     Q4SSocket*  pQ4SSocket;
 
@@ -156,11 +150,6 @@ bool Q4SServerSocket::sendTcpData( int connId, const char* sendBuffer )
 
 bool Q4SServerSocket::receiveTcpData( int connId, char* receiveBuffer, int receiveBufferSize )
 {
-    //return mq4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
-    
-    //// TODO, acceed correct socket. Not kapone.
-    //return listConnectionInfo.front( )->q4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
-
     bool        ok = true;
     Q4SSocket*  pQ4SSocket;
 
