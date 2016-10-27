@@ -151,8 +151,8 @@ bool Q4SServerProtocol::ping()
 
     if( ok )
     {
-        int     j = 0,
-                jmax = 20;
+        int     pingIndex = 0,
+                pingMaxCount = 20;
         char    buffer[ 256 ];
 
         unsigned long                   timeStamp = 0;
@@ -167,10 +167,10 @@ bool Q4SServerProtocol::ping()
 
         if( ok )
         {
-            for( j = 0; j < jmax; j++ )
+            for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
             {
                 timeStamp = ETime_getTime( );
-                sprintf_s( buffer, "PING %d %d", j, timeStamp );
+                sprintf_s( buffer, "PING %d %d", pingIndex, timeStamp );
                 ok &= mServerSocket.sendUdpData( DEFAULT_CONN_ID, buffer );
                 arrSentPingTimestamps.push_back( timeStamp );
                 Sleep( (DWORD)q4SServerConfigFile.timeBetweenPings );
@@ -179,32 +179,32 @@ bool Q4SServerProtocol::ping()
             Sleep( (DWORD)q4SServerConfigFile.timeStartCalc);
 
             // Latency calculation.
-            for( j = 0; j < jmax; j++ )
+            for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
             {
-                sprintf_s( buffer, "200 OK %d", j );
+                sprintf_s( buffer, "200 OK %d", pingIndex );
                 pattern = buffer;
                 if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
                 {
-                    latency = ( messageInfo.timeStamp - arrSentPingTimestamps[ j ] ) / 2.0f;
+                    latency = ( messageInfo.timeStamp - arrSentPingTimestamps[ pingIndex ] ) / 2.0f;
                     arrPingLatencies.push_back( latency );
-                    printf( "PING %d latency: %.2f\n", j, latency );
+                    printf( "PING %d latency: %.2f\n", pingIndex, latency );
                 }
             }
             printf( "Latencies median: %.3f\n", EMathUtils_median( arrPingLatencies ) );
 
             // Jitter calculation.
-            for( j = 0; j < jmax; j++ )
+            for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
             {
-                sprintf_s( buffer, "PING %d", j );
+                sprintf_s( buffer, "PING %d", pingIndex );
                 pattern = buffer;
                 if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
                 {
                     arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
-                    if( j > 0 )
+                    if( pingIndex > 0 )
                     {
-                        jitter = ( arrReceivedPingTimestamps[ j ] - arrReceivedPingTimestamps[ j - 1 ] );
+                        jitter = ( arrReceivedPingTimestamps[ pingIndex ] - arrReceivedPingTimestamps[ pingIndex - 1 ] );
                         arrPingJitters.push_back( jitter );
-                        printf( "PING %d ET: %.2f\n", j, jitter );
+                        printf( "PING %d ET: %.2f\n", pingIndex, jitter );
                     }
                 }
             }
