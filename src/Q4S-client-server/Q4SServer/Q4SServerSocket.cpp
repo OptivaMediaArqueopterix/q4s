@@ -97,6 +97,7 @@ bool Q4SServerSocket::startUdpListening( )
     if( ok )
     {
         mq4sUdpSocket.setSocket( mUdpSocket, SOCK_DGRAM );
+        printf( "Listening UDP at: %s\n", q4SServerConfigFile.defaultUDPPort.c_str() );
     }
 
     return ok;
@@ -392,6 +393,8 @@ bool Q4SServerSocket::startListen( )
         WSACleanup( );
         ok &= false;
     }
+
+    printf( "Listening TCP at: %s\n", q4SServerConfigFile.defaultTCPPort.c_str() );
 
     return ok;
 }
