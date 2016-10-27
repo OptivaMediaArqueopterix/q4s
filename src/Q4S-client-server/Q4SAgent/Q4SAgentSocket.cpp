@@ -28,7 +28,6 @@ void Q4SAgentSocket::done()
 
 void Q4SAgentSocket::clear()
 {
-    mListenSocket = INVALID_SOCKET;
     mpAddrInfoResultUdp = NULL;
 }
 
@@ -57,18 +56,6 @@ bool Q4SAgentSocket::startUdpListening( )
     return ok;
 }
 
-bool Q4SAgentSocket::stopWaiting( )
-{
-    bool ok = true;
-
-    if( ok )
-    {
-        ok &= closeListenSocket( );
-    }
-
-    return ok;
-}
-
 bool Q4SAgentSocket::closeConnection( int socketType )
 {
     bool ok = true;
@@ -85,94 +72,28 @@ bool Q4SAgentSocket::closeConnection( int socketType )
     return ok;
 }
 
-bool Q4SAgentSocket::sendUdpData( int connectionId, const char* sendBuffer )
+/*bool Q4SAgentSocket::sendUdpData( int connectionId, const char* sendBuffer )
 {
-    //return mq4sUdpSocket.sendData( sendBuffer );
+    bool ok = true;
 
-    bool                ok = true;
-    Q4SConnectionInfo*  pQ4SConnInfo;
-
-    ok &= getConnectionInfo( connectionId, pQ4SConnInfo );
     if( ok )
     {
-        ok &= mq4sUdpSocket.sendData( sendBuffer, &( pQ4SConnInfo->peerUdpAddrInfo ) );
+        ok &= mq4sUdpSocket.sendData( sendBuffer, &(mpAddrInfoResultUdp) );
     }
 
     return ok;
-}
+}*/
 
 bool Q4SAgentSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId )
 {
-    //return mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, &addrInfo );
-
     bool                ok = true;
-    Q4SConnectionInfo*  pQ4SConnInfo;
     sockaddr_in         addrInfo;
 
-    //ok &= getConnectionInfo( connectionId, pQ4SConnInfo );
     if( ok )
     {
         ok &= mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, &addrInfo );
     }
-    if( ok )
-    {
-        ok &= getConnectionInfo( addrInfo, pQ4SConnInfo );
-    }
-    if( ok )
-    {
-        connectionId = pQ4SConnInfo->id;
-        memcpy( &( pQ4SConnInfo->peerUdpAddrInfo ), &addrInfo, sizeof( addrInfo ) );
-    }
     
-    return ok;
-}
-
-// Functions to manage connection info list.
-
-bool Q4SAgentSocket::getConnectionInfo( int connectionId, Q4SConnectionInfo*& pQ4SConnInfo )
-{
-    bool ok = false;
-
-    std::list< Q4SConnectionInfo* >::iterator   itr_conn;
-    pQ4SConnInfo = NULL;
-
-    for( itr_conn = listConnectionInfo.begin( ); ( pQ4SConnInfo == NULL ) && ( itr_conn != listConnectionInfo.end( ) ); itr_conn++ )
-    {
-        if( ( *itr_conn )->id == connectionId )
-        {
-            pQ4SConnInfo = ( *itr_conn );
-            ok = true;
-        }
-    }
-
-    return ok;
-}
-
-bool Q4SAgentSocket::getConnectionInfo( sockaddr_in& connectionInfo, Q4SConnectionInfo*& pQ4SConnInfo )
-{
-    bool ok = false;
-
-    std::list< Q4SConnectionInfo* >::iterator   itr_conn;
-
-    pQ4SConnInfo = NULL;
-
-    for( itr_conn = listConnectionInfo.begin( ); ( pQ4SConnInfo == NULL ) && ( itr_conn != listConnectionInfo.end( ) ); itr_conn++ )
-    {
-        if( ( ( *itr_conn )->peerUdpAddrInfo.sin_addr.S_un.S_addr != 0 ) &&
-            ( ( *itr_conn )->peerUdpAddrInfo.sin_addr.S_un.S_addr == connectionInfo.sin_addr.S_un.S_addr ) &&
-            ( ( *itr_conn )->peerUdpAddrInfo.sin_port == connectionInfo.sin_port ) )
-        {
-            // First we try to get connection according to udp peer address information.
-            pQ4SConnInfo = ( *itr_conn );
-            ok = true;
-        }
-    }
-
-    if( ( pQ4SConnInfo == NULL ) )
-    {
-        ok = true;
-    }
-
     return ok;
 }
 
@@ -192,31 +113,6 @@ bool Q4SAgentSocket::initializeSockets( )
         printf( "WSAStartup failed: %d\n", iResult );
         ok &= false;
     }
-
-    return ok;
-}
-
-bool Q4SAgentSocket::startListen( )
-{
-    //Listen on the socket for a client.
-    bool ok = true;
-
-    if( listen( mListenSocket, SOMAXCONN ) == SOCKET_ERROR )
-    {
-        printf( "Listen failed with error: %ld\n", WSAGetLastError( ) );
-        closesocket( mListenSocket );
-        WSACleanup( );
-        ok &= false;
-    }
-
-    return ok;
-}
-
-bool Q4SAgentSocket::closeListenSocket( )
-{
-    bool ok = true;
-
-    closesocket( mListenSocket );
 
     return ok;
 }

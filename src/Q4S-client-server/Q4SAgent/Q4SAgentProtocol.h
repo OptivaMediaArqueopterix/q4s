@@ -40,8 +40,6 @@ private:
     static DWORD WINAPI         manageUdpReceivedDataFn( LPVOID lpData );
 
     Q4SMessageManager           mReceivedMessages;
-
-    bool                        isPingMessage(std::string message, int *pingNumber, unsigned long *timeStamp);
 };
 
 #endif  // _Q4SAGENTPROTOCOL_H_
