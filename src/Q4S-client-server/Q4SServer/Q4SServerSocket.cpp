@@ -221,7 +221,7 @@ bool Q4SServerSocket::startAlertSender()
 
 bool Q4SServerSocket::sendAlertData( const char* sendBuffer )
 {
-    bool                ok = true;
+    bool ok = true;
 
     if( ok )
     {

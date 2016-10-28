@@ -47,7 +47,14 @@ bool Q4SServerProtocol::init()
 
 void Q4SServerProtocol::done()
 {
+    bool closedConnectionAlertSender = mServerSocket.closeConnection(SOCK_DGRAM);
+    if (!closedConnectionAlertSender)
+    {
+        printf( "Error closing sender socket connection.\n" );
+    }
+
     closeConnectionListening();
+
     mReceivedMessages.done( );
 }
 
@@ -213,7 +220,7 @@ bool Q4SServerProtocol::ping()
                     arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
                     if( pingIndex > 0 )
                     {
-                        jitter = ( arrReceivedPingTimestamps[ pingIndex ] - arrReceivedPingTimestamps[ pingIndex - 1 ] );
+                        jitter = (float)( arrReceivedPingTimestamps[ pingIndex ] - arrReceivedPingTimestamps[ pingIndex - 1 ] );
                         arrPingJitters.push_back( jitter );
                         printf( "PING %d ET: %.2f\n", pingIndex, jitter );
                     }
