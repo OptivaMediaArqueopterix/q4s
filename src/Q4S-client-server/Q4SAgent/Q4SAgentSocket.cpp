@@ -84,7 +84,7 @@ bool Q4SAgentSocket::closeConnection( int socketType )
     return ok;
 }*/
 
-bool Q4SAgentSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId )
+bool Q4SAgentSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize)
 {
     bool                ok = true;
     sockaddr_in         addrInfo;

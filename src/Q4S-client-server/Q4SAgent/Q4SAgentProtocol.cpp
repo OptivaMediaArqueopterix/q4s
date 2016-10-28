@@ -133,13 +133,12 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
 {
     bool                ok = true;
     char                udpBuffer[ 65536 ];
-    int                 connId;
 
     mAgentSocket.startUdpListening( );
 
     while ( ok )
     {
-        ok &= mAgentSocket.receiveUdpData( udpBuffer, sizeof( udpBuffer ), connId );
+        ok &= mAgentSocket.receiveUdpData( udpBuffer, sizeof( udpBuffer ));
 
         if( ok )
         {

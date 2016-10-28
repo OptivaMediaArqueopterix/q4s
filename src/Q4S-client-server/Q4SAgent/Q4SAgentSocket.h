@@ -20,7 +20,7 @@ public:
 
     bool    startUdpListening( );
     //bool    sendUdpData( int connectionId, const char* sendBuffer );
-    bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId );
+    bool    receiveUdpData (char* receiveBuffer, int receiveBufferSize);
     bool    closeConnection( int socketType );
 
 private:
