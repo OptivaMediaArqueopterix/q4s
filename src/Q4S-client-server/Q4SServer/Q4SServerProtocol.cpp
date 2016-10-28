@@ -27,9 +27,20 @@ bool Q4SServerProtocol::init()
 
     bool ok = true;
 
-    mReceivedMessages.init( );
+    if (ok)
+    {
+        mReceivedMessages.init( );
+    }
 
-    ok &= openConnectionListening();
+    if (ok)
+    {
+        ok &= openConnectionListening();
+    }
+
+    if (ok)
+    {
+        ok &= mServerSocket.startAlertSender();
+    }
 
     return ok;
 }
@@ -228,6 +239,7 @@ void Q4SServerProtocol::cancel()
 
 void Q4SServerProtocol::alert()
 {
+    mServerSocket.sendAlertData("ALERT");
     printf("METHOD: alert\n");
 }
 

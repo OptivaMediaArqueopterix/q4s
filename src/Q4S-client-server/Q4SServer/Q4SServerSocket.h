@@ -30,9 +30,12 @@ public:
     bool    sendUdpData( int connectionId, const char* sendBuffer );
     bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId );
 
+    // Alert
+    bool    startAlertSender( );
+    bool    sendAlertData( const char* sendBuffer );
+
     // TCP/UDP
     bool    closeConnection( int socketType );
-
 
 private:
 
@@ -56,24 +59,32 @@ private:
     bool    acceptClientConnection( Q4SConnectionInfo* connectionInfo );
     bool    closeListenSocket( );
 
-    //UDP
-    bool    createUdpSocket( );
-    bool    bindUdpSocket( );
-
+    // TCP AUX
     bool    getTcpSocket( int connectionId, Q4SSocket*& pQ4SSocket );
     bool    getConnectionInfo( int connectionId, Q4SConnectionInfo*& pQ4SConnInfo );
     bool    getConnectionInfo( sockaddr_in& connectionInfo, Q4SConnectionInfo*& pQ4SConnInfo );
 
+    //UDP
+    bool    createUdpSocket( );
+    bool    bindUdpSocket( );
+    
+    // Alert
+    bool    createAlertUdpSocket( );
+
     // TCP
-    SOCKET              mListenSocket;
-    struct addrinfo*    mpAddrInfoResultTcp; 
+    SOCKET                          mListenSocket;
+    struct addrinfo*                mpAddrInfoResultTcp; 
+    std::list<Q4SConnectionInfo*>   listConnectionInfo;
 
     // UDP
     SOCKET              mUdpSocket;
     struct addrinfo*    mpAddrInfoResultUdp; 
     Q4SSocket           mq4sUdpSocket;
 
-    std::list< Q4SConnectionInfo* >         listConnectionInfo;
+    // Alert
+    SOCKET              mAlertSocket;
+    struct addrinfo*    mpAddrInfoResultAlert; 
+    Q4SSocket           mq4sAlertSocket;
 };
 
 #endif  // _Q4SSERVERSOCKET_H_

@@ -28,16 +28,17 @@ void Q4SServerSocket::done()
 
 void Q4SServerSocket::clear()
 {
-    mListenSocket = INVALID_SOCKET;
-    mUdpSocket = INVALID_SOCKET;
-    mpAddrInfoResultTcp = NULL;
-    mpAddrInfoResultUdp = NULL;
+    mListenSocket   = INVALID_SOCKET;
+    mUdpSocket      = INVALID_SOCKET;
+    mAlertSocket    = INVALID_SOCKET;
+    mpAddrInfoResultTcp     = NULL;
+    mpAddrInfoResultUdp     = NULL;
+    mpAddrInfoResultAlert   = NULL;
 }
 
 bool Q4SServerSocket::startTcpListening( )
 {
-    Q4SServerSocket     q4SServer;
-    bool                ok = true;
+    bool ok = true;
 
     if( ok )
     {
@@ -61,14 +62,12 @@ bool Q4SServerSocket::startTcpListening( )
 
 bool Q4SServerSocket::waitForTcpConnection( int connectionId )
 {
-    //Q4SServerSocket     q4SServer;
-    bool                ok = true;
+    bool ok = true;
 
     if( ok )
     {
         Q4SConnectionInfo* connectionInfo = new Q4SConnectionInfo( );
         connectionInfo->id = connectionId;
-        //connectionInfo->udpId = 0;
         ZeroMemory( &( connectionInfo->peerTcpAddrInfo ), sizeof( connectionInfo->peerTcpAddrInfo ) );
         ZeroMemory( &( connectionInfo->peerUdpAddrInfo ), sizeof( connectionInfo->peerUdpAddrInfo ) );
         ok &= acceptClientConnection( connectionInfo );
@@ -79,8 +78,7 @@ bool Q4SServerSocket::waitForTcpConnection( int connectionId )
 
 bool Q4SServerSocket::startUdpListening( )
 {
-    Q4SServerSocket     q4SServer;
-    bool                ok = true;
+    bool ok = true;
 
     if( ok )
     {
@@ -105,7 +103,7 @@ bool Q4SServerSocket::startUdpListening( )
 
 bool Q4SServerSocket::stopWaiting( )
 {
-    bool                ok = true;
+    bool ok = true;
 
     if( ok )
     {
@@ -165,8 +163,6 @@ bool Q4SServerSocket::receiveTcpData( int connId, char* receiveBuffer, int recei
 
 bool Q4SServerSocket::sendUdpData( int connectionId, const char* sendBuffer )
 {
-    //return mq4sUdpSocket.sendData( sendBuffer );
-
     bool                ok = true;
     Q4SConnectionInfo*  pQ4SConnInfo;
 
@@ -181,13 +177,10 @@ bool Q4SServerSocket::sendUdpData( int connectionId, const char* sendBuffer )
 
 bool Q4SServerSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize, int& connectionId )
 {
-    //return mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, &addrInfo );
-
     bool                ok = true;
     Q4SConnectionInfo*  pQ4SConnInfo;
     sockaddr_in         addrInfo;
 
-    //ok &= getConnectionInfo( connectionId, pQ4SConnInfo );
     if( ok )
     {
         ok &= mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, &addrInfo );
@@ -204,6 +197,40 @@ bool Q4SServerSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize
     
     return ok;
 }
+
+bool Q4SServerSocket::startAlertSender()
+{
+    bool ok = true;
+
+    if( ok )
+    {
+        ok &= initializeSockets( );
+    }
+    if( ok )
+    {
+        ok &= createAlertUdpSocket( );
+    }
+    if( ok )
+    {
+        mq4sAlertSocket.setSocket( mAlertSocket, SOCK_DGRAM, &q4SServerConfigFile.agentIP, &q4SServerConfigFile.agentPort );
+        printf( "Prepared for sending alerts at: %s\n", q4SServerConfigFile.agentPort.c_str() );
+    }
+
+    return ok;
+}
+
+bool Q4SServerSocket::sendAlertData( const char* sendBuffer )
+{
+    bool                ok = true;
+
+    if( ok )
+    {
+        ok &= mq4sAlertSocket.sendData( sendBuffer);
+    }
+
+    return ok;
+}
+
 
 // Functions to manage connection info list.
 
@@ -512,6 +539,43 @@ bool Q4SServerSocket::bindUdpSocket( )
         else
         {
             freeaddrinfo( mpAddrInfoResultUdp );
+        }
+    }
+
+    return ok;
+}
+
+bool Q4SServerSocket::createAlertUdpSocket( )
+{
+    //Create a socket.
+    struct addrinfo hints;
+    int             iResult;
+    bool            ok = true;
+    
+    ZeroMemory( &hints, sizeof( hints ) );
+    hints.ai_family = AF_INET;
+
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    // Resolve the local address and port to be used by the server
+    iResult = getaddrinfo( NULL, q4SServerConfigFile.agentPort.c_str(), &hints, &mpAddrInfoResultAlert );
+        
+    if( ok && ( iResult != 0 ) )
+    {
+        printf( "getaddrinfo failed: %d\n", iResult );
+        WSACleanup( );
+        ok &= false;
+    }
+
+    if( ok )
+    {
+        mAlertSocket = socket( mpAddrInfoResultAlert->ai_family, mpAddrInfoResultAlert->ai_socktype, mpAddrInfoResultAlert->ai_protocol );
+        if( mAlertSocket == INVALID_SOCKET ) 
+        {
+            printf( "Error at socket(): %ld\n", WSAGetLastError( ) );
+            freeaddrinfo( mpAddrInfoResultAlert );
+            WSACleanup( );
+            ok &= false;
         }
     }
 
