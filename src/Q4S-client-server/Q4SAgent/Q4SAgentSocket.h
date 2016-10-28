@@ -18,9 +18,15 @@ public:
     bool    init( );
     void    done( );
 
+    // UDP Listening
     bool    startUdpListening( );
-    //bool    sendUdpData( int connectionId, const char* sendBuffer );
     bool    receiveUdpData (char* receiveBuffer, int receiveBufferSize);
+
+    // Actions
+    bool    startActionSender( );
+    bool    sendActionData( const char* sendBuffer );
+
+    // Common
     bool    closeConnection( int socketType );
 
 private:
@@ -31,10 +37,17 @@ private:
     bool    createUdpSocket( );
     bool    bindUdpSocket( );
 
+    // Action
+    bool    createActionUdpSocket( );
+
     SOCKET              mUdpSocket;
     struct addrinfo*    mpAddrInfoResultUdp; 
     Q4SSocket           mq4sUdpSocket;
 
+    // Action
+    SOCKET              mActionSocket;
+    struct addrinfo*    mpAddrInfoResultAction; 
+    Q4SSocket           mq4sActionSocket;
 };
 
 #endif  // _Q4SAGENTSOCKET_H_

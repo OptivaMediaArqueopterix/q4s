@@ -34,6 +34,11 @@ bool Q4SAgentProtocol::init()
 
     if (ok)
     {
+        ok &= mAgentSocket.startActionSender();
+    }
+
+    if (ok)
+    {
         ok &= mReceivedMessages.init( );
     }
 
@@ -144,6 +149,7 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
         {
             // TODO: Leer el buffer para ver que alerta es y actuar en consecuencia
             printf( "Received Udp: <%s>\n", udpBuffer );
+            mAgentSocket.sendActionData("ALERT");
         }
     }
 

@@ -97,6 +97,39 @@ bool Q4SAgentSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize)
     return ok;
 }
 
+bool Q4SAgentSocket::startActionSender()
+{
+    bool ok = true;
+
+    if( ok )
+    {
+        ok &= initializeSockets( );
+    }
+    if( ok )
+    {
+        ok &= createActionUdpSocket( );
+    }
+    if( ok )
+    {
+        mq4sActionSocket.setSocket( mActionSocket, SOCK_DGRAM, &q4SAgentConfigFile.ganyConnectorIp, &q4SAgentConfigFile.ganyConnectorPort );
+        printf( "Prepared for sending alerts at: %s\n", q4SAgentConfigFile.ganyConnectorPort.c_str() );
+    }
+
+    return ok;
+}
+
+bool Q4SAgentSocket::sendActionData( const char* sendBuffer )
+{
+    bool ok = true;
+
+    if( ok )
+    {
+        ok &= mq4sActionSocket.sendData( sendBuffer);
+    }
+
+    return ok;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 bool Q4SAgentSocket::initializeSockets( )
@@ -186,6 +219,43 @@ bool Q4SAgentSocket::bindUdpSocket( )
         else
         {
             freeaddrinfo( mpAddrInfoResultUdp );
+        }
+    }
+
+    return ok;
+}
+
+bool Q4SAgentSocket::createActionUdpSocket( )
+{
+    //Create a socket.
+    struct addrinfo hints;
+    int             iResult;
+    bool            ok = true;
+    
+    ZeroMemory( &hints, sizeof( hints ) );
+    hints.ai_family = AF_INET;
+
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    // Resolve the local address and port to be used by the server
+    iResult = getaddrinfo( NULL, q4SAgentConfigFile.ganyConnectorPort.c_str(), &hints, &mpAddrInfoResultAction );
+        
+    if( ok && ( iResult != 0 ) )
+    {
+        printf( "getaddrinfo failed: %d\n", iResult );
+        WSACleanup( );
+        ok &= false;
+    }
+
+    if( ok )
+    {
+        mActionSocket = socket( mpAddrInfoResultAction->ai_family, mpAddrInfoResultAction->ai_socktype, mpAddrInfoResultAction->ai_protocol );
+        if( mActionSocket == INVALID_SOCKET ) 
+        {
+            printf( "Error at socket(): %ld\n", WSAGetLastError( ) );
+            freeaddrinfo( mpAddrInfoResultAction );
+            WSACleanup( );
+            ok &= false;
         }
     }
 
