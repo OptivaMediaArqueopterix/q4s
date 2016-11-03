@@ -19,7 +19,7 @@ public:
     // Q4S Methods
     bool    begin();
     bool    ready();
-    bool    ping();
+    bool    measureStage0(float maxLatency, float maxJitter);
     void    bwidth();
     void    cancel();
     void    alert();

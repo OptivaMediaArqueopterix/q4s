@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include "Q4SClientConfigFile.h"
+
 Q4SClientStateManager::Q4SClientStateManager()
 {
     clear();
@@ -98,14 +100,20 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_NEGOTIATION:
             {
+                bool measureStage0Ok = false;
                 bool readyOk = Q4SClientProtocol::ready();
                 if( readyOk )
                 {
-                    readyOk &= Q4SClientProtocol::ping();
-                }
-                if (readyOk)
-                {
-                    nextState = Q4SCLIENTSTATE_CONTINUITY;
+                    measureStage0Ok = Q4SClientProtocol::measureStage0(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter);
+                    if (measureStage0Ok)
+                    {
+                        nextState = Q4SCLIENTSTATE_CONTINUITY;
+                    }
+                    else
+                    {
+                        //Alert
+                        stop = true;
+                    }
                 }
                 else
                 {

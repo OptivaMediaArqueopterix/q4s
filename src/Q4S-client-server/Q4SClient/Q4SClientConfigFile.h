@@ -15,6 +15,8 @@ public:
     double timeBetweenPings;
     double timeStartCalc;
     double timeEndApp;
+    float maxLatency;
+    float maxJitter;
 };
 
 extern Q4SClientConfigFile q4SClientConfigFile;

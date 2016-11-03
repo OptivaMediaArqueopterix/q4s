@@ -122,9 +122,9 @@ bool Q4SClientProtocol::ready()
     return ok;
 }
 
-bool Q4SClientProtocol::ping()
+bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
 {
-    printf("METHOD: ping\n");
+    printf("METHOD: measureStage0\n");
 
     bool            ok = true;
     int             j = 0,
@@ -186,7 +186,16 @@ bool Q4SClientProtocol::ping()
         }
         float ets = EMathUtils_mean( arrPingJitters );
         printf( "Latencies mean ET: %.3f; jitter: %.3f\n", ets, ets - q4SClientConfigFile.timeBetweenPings );
+    }
 
+    if ( latency > maxLatency )
+    {
+        ok = false;
+    }
+
+    if ( jitter > maxJitter)
+    {
+        ok = false;
     }
     
     return ok;
