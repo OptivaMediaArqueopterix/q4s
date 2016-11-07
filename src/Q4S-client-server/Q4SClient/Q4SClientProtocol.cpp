@@ -232,6 +232,16 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
     return ok;
 }
 
+bool Q4SClientProtocol::measureStage1(float minBandWith, float maxPacketLoss)
+{
+    bool ok = true;
+
+    // TODO measure bandwith and packet loss
+
+
+    return ok;
+}
+
 void Q4SClientProtocol::bwidth()
 {
     printf("METHOD: bwidth\n");

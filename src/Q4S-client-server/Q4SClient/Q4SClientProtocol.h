@@ -20,6 +20,7 @@ public:
     bool    begin();
     bool    ready();
     bool    measureStage0(float maxLatency, float maxJitter);
+    bool    measureStage1(float minBandWith, float maxPacketLoss);
     void    bwidth();
     void    cancel();
     void    alert();

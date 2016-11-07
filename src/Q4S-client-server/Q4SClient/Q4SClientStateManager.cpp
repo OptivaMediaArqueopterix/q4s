@@ -109,7 +109,19 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                     measureStage0Ok = Q4SClientProtocol::measureStage0(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter);
                     if (measureStage0Ok)
                     {
-                        nextState = Q4SCLIENTSTATE_CONTINUITY;
+                        bool measureStage1Ok = false;
+
+                        measureStage1Ok = Q4SClientProtocol::measureStage1( 500, 10);
+
+                        if (measureStage1Ok)
+                        {
+                            nextState = Q4SCLIENTSTATE_CONTINUITY;
+                        }
+                        else
+                        {
+                            //Alert
+                            stop = true;
+                        }
                     }
                     else
                     {
