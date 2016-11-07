@@ -165,10 +165,10 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
         char messagePattern[ 256 ];
         std::string pattern;
         Q4SMessageInfo messageInfo;
-        std::vector<float> arrPingLatencies;
+        std::vector<unsigned long> arrPingLatencies;
         std::vector<float> arrPingJitters;
-        float actualPingLatency;
-        float actualPingTimeWithPrevious;
+        unsigned long actualPingLatency;
+        unsigned long actualPingTimeWithPrevious;
 
         // Latency calculation.
         for( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
@@ -180,16 +180,16 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
             if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
             {
                 // Latency calculation
-                actualPingLatency = ( messageInfo.timeStamp - arrSentPingTimestamps[ pingNumber ] ) / 2.0f;
+                actualPingLatency = messageInfo.timeStamp - arrSentPingTimestamps[ pingNumber ];
 
                 // Latency store
                 arrPingLatencies.push_back( actualPingLatency );
 
-                printf( "PING %d actual ping latency: %.2f\n", pingNumber, actualPingLatency );
+                printf( "PING %d actual ping latency: %d\n", pingNumber, actualPingLatency );
             }
         }
 
-        latency = EMathUtils_median( arrPingLatencies );
+        latency = EMathUtils_median( arrPingLatencies ) / 2.0f;
         printf( "Latency: %.3f\n", latency );
 
         // Jitter calculation.
@@ -205,9 +205,9 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
                 if( pingNumber > 0 )
                 {
                     // Jitter calculation
-                    actualPingTimeWithPrevious = (float)( arrReceivedPingTimestamps[ pingNumber ] - arrReceivedPingTimestamps[ pingNumber - 1 ] );
+                    actualPingTimeWithPrevious = ( arrReceivedPingTimestamps[ pingNumber ] - arrReceivedPingTimestamps[ pingNumber - 1 ] );
                     // Jitter store
-                    arrPingJitters.push_back( actualPingTimeWithPrevious );
+                    arrPingJitters.push_back( (float)actualPingTimeWithPrevious );
 
                     printf( "PING %d ET: %.2f\n", pingNumber, actualPingTimeWithPrevious );
                 }
