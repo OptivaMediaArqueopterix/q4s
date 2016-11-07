@@ -146,13 +146,19 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
     {
         for( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
         {
+            // Store the timestamp
             timeStamp = ETime_getTime( );
+            arrSentPingTimestamps.push_back( timeStamp );
+
+            // Prepare message and send
             sprintf_s( buffer, "PING %d %d", pingNumber, timeStamp );
             ok &= mClientSocket.sendUdpData( buffer );
-            arrSentPingTimestamps.push_back( timeStamp );
+
+            // Wait the established time between pings
             Sleep( (DWORD)q4SClientConfigFile.timeBetweenPings );
         }
 
+        // Wait the established time to start calculation
         Sleep( (DWORD)q4SClientConfigFile.timeStartCalc);
 
         // Latency calculation.
@@ -162,8 +168,11 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
             pattern = buffer;
             if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
             {
+                // Latency calculation
                 latency = ( messageInfo.timeStamp - arrSentPingTimestamps[ pingNumber ] ) / 2.0f;
+                // Latency store
                 arrPingLatencies.push_back( latency );
+
                 printf( "PING %d latency: %.2f\n", pingNumber, latency );
             }
         }
@@ -179,8 +188,11 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
                 arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
                 if( pingNumber > 0 )
                 {
+                    // Jitter calculation
                     jitter = ( arrReceivedPingTimestamps[ pingNumber ] - arrReceivedPingTimestamps[ pingNumber - 1 ] );
+                    // Jitter store
                     arrPingJitters.push_back( jitter );
+
                     printf( "PING %d ET: %.2f\n", pingNumber, jitter );
                 }
             }
