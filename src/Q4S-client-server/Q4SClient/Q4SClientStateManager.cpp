@@ -70,6 +70,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
     {
         case Q4SCLIENTSTATE_INIT:
             {
+                // Initialize protocol: thread and sockets
                 bool initOk = Q4SClientProtocol::init();
                 if (initOk)
                 {
@@ -85,6 +86,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_HANDSHAKE:
             {
+                // Trigger the establishment of the protocol
                 bool beginOk = Q4SClientProtocol::begin();
                 if (beginOk)
                 {
