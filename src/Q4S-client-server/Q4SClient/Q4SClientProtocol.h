@@ -19,8 +19,8 @@ public:
     // Q4S Methods
     bool    begin();
     bool    ready();
-    bool    measureStage0(float maxLatency, float maxJitter);
-    bool    measureStage1(float minBandWith, float maxPacketLoss);
+    bool    measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
+    void    continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
     void    bwidth();
     void    cancel();
     void    alert();
@@ -32,6 +32,9 @@ private:
 
     bool    openConnections();
     void    closeConnections();
+
+    bool    measureStage0(float maxLatency, float maxJitter);
+    bool    measureStage1(float minBandWith, float maxPacketLoss);
 
     Q4SClientSocket             mClientSocket;
     HANDLE                      marrthrHandle[ 2 ];

@@ -102,26 +102,15 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_NEGOTIATION:
             {
-                bool measureStage0Ok = false;
+                bool measureOk = false;
                 bool readyOk = Q4SClientProtocol::ready();
                 if( readyOk )
                 {
-                    measureStage0Ok = Q4SClientProtocol::measureStage0(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter);
-                    if (measureStage0Ok)
+                    measureOk = Q4SClientProtocol::measure(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter, 500, 10);
+
+                    if (measureOk)
                     {
-                        bool measureStage1Ok = false;
-
-                        measureStage1Ok = Q4SClientProtocol::measureStage1( 500, 10);
-
-                        if (measureStage1Ok)
-                        {
-                            nextState = Q4SCLIENTSTATE_CONTINUITY;
-                        }
-                        else
-                        {
-                            //Alert
-                            stop = true;
-                        }
+                        nextState = Q4SCLIENTSTATE_CONTINUITY;
                     }
                     else
                     {
@@ -134,12 +123,13 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                     // TODO: launch error
                     stop = true;
                 }
-            }
+            }  
         break;
 
         case Q4SCLIENTSTATE_CONTINUITY:
             {
                 printf("Hemos llegado a la continuidad\n");
+                continuity(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter, 500, 10);
                 nextState = Q4SCLIENTSTATE_TERMINATION;
             }
         break;

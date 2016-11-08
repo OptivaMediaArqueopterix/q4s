@@ -122,6 +122,51 @@ bool Q4SClientProtocol::ready()
     return ok;
 }
 
+bool Q4SClientProtocol::measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss)
+{
+    bool measureOk = true;
+
+    measureOk = Q4SClientProtocol::measureStage0(maxLatency, maxJitter);
+    if (measureOk)
+    {
+        measureOk = Q4SClientProtocol::measureStage1( 500, 10);
+    }
+
+    return measureOk;
+}
+
+void Q4SClientProtocol::continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss)
+{
+    bool stop = false;
+    bool measureOk = true;
+
+    while ( !stop )
+    {
+        measureOk = measure(maxLatency, maxJitter, minBandWith, maxPacketLoss);
+        stop = !measureOk;
+    }
+}
+
+void Q4SClientProtocol::bwidth()
+{
+    printf("METHOD: bwidth\n");
+}
+
+void Q4SClientProtocol::cancel()
+{
+    printf("METHOD: cancel\n");
+}
+
+void Q4SClientProtocol::alert()
+{
+    printf("METHOD: alert\n");
+}
+
+void Q4SClientProtocol::end()
+{
+    closeConnections();
+}
+
 bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
 {
     printf("METHOD: measureStage0\n");
@@ -242,27 +287,6 @@ bool Q4SClientProtocol::measureStage1(float minBandWith, float maxPacketLoss)
     return ok;
 }
 
-void Q4SClientProtocol::bwidth()
-{
-    printf("METHOD: bwidth\n");
-}
-
-void Q4SClientProtocol::cancel()
-{
-    printf("METHOD: cancel\n");
-}
-
-void Q4SClientProtocol::alert()
-{
-    printf("METHOD: alert\n");
-}
-
-void Q4SClientProtocol::end()
-{
-    closeConnections();
-}
-
-
 // Received data managing functions.
 
 DWORD WINAPI Q4SClientProtocol::manageTcpReceivedDataFn( LPVOID lpData )
@@ -294,7 +318,6 @@ bool Q4SClientProtocol::manageTcpReceivedData( )
             printf( "Received Tcp: <%s>\n", buffer );
         }
     }
-
 
     return ok;
 }
