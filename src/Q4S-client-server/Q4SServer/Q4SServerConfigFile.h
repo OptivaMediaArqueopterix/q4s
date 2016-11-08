@@ -18,6 +18,8 @@ public:
     double timeEndApp;
     float maxLatency;
     float maxJitter;
+    bool showMeasureInfo;
+    bool showReceivedPingInfo;
 };
 
 extern Q4SServerConfigFile q4SServerConfigFile;

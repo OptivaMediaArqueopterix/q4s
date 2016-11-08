@@ -15,7 +15,8 @@ Q4SServerConfigFile::Q4SServerConfigFile(const std::string &fName)
     timeEndApp = configFile.getValueOfKey<double>("TIME_END_APP", 10000);
     maxLatency = configFile.getValueOfKey<float>("MAX_LATENCY", 2000);
     maxJitter = configFile.getValueOfKey<float>("MAX_JITTER", 200);
-
+    showMeasureInfo = configFile.keyExists("SHOW_MEASURE_INFO");
+    showReceivedPingInfo = configFile.keyExists("SHOW_RECEIVED_PING_INFO");
 
     //bool exists = cfg.keyExists("SERVER_IP");
 }

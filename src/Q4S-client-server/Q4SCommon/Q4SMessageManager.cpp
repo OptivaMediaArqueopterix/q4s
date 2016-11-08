@@ -66,6 +66,7 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage )
     if( mMessages.size( ) == 0 )
     {
         printf( "FATAL ERROR. Message available but stolen by another thread.\n" );
+        ok = false;
     }
     else
     {
@@ -86,12 +87,9 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage )
 bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messageInfo )
 {
     bool    found = false;
-    DWORD   waitResult;
-    int     j = 0,
-            jmax = 0;
     std::list< Q4SMessageInfo >::iterator  itr_msg;
 
-    waitResult = WaitForSingleObject( mevMessageReady, INFINITE );
+    WaitForSingleObject( mevMessageReady, INFINITE );
     mcsMessagesAccess.enter( );
 
     for( itr_msg = mMessages.begin( ); ( found == false ) && ( itr_msg != mMessages.end( ) ); itr_msg++ )
@@ -103,6 +101,36 @@ bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messa
             messageInfo.message = itr_msg->message;
             messageInfo.timeStamp = itr_msg->timeStamp;
         }
+    }
+
+    mcsMessagesAccess.leave( );
+
+    return found;
+}
+
+bool Q4SMessageManager::readMessageAndPop( std::string& pattern, Q4SMessageInfo& messageInfo )
+{
+    bool    found = false;
+    std::list< Q4SMessageInfo >::iterator  itr_msg;
+
+    WaitForSingleObject( mevMessageReady, INFINITE );
+    mcsMessagesAccess.enter( );
+
+    for( itr_msg = mMessages.begin( ); ( found == false ) && ( itr_msg != mMessages.end( ) ); itr_msg++ )
+    {
+        if( itr_msg->message.substr( 0, pattern.size( ) ).compare( pattern ) == 0 )
+        {
+            // Message found.
+            found = true;
+            messageInfo.message = itr_msg->message;
+            messageInfo.timeStamp = itr_msg->timeStamp;
+        }
+    }
+
+    if (found)
+    {
+        itr_msg--;
+        mMessages.erase(itr_msg);
     }
 
     mcsMessagesAccess.leave( );

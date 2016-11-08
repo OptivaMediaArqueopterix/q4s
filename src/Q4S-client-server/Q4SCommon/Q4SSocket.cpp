@@ -42,7 +42,7 @@ void Q4SSocket::setSocket( SOCKET socket, int socketType, std::string* connectTo
     mSocketUDPConnectToPort = connectToUDPPort;
 }
 
-bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo )
+bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo, bool showInfo)
 {
     //Bind the socket.
     int     iResult;
@@ -89,12 +89,15 @@ bool Q4SSocket::sendData( const char* sendBuffer, sockaddr_in* pAddrInfo )
         ok &= false;
     }
 
-    printf( "Bytes Sent: %ld\n", iResult );
+    if ( showInfo) 
+    {
+        printf( "Bytes Sent: %ld\n", iResult );
+    }
 
     return ok;
 }
 
-bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize, sockaddr_in* pAddrInfo )
+bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize, sockaddr_in* pAddrInfo, bool showInfo)
 {
     //Listen on the socket for a client.
     bool    ok = true;
@@ -120,16 +123,24 @@ bool Q4SSocket::receiveData( char* receiveBuffer, int receiveBufferSize, sockadd
     {
         memcpy( pAddrInfo, &mPeerAddrInfo, sizeof( mPeerAddrInfo ) );
     }
-    printf( "Exiting from receive in %d type\n", mSocketType );
+
+    if ( showInfo) 
+    {
+        printf( "Exiting from receive in %d type\n", mSocketType );
+    }
+
     if( iResult > 0 )
     {
-        if( mSocketType == SOCK_STREAM )
+        if ( showInfo) 
         {
-            printf( "Bytes received by Tcp: %d\n", iResult );
-        }
-        else if( mSocketType == SOCK_DGRAM )
-        {
-            printf( "Bytes received by Udp: %d\n", iResult );
+            if( mSocketType == SOCK_STREAM )
+            {
+                printf( "Bytes received by Tcp: %d\n", iResult );
+            }
+            else if( mSocketType == SOCK_DGRAM )
+            {
+                printf( "Bytes received by Udp: %d\n", iResult );
+            }
         }
         receiveBuffer[ iResult ] = '\0';
         mAlreadyReceived = true;

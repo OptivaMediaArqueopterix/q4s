@@ -24,6 +24,7 @@ class Q4SMessageManager
 
     bool readFirst( std::string &firstMessage );
     bool readMessage( std::string& pattern, Q4SMessageInfo& message );
+    bool readMessageAndPop( std::string& pattern, Q4SMessageInfo& messageInfo );
 
 private:
 

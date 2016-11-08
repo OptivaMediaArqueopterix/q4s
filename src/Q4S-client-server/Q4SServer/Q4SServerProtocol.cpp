@@ -116,7 +116,7 @@ void Q4SServerProtocol::closeConnections()
 
 bool Q4SServerProtocol::begin()
 {
-    printf("METHOD: begin\n");
+    printf("WAITING FOR BEGIN\n");
     std::string message;
 
     bool ok = true;
@@ -136,14 +136,14 @@ bool Q4SServerProtocol::begin()
 
 bool Q4SServerProtocol::ready()
 {
-    printf("METHOD: ready\n");
+    printf("WAITING FOR READY\n");
     std::string message;
 
     bool ok = true;
 
     if ( ok ) 
     {
-        mReceivedMessages.readFirst( message );
+        ok &= mReceivedMessages.readFirst( message );
     }
 
     if( ok )
@@ -157,6 +157,8 @@ bool Q4SServerProtocol::ready()
 bool Q4SServerProtocol::measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss)
 {
     bool measureOk = true;
+
+    printf("MEASURING\n");
 
     measureOk = Q4SServerProtocol::measureStage0(maxLatency, maxJitter);
     if (measureOk)
@@ -181,8 +183,6 @@ void Q4SServerProtocol::continuity(float maxLatency, float maxJitter, float minB
 
 bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
 {
-    printf("METHOD: ping\n");
-
     bool ok = true;
 
     int pingIndex = 0;
@@ -230,9 +230,9 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
         char messagePattern[ 256 ];
         std::string pattern;
         Q4SMessageInfo messageInfo;
-        std::vector<unsigned long> arrPingLatencies;
+        std::vector<float> arrPingLatencies;
         std::vector<float> arrPingJitters;
-        unsigned long actualPingLatency;
+        float actualPingLatency;
         float actualPingTimeWithPrevious;
 
         // Prepare for Latency calculation
@@ -242,21 +242,28 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
             sprintf_s( messagePattern, "200 OK %d", pingIndex );
             pattern = messagePattern;
 
-            if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
+            if( mReceivedMessages.readMessageAndPop( pattern, messageInfo ) == true )
             {
                 // Actual ping latency calculation
-                actualPingLatency = messageInfo.timeStamp - arrSentPingTimestamps[ pingIndex ];
+                actualPingLatency = (messageInfo.timeStamp - arrSentPingTimestamps[ pingIndex ])/ 2.0f;
 
                 // Latency store
                 arrPingLatencies.push_back( actualPingLatency );
 
-                printf( "PING %d actual ping latency: %d\n", pingIndex, actualPingLatency );
+                if (q4SServerConfigFile.showMeasureInfo)
+                {
+                    printf( "PING %d actual ping latency: %.3f\n", pingIndex, actualPingLatency );
+                }
+            }
+            else
+            {
+                    printf( "PING %d message lost\n", pingIndex);
             }
         }
 
         // Latency calculation
-        latency = EMathUtils_median( arrPingLatencies ) / 2.0f;
-        printf( "Latency: %.3f\n", latency );
+        latency = EMathUtils_median( arrPingLatencies );
+        printf( "MEASURING RESULT - Latency: %.3f\n", latency );
 
         // Prepare for Jitter calculation
         for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
@@ -265,7 +272,7 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
             sprintf_s( messagePattern, "PING %d", pingIndex );
             pattern = messagePattern;
 
-            if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
+            if( mReceivedMessages.readMessageAndPop( pattern, messageInfo ) == true )
             {
                 arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
                 if( pingIndex > 0 )
@@ -274,9 +281,12 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
                     actualPingTimeWithPrevious = (float)( arrReceivedPingTimestamps[ pingIndex ] - arrReceivedPingTimestamps[ pingIndex - 1 ] );
 
                     // Actual time between this ping and previous store
-                    arrPingJitters.push_back( (float)actualPingTimeWithPrevious );
+                    arrPingJitters.push_back( actualPingTimeWithPrevious );
 
-                    printf( "PING %d ET: %d\n", pingIndex, actualPingTimeWithPrevious );
+                    if (q4SServerConfigFile.showMeasureInfo)
+                    {
+                        printf( "PING %d ET: %.3f\n", pingIndex, actualPingTimeWithPrevious );
+                    }
                 }
             }
         }
@@ -284,8 +294,8 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
         // Jitter calculation
         float meanOfTimeWithPrevious = EMathUtils_mean( arrPingJitters );
         jitter = meanOfTimeWithPrevious - (float)q4SServerConfigFile.timeBetweenPings;
-        printf( "Time With previous ping mean: %.3f\n", meanOfTimeWithPrevious );
-        printf( "Jitter: %.3f\n", jitter );
+        printf( "MEASURING RESULT - Time With previous ping mean: %.3f\n", meanOfTimeWithPrevious );
+        printf( "MEASURING RESULT - Jitter: %.3f\n", jitter );
     }
 
     // Check latency and jitter limits
@@ -450,11 +460,17 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
             // Comprobar que es un ping
             if ( isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
             {
-                printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, receivedTimeStamp);
+                if (q4SServerConfigFile.showReceivedPingInfo)
+                {
+                    printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, receivedTimeStamp);
+                }
 
                 // mandar respuesta del ping
                 char buffer[ 256 ];
-                printf( "Ping responsed %d\n", pingNumber);
+                if (q4SServerConfigFile.showReceivedPingInfo)
+                {
+                    printf( "Ping responsed %d\n", pingNumber);
+                }
                 sprintf_s( buffer, "200 OK %d", pingNumber );
                 ok &= mServerSocket.sendUdpData( connId, buffer );
             
@@ -467,7 +483,10 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
                 mReceivedMessages.addMessage(message, actualTimeStamp);
             }
 
-            printf( "Received Udp: <%s>\n", udpBuffer );
+            if (q4SServerConfigFile.showReceivedPingInfo)
+            {
+                printf( "Received Udp: <%s>\n", udpBuffer );
+            }
         }
     }
 

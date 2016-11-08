@@ -102,6 +102,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_NEGOTIATION:
             {
+                Sleep(1000);
                 bool measureOk = false;
                 bool readyOk = Q4SClientProtocol::ready();
                 if( readyOk )
@@ -128,9 +129,14 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_CONTINUITY:
             {
-                printf("Hemos llegado a la continuidad\n");
-                continuity(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter, 500, 10);
-                nextState = Q4SCLIENTSTATE_TERMINATION;
+                Sleep(1000);
+                bool readyOk = Q4SClientProtocol::ready();
+                if( readyOk )
+                {
+                    printf("Hemos llegado a la continuidad\n");
+                    continuity(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter, 500, 10);
+                    nextState = Q4SCLIENTSTATE_TERMINATION;
+                }
             }
         break;
 
