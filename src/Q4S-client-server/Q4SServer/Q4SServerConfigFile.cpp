@@ -13,6 +13,9 @@ Q4SServerConfigFile::Q4SServerConfigFile(const std::string &fName)
     timeBetweenPings = configFile.getValueOfKey<double>("TIME_BETWEEN_PINGS", 200   );
     timeStartCalc = configFile.getValueOfKey<double>("TIME_START_CALC", 2000);
     timeEndApp = configFile.getValueOfKey<double>("TIME_END_APP", 10000);
+    maxLatency = configFile.getValueOfKey<float>("MAX_LATENCY", 2000);
+    maxJitter = configFile.getValueOfKey<float>("MAX_JITTER", 200);
+
 
     //bool exists = cfg.keyExists("SERVER_IP");
 }

@@ -19,7 +19,8 @@ public:
     // Q4S Methods
     bool    begin();
     bool    ready();
-    bool    ping();
+    bool    measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
+    void    continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
     void    bwidth();
     void    cancel();
     void    alert();
@@ -32,6 +33,9 @@ private:
     bool    openConnectionListening();
     void    closeConnectionListening();
     void    closeConnections();
+
+    bool    measureStage0(float maxLatency, float maxJitter);
+    bool    measureStage1(float minBandWith, float maxPacketLoss);
 
     Q4SServerSocket             mServerSocket;
     HANDLE                      marrthrListenHandle[ 2 ];

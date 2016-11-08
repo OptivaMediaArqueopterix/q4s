@@ -1,6 +1,7 @@
 #include "Q4SServerStateManager.h"
 
 #include <stdio.h>
+#include "Q4SServerConfigFile.h"
 
 Q4SServerStateManager::Q4SServerStateManager()
 {
@@ -98,14 +99,20 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
 
         case Q4SSERVERSTATE_NEGOTIATION:
             {
+                bool measureOk = false;
                 bool readyOk = Q4SServerProtocol::ready();
                 if( readyOk )
                 {
-                    readyOk &= Q4SServerProtocol::ping();
-                }
-                if (readyOk)
-                {
-                    nextState = Q4SSERVERSTATE_CONTINUITY;
+                    measureOk = Q4SServerProtocol::measure(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10);
+                    if (measureOk)
+                    {
+                        nextState = Q4SSERVERSTATE_CONTINUITY;
+                    }
+                    else
+                    {
+                        //Alert
+                        stop = true;
+                    }
                 }
                 else
                 {

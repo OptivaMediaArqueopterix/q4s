@@ -154,82 +154,162 @@ bool Q4SServerProtocol::ready()
     return ok;
 }
 
-bool Q4SServerProtocol::ping()
+bool Q4SServerProtocol::measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss)
+{
+    bool measureOk = true;
+
+    measureOk = Q4SServerProtocol::measureStage0(maxLatency, maxJitter);
+    if (measureOk)
+    {
+        measureOk = Q4SServerProtocol::measureStage1( 500, 10);
+    }
+
+    return measureOk;
+}
+
+void Q4SServerProtocol::continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss)
+{
+    bool stop = false;
+    bool measureOk = true;
+
+    while ( !stop )
+    {
+        measureOk = measure(maxLatency, maxJitter, minBandWith, maxPacketLoss);
+        stop = !measureOk;
+    }
+}
+
+bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
 {
     printf("METHOD: ping\n");
 
-    bool            ok = true;
-    std::string     message;
-    Q4SMessageInfo  messageInfo;
+    bool ok = true;
+
+    int pingIndex = 0;
+    int pingMaxCount = 20;
+    std::vector<unsigned long> arrSentPingTimestamps;
+    std::vector<unsigned long> arrReceivedPingTimestamps;
+    float latency;
+    float jitter;
 
     if ( ok ) 
     {
+        // Wait to recive the first Ping
+        Q4SMessageInfo  messageInfo;
         ok &= mReceivedMessages.readMessage( std::string( "PING 0" ), messageInfo );
     }
 
     if( ok )
     {
-        int     pingIndex = 0,
-                pingMaxCount = 20;
-        char    buffer[ 256 ];
+        char messageToSend[ 256 ];
+        unsigned long timeStamp = 0;
 
-        unsigned long                   timeStamp = 0;
-        std::vector< unsigned long >    arrSentPingTimestamps;
-        Q4SMessageInfo                  messageInfo;
-        std::string                     pattern;
-        float                           latency;
-        std::vector< float >            arrPingLatencies;
-        float                           jitter;
-        std::vector< unsigned long >    arrReceivedPingTimestamps;
-        std::vector< float >            arrPingJitters;
-
-        if( ok )
+        for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
         {
-            for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
-            {
-                timeStamp = ETime_getTime( );
-                sprintf_s( buffer, "PING %d %d", pingIndex, timeStamp );
-                ok &= mServerSocket.sendUdpData( DEFAULT_CONN_ID, buffer );
-                arrSentPingTimestamps.push_back( timeStamp );
-                Sleep( (DWORD)q4SServerConfigFile.timeBetweenPings );
-            }
+            // Store the timestamp
+            timeStamp = ETime_getTime( );
+            arrSentPingTimestamps.push_back( timeStamp );
 
-            Sleep( (DWORD)q4SServerConfigFile.timeStartCalc);
+            // Prepare message and send
+            sprintf_s( messageToSend, "PING %d %d", pingIndex, timeStamp );
+            ok &= mServerSocket.sendUdpData( DEFAULT_CONN_ID, messageToSend );
 
-            // Latency calculation.
-            for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
-            {
-                sprintf_s( buffer, "200 OK %d", pingIndex );
-                pattern = buffer;
-                if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
-                {
-                    latency = ( messageInfo.timeStamp - arrSentPingTimestamps[ pingIndex ] ) / 2.0f;
-                    arrPingLatencies.push_back( latency );
-                    printf( "PING %d latency: %.2f\n", pingIndex, latency );
-                }
-            }
-            printf( "Latencies median: %.3f\n", EMathUtils_median( arrPingLatencies ) );
-
-            // Jitter calculation.
-            for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
-            {
-                sprintf_s( buffer, "PING %d", pingIndex );
-                pattern = buffer;
-                if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
-                {
-                    arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
-                    if( pingIndex > 0 )
-                    {
-                        jitter = (float)( arrReceivedPingTimestamps[ pingIndex ] - arrReceivedPingTimestamps[ pingIndex - 1 ] );
-                        arrPingJitters.push_back( jitter );
-                        printf( "PING %d ET: %.2f\n", pingIndex, jitter );
-                    }
-                }
-            }
-            float ets = EMathUtils_mean( arrPingJitters );
-            printf( "Latencies mean ET: %.3f; jitter: %.3f\n", ets, ets - q4SServerConfigFile.timeBetweenPings );
+            // Wait the established time between pings
+            Sleep( (DWORD)q4SServerConfigFile.timeBetweenPings );
         }
     }
+
+    if (ok)
+    {
+        // Wait the established time to start calculation
+        Sleep( (DWORD)q4SServerConfigFile.timeStartCalc);
+    }
+
+    if (ok)
+    {
+        char messagePattern[ 256 ];
+        std::string pattern;
+        Q4SMessageInfo messageInfo;
+        std::vector<unsigned long> arrPingLatencies;
+        std::vector<float> arrPingJitters;
+        unsigned long actualPingLatency;
+        float actualPingTimeWithPrevious;
+
+        // Prepare for Latency calculation
+        for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
+        {
+            // Generate pattern
+            sprintf_s( messagePattern, "200 OK %d", pingIndex );
+            pattern = messagePattern;
+
+            if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
+            {
+                // Actual ping latency calculation
+                actualPingLatency = messageInfo.timeStamp - arrSentPingTimestamps[ pingIndex ];
+
+                // Latency store
+                arrPingLatencies.push_back( actualPingLatency );
+
+                printf( "PING %d actual ping latency: %d\n", pingIndex, actualPingLatency );
+            }
+        }
+
+        // Latency calculation
+        latency = EMathUtils_median( arrPingLatencies ) / 2.0f;
+        printf( "Latency: %.3f\n", latency );
+
+        // Prepare for Jitter calculation
+        for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
+        {
+            // Generate pattern
+            sprintf_s( messagePattern, "PING %d", pingIndex );
+            pattern = messagePattern;
+
+            if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
+            {
+                arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
+                if( pingIndex > 0 )
+                {
+                    // Actual time between this ping and previous calculation
+                    actualPingTimeWithPrevious = (float)( arrReceivedPingTimestamps[ pingIndex ] - arrReceivedPingTimestamps[ pingIndex - 1 ] );
+
+                    // Actual time between this ping and previous store
+                    arrPingJitters.push_back( (float)actualPingTimeWithPrevious );
+
+                    printf( "PING %d ET: %d\n", pingIndex, actualPingTimeWithPrevious );
+                }
+            }
+        }
+
+        // Jitter calculation
+        float meanOfTimeWithPrevious = EMathUtils_mean( arrPingJitters );
+        jitter = meanOfTimeWithPrevious - (float)q4SServerConfigFile.timeBetweenPings;
+        printf( "Time With previous ping mean: %.3f\n", meanOfTimeWithPrevious );
+        printf( "Jitter: %.3f\n", jitter );
+    }
+
+    // Check latency and jitter limits
+    if (ok)
+    {
+        if ( latency > maxLatency )
+        {
+            ok = false;
+        }
+
+        if ( jitter > maxJitter)
+        {
+            ok = false;
+        }
+    }
+
+    return ok;
+}
+
+bool Q4SServerProtocol::measureStage1(float minBandWith, float maxPacketLoss)
+{
+    bool ok = true;
+
+    // TODO measure bandwith and packet loss
 
     return ok;
 }
