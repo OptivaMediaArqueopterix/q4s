@@ -85,7 +85,7 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage )
 
 bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messageInfo )
 {
-    bool    ok = true;
+    bool    found = false;
     DWORD   waitResult;
     int     j = 0,
             jmax = 0;
@@ -94,13 +94,12 @@ bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messa
     waitResult = WaitForSingleObject( mevMessageReady, INFINITE );
     mcsMessagesAccess.enter( );
 
-    ok = false;
-    for( itr_msg = mMessages.begin( ); ( ok == false ) && ( itr_msg != mMessages.end( ) ); itr_msg++ )
+    for( itr_msg = mMessages.begin( ); ( found == false ) && ( itr_msg != mMessages.end( ) ); itr_msg++ )
     {
         if( itr_msg->message.substr( 0, pattern.size( ) ).compare( pattern ) == 0 )
         {
             // Message found.
-            ok = true;
+            found = true;
             messageInfo.message = itr_msg->message;
             messageInfo.timeStamp = itr_msg->timeStamp;
         }
@@ -108,5 +107,5 @@ bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messa
 
     mcsMessagesAccess.leave( );
 
-    return ok;
+    return found;
 }
