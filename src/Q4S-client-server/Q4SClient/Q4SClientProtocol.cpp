@@ -129,7 +129,7 @@ bool Q4SClientProtocol::measure(float maxLatency, float maxJitter, float minBand
     measureOk = Q4SClientProtocol::measureStage0(maxLatency, maxJitter);
     if (measureOk)
     {
-        measureOk = Q4SClientProtocol::measureStage1( 500, 10);
+        measureOk = Q4SClientProtocol::measureStage1( minBandWith, maxPacketLoss);
     }
 
     return measureOk;
@@ -215,7 +215,7 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
         unsigned long actualPingLatency;
         unsigned long actualPingTimeWithPrevious;
 
-        // Latency calculation.
+        // Prepare for Latency calculation
         for( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
         {
             // Generate pattern
@@ -224,7 +224,7 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
 
             if( mReceivedMessages.readMessage( pattern, messageInfo ) == true )
             {
-                // Latency calculation
+                // Actual ping latency calculation
                 actualPingLatency = messageInfo.timeStamp - arrSentPingTimestamps[ pingNumber ];
 
                 // Latency store
@@ -234,10 +234,11 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
             }
         }
 
+        // Latency calculation
         latency = EMathUtils_median( arrPingLatencies ) / 2.0f;
         printf( "Latency: %.3f\n", latency );
 
-        // Jitter calculation.
+        // Prepare for Jitter calculation
         for( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
         {
             // Generate pattern
@@ -249,29 +250,36 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
                 arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
                 if( pingNumber > 0 )
                 {
-                    // Jitter calculation
+                    // Actual time between this ping and previous calculation
                     actualPingTimeWithPrevious = ( arrReceivedPingTimestamps[ pingNumber ] - arrReceivedPingTimestamps[ pingNumber - 1 ] );
-                    // Jitter store
+
+                    // Actual time between this ping and previous store
                     arrPingJitters.push_back( (float)actualPingTimeWithPrevious );
 
                     printf( "PING %d ET: %d\n", pingNumber, actualPingTimeWithPrevious );
                 }
             }
         }
-        float timeWithPreviousMean = EMathUtils_mean( arrPingJitters );
-        jitter = timeWithPreviousMean - (float)q4SClientConfigFile.timeBetweenPings;
-        printf( "Time With previous ping mean: %.3f\n", timeWithPreviousMean );
+
+        // Jitter calculation
+        float meanOfTimeWithPrevious = EMathUtils_mean( arrPingJitters );
+        jitter = meanOfTimeWithPrevious - (float)q4SClientConfigFile.timeBetweenPings;
+        printf( "Time With previous ping mean: %.3f\n", meanOfTimeWithPrevious );
         printf( "Jitter: %.3f\n", jitter );
     }
 
-    if ( latency > maxLatency )
+    // Check latency and jitter limits
+    if (ok)
     {
-        ok = false;
-    }
+        if ( latency > maxLatency )
+        {
+            ok = false;
+        }
 
-    if ( jitter > maxJitter)
-    {
-        ok = false;
+        if ( jitter > maxJitter)
+        {
+            ok = false;
+        }
     }
     
     return ok;
