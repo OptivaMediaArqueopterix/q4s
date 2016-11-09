@@ -84,7 +84,7 @@ bool Q4SClientSocket::sendTcpData( char* sendBuffer )
 
 bool Q4SClientSocket::receiveTcpData( char* receiveBuffer, int receiveBufferSize )
 {
-    return mq4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize );
+    return mq4sTcpSocket.receiveData( receiveBuffer, receiveBufferSize, NULL, q4SClientConfigFile.showSocketReceivedInfo );
 }
 
 bool Q4SClientSocket::sendUdpData( char* sendBuffer )
@@ -94,7 +94,7 @@ bool Q4SClientSocket::sendUdpData( char* sendBuffer )
 
 bool Q4SClientSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize )
 {
-    return mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize );
+    return mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, NULL, q4SClientConfigFile.showSocketReceivedInfo );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////

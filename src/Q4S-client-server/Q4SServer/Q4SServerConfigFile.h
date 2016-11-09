@@ -20,6 +20,7 @@ public:
     float maxJitter;
     bool showMeasureInfo;
     bool showReceivedPingInfo;
+    bool showSocketReceivedInfo;
 };
 
 extern Q4SServerConfigFile q4SServerConfigFile;

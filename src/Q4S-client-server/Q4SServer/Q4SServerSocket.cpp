@@ -155,7 +155,7 @@ bool Q4SServerSocket::receiveTcpData( int connId, char* receiveBuffer, int recei
     ok &= getTcpSocket( connId, pQ4SSocket );
     if( ok )
     {
-        ok &= pQ4SSocket->receiveData( receiveBuffer, receiveBufferSize );
+        ok &= pQ4SSocket->receiveData( receiveBuffer, receiveBufferSize, NULL, q4SServerConfigFile.showSocketReceivedInfo );
     }
 
     return ok;
@@ -183,7 +183,7 @@ bool Q4SServerSocket::receiveUdpData( char* receiveBuffer, int receiveBufferSize
 
     if( ok )
     {
-        ok &= mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, &addrInfo );
+        ok &= mq4sUdpSocket.receiveData( receiveBuffer, receiveBufferSize, &addrInfo, q4SServerConfigFile.showSocketReceivedInfo );
     }
     if( ok )
     {

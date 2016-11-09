@@ -17,6 +17,5 @@ Q4SServerConfigFile::Q4SServerConfigFile(const std::string &fName)
     maxJitter = configFile.getValueOfKey<float>("MAX_JITTER", 200);
     showMeasureInfo = configFile.keyExists("SHOW_MEASURE_INFO");
     showReceivedPingInfo = configFile.keyExists("SHOW_RECEIVED_PING_INFO");
-
-    //bool exists = cfg.keyExists("SERVER_IP");
+    showSocketReceivedInfo = configFile.keyExists("SHOW_SOCKET_RECEIVED_INFO");
 }

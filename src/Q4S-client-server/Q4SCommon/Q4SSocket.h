@@ -21,7 +21,7 @@ public:
     void    setSocket( SOCKET socket, int socketType, std::string* connectToIP = NULL, std::string* connectToUDPPort = NULL);
     bool    sendData( const char* sendBuffer, sockaddr_in* pAddrInfo = NULL, bool showInfo = false );
 
-    bool    receiveData( char* receiveBuffer, int receiveBufferSize, sockaddr_in* pAddrInfo = NULL, bool showInfo = false );
+    bool    receiveData( char* receiveBuffer, int receiveBufferSize, sockaddr_in* pAddrInfo, bool showInfo = false );
     bool    shutDown( );
     bool    disconnect( );
 

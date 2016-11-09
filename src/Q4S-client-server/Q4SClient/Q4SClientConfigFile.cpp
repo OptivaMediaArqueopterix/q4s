@@ -14,6 +14,7 @@ Q4SClientConfigFile::Q4SClientConfigFile(const std::string &fName)
     timeEndApp = configFile.getValueOfKey<double>("TIME_END_APP", 10000);
     maxLatency = configFile.getValueOfKey<float>("MAX_LATENCY", 2000);
     maxJitter = configFile.getValueOfKey<float>("MAX_JITTER", 200);
-
-    //bool exists = cfg.keyExists("SERVER_IP");
+    showMeasureInfo = configFile.keyExists("SHOW_MEASURE_INFO");
+    showReceivedPingInfo = configFile.keyExists("SHOW_RECEIVED_PING_INFO");
+    showSocketReceivedInfo = configFile.keyExists("SHOW_SOCKET_RECEIVED_INFO");
 }
