@@ -131,6 +131,11 @@ bool Q4SMessageManager::readMessageAndPop( std::string& pattern, Q4SMessageInfo&
     {
         itr_msg--;
         mMessages.erase(itr_msg);
+        if( mMessages.size( ) == 0 )
+        {
+            ResetEvent( mevMessageReady );
+        }
+
     }
 
     mcsMessagesAccess.leave( );

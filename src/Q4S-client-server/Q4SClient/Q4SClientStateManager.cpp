@@ -102,7 +102,6 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_NEGOTIATION:
             {
-                Sleep(1000);
                 bool measureOk = false;
                 bool readyOk = Q4SClientProtocol::ready();
                 if( readyOk )
@@ -129,7 +128,6 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_CONTINUITY:
             {
-                Sleep(1000);
                 bool readyOk = Q4SClientProtocol::ready();
                 if( readyOk )
                 {

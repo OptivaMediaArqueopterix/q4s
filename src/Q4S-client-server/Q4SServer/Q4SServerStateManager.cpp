@@ -99,7 +99,6 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
 
         case Q4SSERVERSTATE_NEGOTIATION:
             {
-                Sleep(1000);
                 bool measureOk = false;
                 bool readyOk = Q4SServerProtocol::ready();
                 if( readyOk )
@@ -125,17 +124,13 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
 
         case Q4SSERVERSTATE_CONTINUITY:
             {
-                Sleep(1000);
-                bool readyOk = false;
-                while (!readyOk)
-                {
-                    readyOk = Q4SServerProtocol::ready();
-                }
+                bool readyOk = Q4SServerProtocol::ready();
+                if (readyOk)
                 {
                     printf("Hemos llegado a la continuidad\n");
                     Q4SServerProtocol::continuity(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10);
-                    nextState = Q4SSERVERSTATE_TERMINATION;
                 }
+                nextState = Q4SSERVERSTATE_TERMINATION;
             }
         break;
 
