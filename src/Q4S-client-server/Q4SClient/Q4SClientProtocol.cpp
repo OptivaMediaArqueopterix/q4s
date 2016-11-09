@@ -198,6 +198,11 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
             Sleep( (DWORD)q4SClientConfigFile.timeBetweenPings );
         }
     }
+    
+    if(!ok)
+    {
+        printf( "ERROR:sendUdpData PING.\n" );
+    }
 
     if (ok) 
     {
@@ -273,11 +278,13 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
     {
         if ( latency > maxLatency )
         {
+            printf( "Lantecy limits not reached\n");
             ok = false;
         }
 
         if ( jitter > maxJitter)
         {
+            printf( "Jitter limits not reached\n");
             ok = false;
         }
     }

@@ -199,6 +199,11 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
         ok &= mReceivedMessages.readMessage( std::string( "PING 0" ), messageInfo );
     }
 
+    if(!ok)
+    {
+        printf( "ERROR:PING 0 is not the first message.\n" );
+    }
+
     if( ok )
     {
         char messageToSend[ 256 ];
@@ -217,6 +222,11 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
             // Wait the established time between pings
             Sleep( (DWORD)q4SServerConfigFile.timeBetweenPings );
         }
+    }
+
+    if(!ok)
+    {
+        printf( "ERROR:sendUdpData PING.\n" );
     }
 
     if (ok)
@@ -303,11 +313,13 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
     {
         if ( latency > maxLatency )
         {
+            printf( "Lantecy limits not reached\n");
             ok = false;
         }
 
         if ( jitter > maxJitter)
         {
+            printf( "Jitter limits not reached\n");
             ok = false;
         }
     }
