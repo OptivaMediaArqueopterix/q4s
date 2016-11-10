@@ -188,7 +188,15 @@ bool Q4SServerProtocol::measure(float maxLatency, float maxJitter, float minBand
 
     if (mReceivedMessages.size() != 0)
     {
-        printf("Message received not processed\n");
+        Q4SMessageInfo message;
+        std::string pattern;
+        pattern.assign( "CANCEL" );
+        bool cancelMessageReceived = mReceivedMessages.readMessage( pattern, message, false);
+        if ( cancelMessageReceived)
+        {
+            printf("CANCEL received: %s\n", message.message.c_str());
+            measureOk = false;
+        }
     }
 
     return measureOk;

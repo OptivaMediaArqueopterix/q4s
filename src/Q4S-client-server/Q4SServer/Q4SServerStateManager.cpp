@@ -113,6 +113,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                         //Alert
                         Q4SServerProtocol::alert();
                         stop = true;
+                        nextState = Q4SSERVERSTATE_TERMINATION;
                     }
                 }
                 else

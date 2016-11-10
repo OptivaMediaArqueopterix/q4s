@@ -341,13 +341,6 @@ bool Q4SClientProtocol::manageTcpReceivedData( )
             mReceivedMessages.addMessage ( message );
             printf( "Received Tcp: <%s>\n", buffer );
         }
-
-        // Key management
-        if (EKey_getKeyState(EK_C))
-        {
-            printf( "CANCEL key pressed\n");
-        }
-
     }
 
     return ok;
@@ -407,6 +400,7 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
         if (EKey_getKeyState(EK_C))
         {
             printf( "CANCEL key pressed\n");
+            cancel();
         }
     }
 
