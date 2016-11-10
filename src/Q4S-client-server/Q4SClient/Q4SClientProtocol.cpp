@@ -235,7 +235,11 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
                 // Latency store
                 arrPingLatencies.push_back( actualPingLatency );
 
-                printf( "PING %d actual ping latency: %d\n", pingNumber, actualPingLatency );
+                if (q4SClientConfigFile.showMeasureInfo)
+                {
+                    printf( "PING %d actual ping latency: %d\n", pingNumber, actualPingLatency );
+                }
+
             }
         }
 
@@ -261,7 +265,10 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
                     // Actual time between this ping and previous store
                     arrPingJitters.push_back( (float)actualPingTimeWithPrevious );
 
-                    printf( "PING %d ET: %d\n", pingNumber, actualPingTimeWithPrevious );
+                    if (q4SClientConfigFile.showMeasureInfo)
+                    {
+                        printf( "PING %d ET: %d\n", pingNumber, actualPingTimeWithPrevious );
+                    }
                 }
             }
         }
@@ -358,11 +365,17 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
             // Comprobar que es un ping
             if ( isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
             {
-                printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, receivedTimeStamp);
+                if (q4SClientConfigFile.showReceivedPingInfo)
+                {
+                    printf( "Received Ping, number:%d, timeStamp: %d\n", pingNumber, receivedTimeStamp);
+                }
 
                 // mandar respuesta del ping
                 char buffer[ 256 ];
-                printf( "Ping responsed %d\n", pingNumber);
+                if (q4SClientConfigFile.showReceivedPingInfo)
+                {
+                    printf( "Ping responsed %d\n", pingNumber);
+                }
                 sprintf_s( buffer, "200 OK %d", pingNumber );
                 ok &= mClientSocket.sendUdpData( buffer );
             
@@ -375,7 +388,10 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
                 mReceivedMessages.addMessage(message, actualTimeStamp);
             }
 
-            printf( "Received Udp: <%s>\n", udpBuffer );
+            if (q4SClientConfigFile.showReceivedPingInfo)
+            {
+                printf( "Received Udp: <%s>\n", udpBuffer );
+            }
         }
     }
 
