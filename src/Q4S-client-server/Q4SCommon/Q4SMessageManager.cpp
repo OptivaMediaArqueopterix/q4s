@@ -117,3 +117,8 @@ bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messa
 
     return found;
 }
+
+int Q4SMessageManager::size()
+{
+    return mMessages.size();
+}

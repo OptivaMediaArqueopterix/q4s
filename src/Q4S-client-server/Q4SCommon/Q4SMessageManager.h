@@ -25,6 +25,8 @@ class Q4SMessageManager
     bool readFirst( std::string &firstMessage );
     bool readMessage( std::string& pattern, Q4SMessageInfo& message, bool erase );
 
+    int size();
+
 private:
 
     void    clear( );

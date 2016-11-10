@@ -7,6 +7,7 @@
 #include "ETime.h"
 #include "Q4SMathUtils.h"
 #include "Q4SClientConfigFile.h"
+#include "EKey.h"
 
 Q4SClientProtocol::Q4SClientProtocol ()
 {
@@ -149,17 +150,18 @@ void Q4SClientProtocol::continuity(float maxLatency, float maxJitter, float minB
 
 void Q4SClientProtocol::bwidth()
 {
-    printf("METHOD: bwidth\n");
+    printf("METHOD: bwidth TODO\n");
 }
 
 void Q4SClientProtocol::cancel()
 {
-    printf("METHOD: cancel\n");
+    printf("METHOD: cancel TODO\n");
+    mClientSocket.sendTcpData( "CANCEL" );
 }
 
 void Q4SClientProtocol::alert()
 {
-    printf("METHOD: alert\n");
+    printf("METHOD: alert TODO\n");
 }
 
 void Q4SClientProtocol::end()
@@ -339,6 +341,13 @@ bool Q4SClientProtocol::manageTcpReceivedData( )
             mReceivedMessages.addMessage ( message );
             printf( "Received Tcp: <%s>\n", buffer );
         }
+
+        // Key management
+        if (EKey_getKeyState(EK_C))
+        {
+            printf( "CANCEL key pressed\n");
+        }
+
     }
 
     return ok;
@@ -392,6 +401,12 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
             {
                 printf( "Received Udp: <%s>\n", udpBuffer );
             }
+        }
+
+        // Key management
+        if (EKey_getKeyState(EK_C))
+        {
+            printf( "CANCEL key pressed\n");
         }
     }
 

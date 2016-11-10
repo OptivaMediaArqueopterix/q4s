@@ -186,6 +186,11 @@ bool Q4SServerProtocol::measure(float maxLatency, float maxJitter, float minBand
         measureOk = Q4SServerProtocol::measureStage1( 500, 10);
     }
 
+    if (mReceivedMessages.size() != 0)
+    {
+        printf("Message received not processed\n");
+    }
+
     return measureOk;
 }
 
