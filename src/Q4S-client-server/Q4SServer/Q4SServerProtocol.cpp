@@ -122,9 +122,20 @@ bool Q4SServerProtocol::begin()
     
     if ( ok ) 
     {
+        // Wait for a message
         mReceivedMessages.readFirst( message );
     }
 
+    if (ok)
+    {
+        std::string pattern;
+        pattern.assign( "BEGIN" );
+        if ( message.substr( 0, pattern.size( ) ).compare( pattern ) != 0)
+        {
+            ok = false;
+        }
+    }
+    
     if( ok )
     {
         ok &= mServerSocket.sendTcpData( DEFAULT_CONN_ID, "200 OK" );
@@ -143,6 +154,16 @@ bool Q4SServerProtocol::ready()
     if ( ok ) 
     {
         ok &= mReceivedMessages.readFirst( message );
+    }
+
+    if (ok)
+    {
+        std::string pattern;
+        pattern.assign( "READY" );
+        if ( message.substr( 0, pattern.size( ) ).compare( pattern ) != 0)
+        {
+            ok = false;
+        }
     }
 
     if( ok )

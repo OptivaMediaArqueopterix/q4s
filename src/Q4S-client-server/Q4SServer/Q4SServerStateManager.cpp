@@ -111,6 +111,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                     else
                     {
                         //Alert
+                        Q4SServerProtocol::alert();
                         stop = true;
                     }
                 }
@@ -127,7 +128,6 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 bool readyOk = Q4SServerProtocol::ready();
                 if (readyOk)
                 {
-                    printf("Hemos llegado a la continuidad\n");
                     Q4SServerProtocol::continuity(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10);
                 }
                 nextState = Q4SSERVERSTATE_TERMINATION;
