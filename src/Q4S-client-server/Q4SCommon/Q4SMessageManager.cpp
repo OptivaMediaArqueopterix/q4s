@@ -84,7 +84,7 @@ bool Q4SMessageManager::readFirst( std::string &firstMessage )
     return ok;
 }
 
-bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messageInfo )
+bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messageInfo, bool erase )
 {
     bool    found = false;
     std::list< Q4SMessageInfo >::iterator  itr_msg;
@@ -103,31 +103,7 @@ bool Q4SMessageManager::readMessage( std::string& pattern, Q4SMessageInfo& messa
         }
     }
 
-    mcsMessagesAccess.leave( );
-
-    return found;
-}
-
-bool Q4SMessageManager::readMessageAndPop( std::string& pattern, Q4SMessageInfo& messageInfo )
-{
-    bool    found = false;
-    std::list< Q4SMessageInfo >::iterator  itr_msg;
-
-    WaitForSingleObject( mevMessageReady, INFINITE );
-    mcsMessagesAccess.enter( );
-
-    for( itr_msg = mMessages.begin( ); ( found == false ) && ( itr_msg != mMessages.end( ) ); itr_msg++ )
-    {
-        if( itr_msg->message.substr( 0, pattern.size( ) ).compare( pattern ) == 0 )
-        {
-            // Message found.
-            found = true;
-            messageInfo.message = itr_msg->message;
-            messageInfo.timeStamp = itr_msg->timeStamp;
-        }
-    }
-
-    if (found)
+    if (erase && found)
     {
         itr_msg--;
         mMessages.erase(itr_msg);
@@ -135,7 +111,6 @@ bool Q4SMessageManager::readMessageAndPop( std::string& pattern, Q4SMessageInfo&
         {
             ResetEvent( mevMessageReady );
         }
-
     }
 
     mcsMessagesAccess.leave( );

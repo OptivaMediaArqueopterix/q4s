@@ -227,7 +227,7 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
             sprintf_s( messagePattern, "200 OK %d", pingNumber );
             pattern = messagePattern;
 
-            if( mReceivedMessages.readMessageAndPop( pattern, messageInfo ) == true )
+            if( mReceivedMessages.readMessage( pattern, messageInfo, true ) == true )
             {
                 // Actual ping latency calculation
                 actualPingLatency = messageInfo.timeStamp - arrSentPingTimestamps[ pingNumber ];
@@ -254,7 +254,7 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
             sprintf_s( messagePattern, "PING %d", pingNumber );
             pattern = messagePattern;
 
-            if( mReceivedMessages.readMessageAndPop( pattern, messageInfo ) == true )
+            if( mReceivedMessages.readMessage( pattern, messageInfo, true ) == true )
             {
                 arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
                 if( pingNumber > 0 )

@@ -67,7 +67,6 @@ bool Q4SServerProtocol::openConnectionListening()
     bool ok = true;
 
     marrthrListenHandle[ 0 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageTcpConnectionsFn, ( void* ) this, 0, 0 );
-    //marrthrListenHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpConnectionsFn, ( void* ) this, 0, 0 );
     marrthrListenHandle[ 1 ] = CreateThread( 0, 0, ( LPTHREAD_START_ROUTINE )manageUdpReceivedDataFn, ( void* ) this, 0, 0 );
     
     return ok;
@@ -196,7 +195,7 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
     {
         // Wait to recive the first Ping
         Q4SMessageInfo  messageInfo;
-        ok &= mReceivedMessages.readMessage( std::string( "PING 0" ), messageInfo );
+        ok &= mReceivedMessages.readMessage( std::string( "PING 0" ), messageInfo, false );
     }
 
     if(!ok)
@@ -252,7 +251,7 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
             sprintf_s( messagePattern, "200 OK %d", pingIndex );
             pattern = messagePattern;
 
-            if( mReceivedMessages.readMessageAndPop( pattern, messageInfo ) == true )
+            if( mReceivedMessages.readMessage( pattern, messageInfo, true ) == true )
             {
                 // Actual ping latency calculation
                 actualPingLatency = (messageInfo.timeStamp - arrSentPingTimestamps[ pingIndex ])/ 2.0f;
@@ -282,7 +281,7 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
             sprintf_s( messagePattern, "PING %d", pingIndex );
             pattern = messagePattern;
 
-            if( mReceivedMessages.readMessageAndPop( pattern, messageInfo ) == true )
+            if( mReceivedMessages.readMessage( pattern, messageInfo, true ) == true )
             {
                 arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
                 if( pingIndex > 0 )
