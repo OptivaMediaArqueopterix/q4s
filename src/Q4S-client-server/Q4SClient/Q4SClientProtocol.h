@@ -3,6 +3,7 @@
 
 #include "Q4SClientSocket.h"
 #include "Q4SMessageManager.h"
+#include <vector>
 
 class Q4SClientProtocol
 {
@@ -23,7 +24,6 @@ public:
     void    continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
     void    bwidth();
     void    cancel();
-    void    alert();
 
 private:
 
@@ -33,6 +33,10 @@ private:
     void    closeConnections();
 
     bool    measureStage0(float maxLatency, float maxJitter);
+    bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
+    void    calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showResult, bool showMeasureInfo);
+    void    calculateJitter(float &jitter, bool showResult, bool showMeasureInfo);
+    bool    checkLatencyAndJitter(float latency, float jitter, float maxLatency, float maxJitter);
     bool    measureStage1(float minBandWith, float maxPacketLoss);
 
     Q4SClientSocket             mClientSocket;

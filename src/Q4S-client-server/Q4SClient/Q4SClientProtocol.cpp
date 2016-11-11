@@ -1,7 +1,6 @@
 #include "Q4SClientProtocol.h"
 
 #include <stdio.h>
-#include <vector>
 #include <sstream>
 
 #include "ETime.h"
@@ -26,8 +25,15 @@ bool Q4SClientProtocol::init()
 
     bool ok = true;
 
-    mReceivedMessages.init( );
-    ok &= openConnections();
+    if (ok)
+    {
+        ok &= mReceivedMessages.init( );
+    }
+
+    if (ok)
+    {
+        ok &= openConnections();
+    }
 
     return ok;
 }
@@ -160,41 +166,22 @@ void Q4SClientProtocol::cancel()
     mClientSocket.sendTcpData( "CANCEL" );
 }
 
-void Q4SClientProtocol::alert()
-{
-    printf("METHOD: alert TODO\n");
-}
+//--private:-------------------------------------------------------------------------------
 
 bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
 {
     printf("METHOD: measureStage0\n");
 
     bool ok = true;
-    int pingNumber = 0;
-    int pingNumberToSend = 20;
+
     std::vector<unsigned long> arrSentPingTimestamps;
-    std::vector<unsigned long> arrReceivedPingTimestamps;
     float latency;
     float jitter;
 
     if (ok)
     {
-        char messageToSend[ 256 ];
-        unsigned long timeStamp = 0;
-
-        for ( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
-        {
-            // Store the timestamp
-            timeStamp = ETime_getTime( );
-            arrSentPingTimestamps.push_back( timeStamp );
-
-            // Prepare message and send
-            sprintf_s( messageToSend, "PING %d %d", pingNumber, timeStamp );
-            ok &= mClientSocket.sendUdpData( messageToSend );
-
-            // Wait the established time between pings
-            Sleep( (DWORD)q4SClientConfigFile.timeBetweenPings );
-        }
+        // Send regular pings
+        ok &= sendRegularPings(arrSentPingTimestamps);
     }
     
     if(!ok)
@@ -202,48 +189,100 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
         printf( "ERROR:sendUdpData PING.\n" );
     }
 
-    if (ok) 
+    if (ok)
     {
         // Wait the established time to start calculation
         Sleep( (DWORD)q4SClientConfigFile.timeStartCalc);
+
+        // Calculate Latency
+        calculateLatency(arrSentPingTimestamps, latency, true, q4SClientConfigFile.showMeasureInfo);
+
+        // Calculate Jitter
+        calculateJitter(jitter, true, q4SClientConfigFile.showMeasureInfo);
+
+        // Check latency and jitter limits
+        ok &= checkLatencyAndJitter(latency, jitter, maxLatency, maxJitter);
+    }
+    
+    return ok;
+}
+
+bool Q4SClientProtocol::sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps)
+{
+    bool ok = true;
+
+    char messageToSend[ 256 ];
+    unsigned long timeStamp = 0;
+    int pingNumber = 0;
+    int pingNumberToSend = 20;
+
+    for ( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
+    {
+        // Store the timestamp
+        timeStamp = ETime_getTime( );
+        arrSentPingTimestamps.push_back( timeStamp );
+
+        // Prepare message and send
+        sprintf_s( messageToSend, "PING %d %d", pingNumber, timeStamp );
+        ok &= mClientSocket.sendUdpData( messageToSend );
+
+        // Wait the established time between pings
+        Sleep( (DWORD)q4SClientConfigFile.timeBetweenPings );
     }
 
-    if (ok)
+    return ok;
+}
+
+void Q4SClientProtocol::calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showResult, bool showMeasureInfo)
+{
+    char messagePattern[ 256 ];
+    std::string pattern;
+    Q4SMessageInfo messageInfo;
+    std::vector<unsigned long> arrPingLatencies;
+    unsigned long actualPingLatency;
+    int pingNumber = 0;
+    int pingNumberToSend = 20;
+
+    // Prepare for Latency calculation
+    for( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
     {
+        // Generate pattern
+        sprintf_s( messagePattern, "200 OK %d", pingNumber );
+        pattern = messagePattern;
+
+        if( mReceivedMessages.readMessage( pattern, messageInfo, true ) == true )
+        {
+            // Actual ping latency calculation
+            actualPingLatency = messageInfo.timeStamp - arrSentPingTimestamps[ pingNumber ];
+
+            // Latency store
+            arrPingLatencies.push_back( actualPingLatency );
+
+            if (showMeasureInfo)
+            {
+                printf( "PING %d actual ping latency: %d\n", pingNumber, actualPingLatency );
+            }
+        }
+    }
+
+    // Latency calculation
+    latency = EMathUtils_median( arrPingLatencies ) / 2.0f;
+    if (showResult)
+    {
+        printf( "Latency: %.3f\n", latency );
+    }
+}
+
+void Q4SClientProtocol::calculateJitter(float &jitter, bool showResult, bool showMeasureInfo)
+{
+        int pingNumber = 0;
+        int pingNumberToSend = 20;
         char messagePattern[ 256 ];
         std::string pattern;
         Q4SMessageInfo messageInfo;
-        std::vector<unsigned long> arrPingLatencies;
-        std::vector<float> arrPingJitters;
-        unsigned long actualPingLatency;
         unsigned long actualPingTimeWithPrevious;
-
-        // Prepare for Latency calculation
-        for( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
-        {
-            // Generate pattern
-            sprintf_s( messagePattern, "200 OK %d", pingNumber );
-            pattern = messagePattern;
-
-            if( mReceivedMessages.readMessage( pattern, messageInfo, true ) == true )
-            {
-                // Actual ping latency calculation
-                actualPingLatency = messageInfo.timeStamp - arrSentPingTimestamps[ pingNumber ];
-
-                // Latency store
-                arrPingLatencies.push_back( actualPingLatency );
-
-                if (q4SClientConfigFile.showMeasureInfo)
-                {
-                    printf( "PING %d actual ping latency: %d\n", pingNumber, actualPingLatency );
-                }
-
-            }
-        }
-
-        // Latency calculation
-        latency = EMathUtils_median( arrPingLatencies ) / 2.0f;
-        printf( "Latency: %.3f\n", latency );
+        std::vector<float> arrPingJitters;
+        std::vector<unsigned long> arrReceivedPingTimestamps;
 
         // Prepare for Jitter calculation
         for( pingNumber = 0; pingNumber < pingNumberToSend; pingNumber++ )
@@ -263,7 +302,7 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
                     // Actual time between this ping and previous store
                     arrPingJitters.push_back( (float)actualPingTimeWithPrevious );
 
-                    if (q4SClientConfigFile.showMeasureInfo)
+                    if (showMeasureInfo)
                     {
                         printf( "PING %d ET: %d\n", pingNumber, actualPingTimeWithPrevious );
                     }
@@ -274,26 +313,34 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
         // Jitter calculation
         float meanOfTimeWithPrevious = EMathUtils_mean( arrPingJitters );
         jitter = meanOfTimeWithPrevious - (float)q4SClientConfigFile.timeBetweenPings;
-        printf( "Time With previous ping mean: %.3f\n", meanOfTimeWithPrevious );
-        printf( "Jitter: %.3f\n", jitter );
-    }
 
-    // Check latency and jitter limits
-    if (ok)
+        if (showMeasureInfo)
+        {
+            printf( "Time With previous ping mean: %.3f\n", meanOfTimeWithPrevious );
+        }
+
+        if (showResult)
+        {
+            printf( "Jitter: %.3f\n", jitter );
+        }
+}
+
+bool Q4SClientProtocol::checkLatencyAndJitter(float latency, float jitter, float maxLatency, float maxJitter)
+{
+    bool ok = true;
+
+    if ( latency > maxLatency )
     {
-        if ( latency > maxLatency )
-        {
-            printf( "Lantecy limits not reached\n");
-            ok = false;
-        }
-
-        if ( jitter > maxJitter)
-        {
-            printf( "Jitter limits not reached\n");
-            ok = false;
-        }
+        printf( "Lantecy limits not reached\n");
+        ok = false;
     }
-    
+
+    if ( jitter > maxJitter)
+    {
+        printf( "Jitter limits not reached\n");
+        ok = false;
+    }
+
     return ok;
 }
 
