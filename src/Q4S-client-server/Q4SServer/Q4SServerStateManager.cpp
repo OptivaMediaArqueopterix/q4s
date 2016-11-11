@@ -131,6 +131,9 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 {
                     Q4SServerProtocol::continuity(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10);
                 }
+
+                Q4SServerProtocol::alert();
+
                 nextState = Q4SSERVERSTATE_TERMINATION;
             }
         break;
