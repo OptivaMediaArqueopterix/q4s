@@ -18,6 +18,6 @@
 
 void EKey_enabled     ( bool enable );
 bool EKey_getKeyState ( unsigned long keyCode );
-
+bool EKey_anyKey      ();
 
 #endif //_EKEY_H_

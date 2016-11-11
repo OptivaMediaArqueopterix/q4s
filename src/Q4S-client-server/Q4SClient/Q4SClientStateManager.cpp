@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "Q4SClientConfigFile.h"
+#include "EKey.h"
 
 Q4SClientStateManager::Q4SClientStateManager()
 {
@@ -110,6 +111,11 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
                     if (measureOk)
                     {
+                        printf("Negotiation OK, launch GANY and press any key\n");
+                        while(!EKey_anyKey())
+                        {
+                            stop = stop;
+                        }
                         nextState = Q4SCLIENTSTATE_CONTINUITY;
                     }
                     else

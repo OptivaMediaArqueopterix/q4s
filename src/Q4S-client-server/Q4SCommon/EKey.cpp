@@ -30,3 +30,8 @@ bool EKey_getKeyState ( unsigned long keyCode )
     return false;
   }
 }
+
+bool EKey_anyKey ()
+{
+  return _kbhit ()?true:false;
+}
