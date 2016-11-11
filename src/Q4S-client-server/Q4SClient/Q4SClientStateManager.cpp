@@ -25,8 +25,6 @@ bool Q4SClientStateManager::init()
     // Init first state
     ok &= stateInit ( Q4SCLIENTSTATE_INIT );
 
-    ok &= run();
-
     return ok;
 }
 
@@ -80,7 +78,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                 else
                 {
                     // TODO: launch error
-                    stop = true;
+                    nextState = Q4SCLIENTSTATE_TERMINATION;
                 }
             }
         break;
@@ -96,7 +94,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                 else
                 {
                     // TODO: launch error
-                    stop = true;
+                    nextState = Q4SCLIENTSTATE_TERMINATION;
                 }
             }
         break;
@@ -114,21 +112,22 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                         printf("Negotiation OK, launch GANY and press any key\n");
                         while(!EKey_anyKey())
                         {
-                            stop = stop;
+                            measureOk = measureOk;
                         }
+
                         nextState = Q4SCLIENTSTATE_CONTINUITY;
                     }
                     else
                     {
                         // TODO: send the measure or the constrains not reached to the server in order to be informed 
                         //Alert
-                        stop = true;
+                        nextState = Q4SCLIENTSTATE_TERMINATION;
                     }
                 }
                 else
                 {
                     // TODO: launch error
-                    stop = true;
+                    nextState = Q4SCLIENTSTATE_TERMINATION;
                 }
             }  
         break;
