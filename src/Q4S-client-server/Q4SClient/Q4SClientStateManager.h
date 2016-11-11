@@ -18,11 +18,11 @@ public:
     bool    init();
     void    done();
 
+    bool    run();
+
 private:
 
     void    clear();
-
-    bool    run();
 
     // State
     bool    stateInit   ( Q4SClientState state );

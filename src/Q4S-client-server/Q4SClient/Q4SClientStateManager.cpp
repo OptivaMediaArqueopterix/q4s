@@ -148,7 +148,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
         case Q4SCLIENTSTATE_TERMINATION:
             {
                 printf("Termination state\n");
-                Q4SClientProtocol::end( );
+                Q4SClientProtocol::done( );
                 stop = true;
             }
         break;

@@ -34,6 +34,7 @@ bool Q4SClientProtocol::init()
 
 void Q4SClientProtocol::done()
 {
+    closeConnections();
     mReceivedMessages.done( );
 }
 
@@ -162,11 +163,6 @@ void Q4SClientProtocol::cancel()
 void Q4SClientProtocol::alert()
 {
     printf("METHOD: alert TODO\n");
-}
-
-void Q4SClientProtocol::end()
-{
-    closeConnections();
 }
 
 bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
@@ -401,6 +397,7 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
         {
             printf( "CANCEL key pressed\n");
             cancel();
+            ok = false;
         }
     }
 

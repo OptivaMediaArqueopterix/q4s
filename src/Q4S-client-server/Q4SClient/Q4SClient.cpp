@@ -27,6 +27,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
     ok &= q4SClientStateManager.init();
 
+    if (ok)
+    {
+        bool runOk = q4SClientStateManager.run();
+
+    }
     Sleep ( (DWORD)q4SClientConfigFile.timeEndApp);
 
     printf( "Saliendo de Client\n" );

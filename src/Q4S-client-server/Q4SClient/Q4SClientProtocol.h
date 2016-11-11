@@ -24,7 +24,6 @@ public:
     void    bwidth();
     void    cancel();
     void    alert();
-    void    end();
 
 private:
 
