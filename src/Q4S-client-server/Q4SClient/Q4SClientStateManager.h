@@ -32,6 +32,7 @@ private:
     Q4SClientState q4SClientState;
     Q4SClientState nextState;
     
+    void    waitForLaunchGANY();
 };
 
 #endif  // _Q4SCLIENTSTATEMANAGER_H_

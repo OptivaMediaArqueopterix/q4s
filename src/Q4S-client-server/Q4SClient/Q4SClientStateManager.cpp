@@ -109,12 +109,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
                     if (measureOk)
                     {
-                        printf("Negotiation OK, launch GANY and press any key\n");
-                        while(!EKey_anyKey())
-                        {
-                            measureOk = measureOk;
-                        }
-
+                        waitForLaunchGANY();
                         nextState = Q4SCLIENTSTATE_CONTINUITY;
                     }
                     else
@@ -139,6 +134,11 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                 {
                     printf("Hemos llegado a la continuidad\n");
                     continuity(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter, 500, 10);
+                    nextState = Q4SCLIENTSTATE_TERMINATION;
+                }
+                else
+                {
+                    // TODO: launch error
                     nextState = Q4SCLIENTSTATE_TERMINATION;
                 }
             }
@@ -185,5 +185,13 @@ void Q4SClientStateManager::stateDone ()
 
         case Q4SCLIENTSTATE_TERMINATION:
         break;
+    }
+}
+
+void Q4SClientStateManager::waitForLaunchGANY()
+{
+    printf("Negotiation OK, launch GANY and press any key\n");
+    while(!EKey_anyKey())
+    {
     }
 }
