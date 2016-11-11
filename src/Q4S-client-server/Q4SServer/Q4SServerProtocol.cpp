@@ -7,6 +7,7 @@
 #include "ETime.h"
 #include "Q4SMathUtils.h"
 #include "Q4SServerConfigFile.h"
+#include "EKey.h"
 
 #define     DEFAULT_CONN_ID     1
 
@@ -533,6 +534,14 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
                 printf( "Received Udp: <%s>\n", udpBuffer );
             }
         }
+
+        // Key management
+        if (EKey_getKeyState(EK_A))
+        {
+            printf( "Alert Sended\n");
+            alert();
+        }
+
     }
 
     return ok;
