@@ -23,8 +23,6 @@ bool Q4SServerStateManager::init()
     // Init first state
     ok &= stateInit ( Q4SSERVERSTATE_INIT );
 
-    ok &= run();
-
     return ok;
 }
 
@@ -77,7 +75,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 else
                 {
                     // TODO: launch error
-                    stop = true;
+                    nextState = Q4SSERVERSTATE_TERMINATION;
                 }
             }
         break;
@@ -92,7 +90,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 else
                 {
                     // TODO: launch error
-                    stop = true;
+                    nextState = Q4SSERVERSTATE_TERMINATION;
                 }
             }
         break;
@@ -112,7 +110,6 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                     {
                         //Alert
                         Q4SServerProtocol::alert();
-                        stop = true;
                         nextState = Q4SSERVERSTATE_TERMINATION;
                     }
                 }

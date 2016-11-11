@@ -61,6 +61,7 @@ void Q4SServerProtocol::done()
 
 void Q4SServerProtocol::clear()
 {
+    lastAlertTimeStamp = ULONG_MAX;
 }
 
 bool Q4SServerProtocol::openConnectionListening()
@@ -211,7 +212,11 @@ void Q4SServerProtocol::continuity(float maxLatency, float maxJitter, float minB
     while ( !stop )
     {
         measureOk = measure(maxLatency, maxJitter, minBandWith, maxPacketLoss);
-        stop = !measureOk;
+        if (!measureOk)
+        {
+            alert();
+        }
+//        stop = !measureOk;
     }
 }
 
@@ -382,8 +387,14 @@ void Q4SServerProtocol::cancel()
 
 void Q4SServerProtocol::alert()
 {
-    mServerSocket.sendAlertData("ALERT");
-    printf("METHOD: alert\n");
+    unsigned long actualTime = ETime_getTime();
+    unsigned long timeFromLastAlert = actualTime - lastAlertTimeStamp;
+    if ( timeFromLastAlert > q4SServerConfigFile.timeBetweenAlerts)
+    {
+        lastAlertTimeStamp = actualTime;
+        mServerSocket.sendAlertData("ALERT");
+        printf("METHOD: alert\n");
+    }
 }
 
 void Q4SServerProtocol::end()

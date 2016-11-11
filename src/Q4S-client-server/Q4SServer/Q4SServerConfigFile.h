@@ -14,6 +14,7 @@ public:
     std::string agentIP;
     std::string agentPort;
     double timeBetweenPings;
+    unsigned long timeBetweenAlerts;
     double timeStartCalc;
     double timeEndApp;
     float maxLatency;
