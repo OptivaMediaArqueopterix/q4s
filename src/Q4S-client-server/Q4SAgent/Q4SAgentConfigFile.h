@@ -13,6 +13,7 @@ public:
     std::string ganyConnectorPort;
     std::string listenUDPPort;
     double timeEndApp;
+    bool demoMode;
 };
 
 extern Q4SAgentConfigFile q4SAgentConfigFile;

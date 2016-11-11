@@ -112,6 +112,20 @@ bool Q4SAgentProtocol::listen()
 
     bool ok = true;
     
+    if (q4SAgentConfigFile.demoMode)
+    {
+        mAgentSocket.sendActionData("SET_BITRATE 5000");
+        Sleep (5000);
+        mAgentSocket.sendActionData("SET_BITRATE 4000");
+        Sleep (5000);
+        mAgentSocket.sendActionData("SET_BITRATE 3000");
+        Sleep (5000);
+        mAgentSocket.sendActionData("SET_BITRATE 2000");
+        Sleep (5000);
+        mAgentSocket.sendActionData("SET_BITRATE 1000");
+        
+        ok = true;
+    }
     if ( ok ) 
     {
         mReceivedMessages.readFirst( message );
