@@ -114,6 +114,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                     }
                     else
                     {
+                        // TODO: send the measure or the constrains not reached to the server in order to be informed 
                         //Alert
                         stop = true;
                     }
