@@ -8,6 +8,7 @@
 #include "Q4SMathUtils.h"
 #include "Q4SServerConfigFile.h"
 #include "EKey.h"
+#include "Q4SMessage.h"
 
 #define     DEFAULT_CONN_ID     1
 
@@ -392,7 +393,10 @@ void Q4SServerProtocol::alert()
     if ( timeFromLastAlert > q4SServerConfigFile.timeBetweenAlerts)
     {
         lastAlertTimeStamp = actualTime;
-        mServerSocket.sendAlertData("ALERT");
+        Q4SMessage message;
+        message.init(Q4SMREQUESTORRESPOND_REQUEST, Q4SMTYPE_Q4SALERT);
+
+        mServerSocket.sendAlertData(message.getMessage().c_str());
         printf("METHOD: alert\n");
     }
 }

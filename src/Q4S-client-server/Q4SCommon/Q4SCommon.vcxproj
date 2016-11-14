@@ -82,6 +82,7 @@
     <ClInclude Include="Q4SCriticalSection.h" />
     <ClInclude Include="Q4SMessageInfo.h" />
     <ClInclude Include="Q4SMessageManager.h" />
+    <ClInclude Include="Q4SMessage.h" />
     <ClInclude Include="Q4SSocket.h" />
   </ItemGroup>
   <ItemGroup>
@@ -93,6 +94,7 @@
     <ClCompile Include="Q4SCriticalSection.cpp" />
     <ClCompile Include="Q4SMathUtils.cpp" />
     <ClCompile Include="Q4SMessageManager.cpp" />
+    <ClCompile Include="Q4SMessage.cpp" />
     <ClCompile Include="Q4SSocket.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
