@@ -393,10 +393,11 @@ void Q4SServerProtocol::alert()
     if ( timeFromLastAlert > q4SServerConfigFile.timeBetweenAlerts)
     {
         lastAlertTimeStamp = actualTime;
-        Q4SMessage message;
-        message.init(Q4SMREQUESTORRESPOND_REQUEST, Q4SMTYPE_Q4SALERT);
 
+        Q4SMessage message;
+        message.init(Q4SMREQUESTORRESPOND_REQUEST, Q4SMTYPE_Q4SALERT, "myIp", q4SServerConfigFile.agentPort);
         mServerSocket.sendAlertData(message.getMessage().c_str());
+
         printf("METHOD: alert\n");
     }
 }

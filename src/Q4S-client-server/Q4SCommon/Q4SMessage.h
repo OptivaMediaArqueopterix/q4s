@@ -19,7 +19,6 @@ enum Q4SMType
 , Q4SMTYPE_Q4SALERT
 };
 
-
 class Q4SMessage
 {
     public:
@@ -30,7 +29,9 @@ class Q4SMessage
 
     // Init-Done
     bool    init(   Q4SMRequestOrResponse q4SMRequestOrResponse,
-                    Q4SMType q4SMType);
+                    Q4SMType q4SMType, 
+                    std::string host, 
+                    std::string port);
     void    done( );
 
     // Get Message
@@ -40,8 +41,11 @@ private:
 
     void    clear( );
 
-    void    makeFirstLine(Q4SMRequestOrResponse q4SMRequestOrResponse, Q4SMType q4SMType);
-    void    makeFirstLineRequest(Q4SMType q4SMType);
+    void    makeFirstLine(Q4SMRequestOrResponse q4SMRequestOrResponse, Q4SMType q4SMType, std::string host, std::string port);
+    void    makeFirstLineRequest(Q4SMType q4SMType, std::string host, std::string port);
+    void    makeFirstLineRequestMethod(Q4SMType q4SMType);
+    void    makeFirstLineRequestURI(std::string host, std::string port);
+    void    makeFirstLineRequestVersion();
     void    makeHeaders();
     void    makeBody();
 
