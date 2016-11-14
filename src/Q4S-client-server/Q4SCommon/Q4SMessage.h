@@ -2,6 +2,7 @@
 #define _Q4SMESSAGE_H_
 
 #include <string>
+#include "Q4SSDP.h"
 
 enum Q4SMRequestOrResponse
 { Q4SMREQUESTORRESPOND_INVALID
@@ -32,6 +33,11 @@ class Q4SMessage
                     Q4SMType q4SMType, 
                     std::string host, 
                     std::string port);
+    bool    init(   Q4SMRequestOrResponse q4SMRequestOrResponse,
+                    Q4SMType q4SMType, 
+                    std::string host, 
+                    std::string port, 
+                    Q4SSDP q4SSDP);
     void    done( );
 
     // Get Message

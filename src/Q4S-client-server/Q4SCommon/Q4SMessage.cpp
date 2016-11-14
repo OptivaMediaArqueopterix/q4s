@@ -10,7 +10,6 @@ Q4SMessage::~Q4SMessage( )
     done();
 }
 
-
 bool Q4SMessage::init(Q4SMRequestOrResponse q4SMRequestOrResponse, Q4SMType q4SMType, std::string host, std::string port)
 {
     done();
@@ -25,6 +24,19 @@ bool Q4SMessage::init(Q4SMRequestOrResponse q4SMRequestOrResponse, Q4SMType q4SM
     mMessage.append("\n");
     // Body
     makeBody();
+
+    return ok;
+}
+
+bool Q4SMessage::init(Q4SMRequestOrResponse q4SMRequestOrResponse,Q4SMType q4SMType, std::string host, std::string port, Q4SSDP q4SSDP)
+{
+    bool ok = true;
+
+    // init
+    ok &= init(q4SMRequestOrResponse, q4SMType, host, port);
+
+    // SDP
+    mMessage.append( q4SSDP.getMessage());
 
     return ok;
 }
