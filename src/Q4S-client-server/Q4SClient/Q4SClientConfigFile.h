@@ -12,9 +12,9 @@ public:
     std::string serverIP;
     std::string defaultTCPPort;
     std::string defaultUDPPort;
-    double timeBetweenPings;
-    double timeStartCalc;
-    double timeEndApp;
+    unsigned long timeBetweenPings;
+    unsigned long timeStartCalc;
+    unsigned long timeEndApp;
     float maxLatency;
     float maxJitter;
     bool showMeasureInfo;

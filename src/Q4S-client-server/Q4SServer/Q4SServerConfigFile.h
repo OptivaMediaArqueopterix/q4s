@@ -13,10 +13,10 @@ public:
     std::string defaultUDPPort;
     std::string agentIP;
     std::string agentPort;
-    double timeBetweenPings;
+    unsigned long timeBetweenPings;
     unsigned long timeBetweenAlerts;
-    double timeStartCalc;
-    double timeEndApp;
+    unsigned long timeStartCalc;
+    unsigned long timeEndApp;
     float maxLatency;
     float maxJitter;
     bool showMeasureInfo;

@@ -10,7 +10,7 @@ public:
     Q4SGAMConnConfigFile(const std::string &fName);
 
     std::string listenUDPPort;
-    double timeEndApp;
+    unsigned long timeEndApp;
 };
 
 extern Q4SGAMConnConfigFile q4SGAMConnConfigFile;

@@ -9,9 +9,9 @@ Q4SClientConfigFile::Q4SClientConfigFile(const std::string &fName)
     serverIP = configFile.getValueOfKey<std::string>("SERVER_IP", "127.0.0.1");
     defaultTCPPort = configFile.getValueOfKey<std::string>("DEFAULT_TCP_PORT", "27015");
     defaultUDPPort = configFile.getValueOfKey<std::string>("DEFAULT_UDP_PORT", "27016");
-    timeBetweenPings = configFile.getValueOfKey<double>("TIME_BETWEEN_PINGS", 200   );
-    timeStartCalc = configFile.getValueOfKey<double>("TIME_START_CALC", 2000);
-    timeEndApp = configFile.getValueOfKey<double>("TIME_END_APP", 10000);
+    timeBetweenPings = configFile.getValueOfKey<unsigned long>("TIME_BETWEEN_PINGS", 200   );
+    timeStartCalc = configFile.getValueOfKey<unsigned long>("TIME_START_CALC", 2000);
+    timeEndApp = configFile.getValueOfKey<unsigned long>("TIME_END_APP", 10000);
     maxLatency = configFile.getValueOfKey<float>("MAX_LATENCY", 2000);
     maxJitter = configFile.getValueOfKey<float>("MAX_JITTER", 200);
     showMeasureInfo = configFile.keyExists("SHOW_MEASURE_INFO");

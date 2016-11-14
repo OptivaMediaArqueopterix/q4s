@@ -10,10 +10,10 @@ Q4SServerConfigFile::Q4SServerConfigFile(const std::string &fName)
     defaultUDPPort = configFile.getValueOfKey<std::string>("DEFAULT_UDP_PORT", "27016");
     agentIP = configFile.getValueOfKey<std::string>("AGENT_IP", "127.0.0.1");
     agentPort = configFile.getValueOfKey<std::string>("AGENT_PORT", "27017");
-    timeBetweenPings = configFile.getValueOfKey<double>("TIME_BETWEEN_PINGS", 200);
+    timeBetweenPings = configFile.getValueOfKey<unsigned long>("TIME_BETWEEN_PINGS", 200);
     timeBetweenAlerts = configFile.getValueOfKey<unsigned long>("TIME_BETWEEN_ALERTS", 5000);
-    timeStartCalc = configFile.getValueOfKey<double>("TIME_START_CALC", 2000);
-    timeEndApp = configFile.getValueOfKey<double>("TIME_END_APP", 10000);
+    timeStartCalc = configFile.getValueOfKey<unsigned long>("TIME_START_CALC", 2000);
+    timeEndApp = configFile.getValueOfKey<unsigned long>("TIME_END_APP", 10000);
     maxLatency = configFile.getValueOfKey<float>("MAX_LATENCY", 2000);
     maxJitter = configFile.getValueOfKey<float>("MAX_JITTER", 200);
     showMeasureInfo = configFile.keyExists("SHOW_MEASURE_INFO");
