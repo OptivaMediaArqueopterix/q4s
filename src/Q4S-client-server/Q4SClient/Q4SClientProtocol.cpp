@@ -7,6 +7,7 @@
 #include "Q4SMathUtils.h"
 #include "Q4SClientConfigFile.h"
 #include "EKey.h"
+#include "Q4SMessage.h"
 
 Q4SClientProtocol::Q4SClientProtocol ()
 {
@@ -98,7 +99,9 @@ bool Q4SClientProtocol::begin()
     
     if( ok )
     {
-        ok &= mClientSocket.sendTcpData( "BEGIN" );
+        Q4SMessage message;
+        message.init(Q4SMREQUESTORRESPOND_REQUEST, Q4SMTYPE_BEGIN, "myIP", q4SClientConfigFile.defaultTCPPort);
+        ok &= mClientSocket.sendTcpData( message.getMessageCChar() );
     }
 
     if ( ok ) 

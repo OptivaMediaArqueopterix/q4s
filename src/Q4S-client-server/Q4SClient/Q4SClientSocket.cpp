@@ -77,7 +77,7 @@ bool Q4SClientSocket::closeConnection( int socketType )
     return ok;
 }
 
-bool Q4SClientSocket::sendTcpData( char* sendBuffer )
+bool Q4SClientSocket::sendTcpData( const char* sendBuffer )
 {
     return mq4sTcpSocket.sendData( sendBuffer );
 }

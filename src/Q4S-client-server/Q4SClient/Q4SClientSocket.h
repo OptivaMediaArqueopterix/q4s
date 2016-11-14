@@ -19,7 +19,7 @@ public:
 
     bool    openConnection( int socketType );
     bool    closeConnection( int socketType );
-    bool    sendTcpData( char* sendBuffer );
+    bool    sendTcpData( const char* sendBuffer );
     bool    receiveTcpData( char* receiveBuffer, int receiveBufferSize );
     bool    sendUdpData( char* sendBuffer );
     bool    receiveUdpData( char* receiveBuffer, int receiveBufferSize );

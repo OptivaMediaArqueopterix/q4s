@@ -41,7 +41,8 @@ class Q4SMessage
     void    done( );
 
     // Get Message
-    std::string getMessage();
+    std::string getMessage() const;
+    const char* getMessageCChar() const;
 
 private:
 

@@ -41,9 +41,14 @@ bool Q4SMessage::init(Q4SMRequestOrResponse q4SMRequestOrResponse,Q4SMType q4SMT
     return ok;
 }
 
-std::string Q4SMessage::getMessage()
+std::string Q4SMessage::getMessage() const 
 {
     return mMessage;
+}
+
+const char* Q4SMessage::getMessageCChar() const
+{
+    return mMessage.c_str();
 }
 
 void Q4SMessage::done( )
