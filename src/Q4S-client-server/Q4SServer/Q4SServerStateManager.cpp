@@ -1,6 +1,7 @@
 #include "Q4SServerStateManager.h"
 
 #include <stdio.h>
+#include <string>
 #include "Q4SServerConfigFile.h"
 
 Q4SServerStateManager::Q4SServerStateManager()
@@ -101,15 +102,20 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 bool readyOk = Q4SServerProtocol::ready();
                 if( readyOk )
                 {
-                    measureOk = Q4SServerProtocol::measure(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10);
+                    float latency;
+                    float jitter;
+                    measureOk = Q4SServerProtocol::measure(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10, latency, jitter);
                     if (measureOk)
                     {
                         nextState = Q4SSERVERSTATE_CONTINUITY;
                     }
                     else
                     {
+                        std::string alertMessage;
+                        alertMessage= "Latency: " + std::to_string((long double)latency) + " Jitter: " + std::to_string((long double)jitter);
+
                         //Alert
-                        Q4SServerProtocol::alert();
+                        Q4SServerProtocol::alert(alertMessage);
                         nextState = Q4SSERVERSTATE_TERMINATION;
                     }
                 }
@@ -129,7 +135,9 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                     Q4SServerProtocol::continuity(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10);
                 }
 
-                Q4SServerProtocol::alert();
+                std::string alertMessage;
+                alertMessage= "Continuity end";
+                Q4SServerProtocol::alert(alertMessage);
 
                 nextState = Q4SSERVERSTATE_TERMINATION;
             }
@@ -138,7 +146,9 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
         case Q4SSERVERSTATE_TERMINATION:
             {
                 printf("Hemos llegado a la terminacion\n");
-                Q4SServerProtocol::alert();
+                std::string alertMessage;
+                alertMessage= "Termination";
+                Q4SServerProtocol::alert(alertMessage);
                 Q4SServerProtocol::end();
                 Q4SServerProtocol::done();
                 stop = true;

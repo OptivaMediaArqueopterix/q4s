@@ -20,11 +20,11 @@ public:
     // Q4S Methods
     bool    begin();
     bool    ready();
-    bool    measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
+    bool    measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss, float &latency, float &jitter);
     void    continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
     void    bwidth();
     void    cancel();
-    void    alert();
+    void    alert(std::string alertMessage);
     void    end();
 
 private:
@@ -35,7 +35,7 @@ private:
     void    closeConnectionListening();
     void    closeConnections();
 
-    bool    measureStage0(float maxLatency, float maxJitter);
+    bool    measureStage0(float maxLatency, float maxJitter, float &latency, float &jitter);
     bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
     void    calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showMeasureInfo);
     void    calculateJitter(float &jitter, bool showResult, bool showMeasureInfo);

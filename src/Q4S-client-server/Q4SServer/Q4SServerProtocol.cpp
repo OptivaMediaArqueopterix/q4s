@@ -178,13 +178,13 @@ bool Q4SServerProtocol::ready()
     return ok;
 }
 
-bool Q4SServerProtocol::measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss)
+bool Q4SServerProtocol::measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss, float &latency, float &jitter)
 {
     bool measureOk = true;
 
     printf("MEASURING\n");
 
-    measureOk = Q4SServerProtocol::measureStage0(maxLatency, maxJitter);
+    measureOk = Q4SServerProtocol::measureStage0(maxLatency, maxJitter, latency, jitter);
     if (measureOk)
     {
         measureOk = Q4SServerProtocol::measureStage1( minBandWith, maxPacketLoss);
@@ -214,10 +214,15 @@ void Q4SServerProtocol::continuity(float maxLatency, float maxJitter, float minB
 
     while ( !stop )
     {
-        measureOk = measure(maxLatency, maxJitter, minBandWith, maxPacketLoss);
+        float latency;
+        float jitter;
+        measureOk = measure(maxLatency, maxJitter, minBandWith, maxPacketLoss, latency, jitter);
         if (!measureOk)
         {
-            alert();
+            //Alert
+            std::string alertMessage;
+            alertMessage= "Latency: " + std::to_string((long double)latency) + " Jitter: " + std::to_string((long double)jitter);
+            alert(alertMessage);
         }
 //        stop = !measureOk;
     }
@@ -234,7 +239,7 @@ void Q4SServerProtocol::cancel()
     printf("METHOD: cancel\n");
 }
 
-void Q4SServerProtocol::alert()
+void Q4SServerProtocol::alert(std::string alertMessage)
 {
     unsigned long actualTime = ETime_getTime();
     unsigned long timeFromLastAlert = actualTime - lastAlertTimeStamp;
@@ -242,7 +247,8 @@ void Q4SServerProtocol::alert()
     {
         lastAlertTimeStamp = actualTime;
 
-        mServerSocket.sendAlertData("ALERT");
+        std::string message = "ALERT "+alertMessage;
+        mServerSocket.sendAlertData(message.c_str());
 
         printf("METHOD: alert\n");
     }
@@ -255,13 +261,11 @@ void Q4SServerProtocol::end()
 
 //--private:-------------------------------------------------------------------------------
 
-bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
+bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter, float &latency, float &jitter)
 {
     bool ok = true;
 
     std::vector<unsigned long> arrSentPingTimestamps;
-    float latency;
-    float jitter;
 
     if ( ok ) 
     {
@@ -589,7 +593,9 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
         if (EKey_getKeyState(EK_A))
         {
             printf( "Alert Sended\n");
-            alert();
+            std::string alertMessage;
+            alertMessage= "Alert by keyboard";
+            alert(alertMessage);
         }
 
     }
