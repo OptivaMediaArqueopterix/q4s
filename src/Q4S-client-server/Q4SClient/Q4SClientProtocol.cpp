@@ -8,6 +8,7 @@
 #include "Q4SClientConfigFile.h"
 #include "EKey.h"
 #include "Q4SMessage.h"
+#include "Q4SMessageTools.h"
 
 Q4SClientProtocol::Q4SClientProtocol ()
 {
@@ -121,7 +122,9 @@ bool Q4SClientProtocol::ready()
     
     if( ok )
     {
-        ok &= mClientSocket.sendTcpData( "READY" );
+        Q4SMessage message;
+        message.init(Q4SMREQUESTORRESPOND_REQUEST, Q4SMTYPE_READY, "myIP", q4SClientConfigFile.defaultTCPPort);
+        ok &= mClientSocket.sendTcpData( message.getMessageCChar() );
     }
 
     if ( ok ) 
@@ -214,7 +217,7 @@ bool Q4SClientProtocol::sendRegularPings(std::vector<unsigned long> &arrSentPing
 {
     bool ok = true;
 
-    char messageToSend[ 256 ];
+    Q4SMessage message;
     unsigned long timeStamp = 0;
     int pingNumber = 0;
     int pingNumberToSend = 20;
@@ -226,8 +229,8 @@ bool Q4SClientProtocol::sendRegularPings(std::vector<unsigned long> &arrSentPing
         arrSentPingTimestamps.push_back( timeStamp );
 
         // Prepare message and send
-        sprintf_s( messageToSend, "PING %d %d", pingNumber, timeStamp );
-        ok &= mClientSocket.sendUdpData( messageToSend );
+        message.init(Q4SMREQUESTORRESPOND_REQUEST, Q4SMTYPE_PING,"myIp", q4SClientConfigFile.defaultUDPPort, pingNumber, timeStamp);
+        ok &= mClientSocket.sendUdpData( message.getMessageCChar() );
 
         // Wait the established time between pings
         Sleep( (DWORD)q4SClientConfigFile.timeBetweenPings );
@@ -294,7 +297,7 @@ void Q4SClientProtocol::calculateJitter(float &jitter, bool showResult, bool sho
             sprintf_s( messagePattern, "PING %d", pingNumber );
             pattern = messagePattern;
 
-            if( mReceivedMessages.readMessage( pattern, messageInfo, true ) == true )
+            if( mReceivedMessages.readPingMessage( pingNumber, messageInfo, true ) == true )
             {
                 arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
                 if( pingNumber > 0 )
@@ -411,7 +414,7 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
             unsigned long receivedTimeStamp = 0;
 
             // Comprobar que es un ping
-            if ( isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
+            if ( Q4SMessageTools_isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
             {
                 if (q4SClientConfigFile.showReceivedPingInfo)
                 {
@@ -453,44 +456,3 @@ bool Q4SClientProtocol::manageUdpReceivedData( )
 
     return ok;
 }
-
-bool Q4SClientProtocol::isPingMessage(std::string message, int *pingNumber, unsigned long *timeStamp)
-{
-    bool ok = true;
-
-    // Convert message to a stringstream 
-    std::istringstream messageStream (message);
-
-    std::string method;
-
-    // Get method from message
-    if ( ok )
-    {
-        std::getline(messageStream, method, ' ');
-        // Check if method is ping
-        if ( method.compare("PING") != 0)
-        {
-            ok = false;
-        }
-    }
-
-    // Get pingNumberfrom message
-    if ( ok )
-    {
-        std::string stringPingNumber;
-        std::getline(messageStream, stringPingNumber, ' ');
-
-        *pingNumber = atoi(stringPingNumber.c_str());       
-    }
-    
-    if ( ok )
-    {
-        std::string stringTimeStamp;
-        std::getline(messageStream, stringTimeStamp, ' ');
-
-        *timeStamp= atoi(stringTimeStamp.c_str());
-    }
-
-    return ok;
-}
-

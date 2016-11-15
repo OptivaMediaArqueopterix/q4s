@@ -59,8 +59,6 @@ private:
     Q4SMessageManager           mReceivedMessages;
 
     unsigned long               lastAlertTimeStamp;
-
-    bool                        isPingMessage(std::string message, int *pingNumber, unsigned long *timeStamp);
 };
 
 #endif  // _Q4SSERVERPROTOCOL_H_

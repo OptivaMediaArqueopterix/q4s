@@ -23,7 +23,8 @@ class Q4SMessageManager
     void addMessage( std::string &message, unsigned long timestamp = 0 );
 
     bool readFirst( std::string &firstMessage );
-    bool readMessage( std::string& pattern, Q4SMessageInfo& message, bool erase );
+    bool readMessage( std::string& pattern, Q4SMessageInfo& messageInfo, bool erase );
+    bool readPingMessage( int pingIndex, Q4SMessageInfo& messageInfo, bool erase );
 
     int size();
 

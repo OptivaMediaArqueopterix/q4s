@@ -28,6 +28,27 @@ bool Q4SMessage::init(Q4SMRequestOrResponse q4SMRequestOrResponse, Q4SMType q4SM
     return ok;
 }
 
+bool Q4SMessage::init(Q4SMRequestOrResponse q4SMRequestOrResponse, Q4SMType q4SMType, std::string host, std::string port, int sequenceNumber, unsigned long timeStamp)
+{
+    done();
+
+    bool ok = true;
+
+    // FirstLine
+    makeFirstLine(q4SMRequestOrResponse, q4SMType, host, port);
+
+    // Headers
+    makeHeaders(sequenceNumber, timeStamp);
+
+    //CRLF
+    mMessage.append("\n");
+
+    // Body
+    makeBody();
+
+    return ok;
+}
+
 bool Q4SMessage::init(Q4SMRequestOrResponse q4SMRequestOrResponse,Q4SMType q4SMType, std::string host, std::string port, Q4SSDP q4SSDP)
 {
     bool ok = true;
@@ -53,6 +74,7 @@ const char* Q4SMessage::getMessageCChar() const
 
 void Q4SMessage::done( )
 {
+    clear();
 }
 
 // ---private----------------------------------------------------------------------------------------------------------------
@@ -83,6 +105,8 @@ void Q4SMessage::makeFirstLine(Q4SMRequestOrResponse q4SMRequestOrResponse, Q4SM
         }
         break;
     }
+
+    mMessage.append("\n");
 }
 
 void Q4SMessage::makeFirstLineRequest(Q4SMType q4SMType, std::string host, std::string port)
@@ -163,6 +187,29 @@ void Q4SMessage::makeFirstLineRequestVersion()
 
 void Q4SMessage::makeHeaders()
 {
+    // Session-Id
+    //Sequence-Number
+    //Timestamp
+    //Stage
+
+    // TODO
+}
+void Q4SMessage::makeHeaders( int sequenceNumber, unsigned long timeStamp)
+{
+    // Session-Id
+
+    //Sequence-Number
+    mMessage.append("Sequence-Number=");
+    mMessage.append(std::to_string((_ULonglong)sequenceNumber));
+    mMessage.append("\n");
+
+    //Timestamp
+    mMessage.append("Timestamp=");
+    mMessage.append(std::to_string((_ULonglong)timeStamp));
+    mMessage.append("\n");
+
+    //Stage
+
     // TODO
 }
 

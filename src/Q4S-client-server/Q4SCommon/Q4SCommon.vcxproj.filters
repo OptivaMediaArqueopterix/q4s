@@ -57,6 +57,9 @@
     <ClInclude Include="Q4SSDP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Q4SMessageTools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SCommon.cpp">
@@ -90,6 +93,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Q4SSDP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Q4SMessageTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

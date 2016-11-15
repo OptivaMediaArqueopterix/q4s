@@ -9,6 +9,7 @@
 #include "Q4SServerConfigFile.h"
 #include "EKey.h"
 #include "Q4SMessage.h"
+#include "Q4SMessageTools.h"
 
 #define     DEFAULT_CONN_ID     1
 
@@ -236,7 +237,7 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
     {
         // Wait to recive the first Ping
         Q4SMessageInfo  messageInfo;
-        ok &= mReceivedMessages.readMessage( std::string( "PING 0" ), messageInfo, false );
+        ok &= mReceivedMessages.readPingMessage( 0, messageInfo, false );
     }
 
     if(!ok)
@@ -246,7 +247,7 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
 
     if( ok )
     {
-        char messageToSend[ 256 ];
+        Q4SMessage message;
         unsigned long timeStamp = 0;
 
         for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
@@ -256,8 +257,8 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
             arrSentPingTimestamps.push_back( timeStamp );
 
             // Prepare message and send
-            sprintf_s( messageToSend, "PING %d %d", pingIndex, timeStamp );
-            ok &= mServerSocket.sendUdpData( DEFAULT_CONN_ID, messageToSend );
+            message.init(Q4SMREQUESTORRESPOND_REQUEST, Q4SMTYPE_PING,"myIp", q4SServerConfigFile.defaultUDPPort, pingIndex, timeStamp);
+            ok &= mServerSocket.sendUdpData( DEFAULT_CONN_ID, message.getMessageCChar() );
 
             // Wait the established time between pings
             Sleep( (DWORD)q4SServerConfigFile.timeBetweenPings );
@@ -319,10 +320,10 @@ bool Q4SServerProtocol::measureStage0(float maxLatency, float maxJitter)
         for( pingIndex = 0; pingIndex < pingMaxCount; pingIndex++ )
         {
             // Generate pattern
-            sprintf_s( messagePattern, "PING %d", pingIndex );
-            pattern = messagePattern;
+            //sprintf_s( messagePattern, "PING %d", pingIndex );
+            //pattern = messagePattern;
 
-            if( mReceivedMessages.readMessage( pattern, messageInfo, true ) == true )
+            if( mReceivedMessages.readPingMessage( pingIndex, messageInfo, true ) == true )
             {
                 arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
                 if( pingIndex > 0 )
@@ -520,7 +521,7 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
             unsigned long receivedTimeStamp = 0;
 
             // Comprobar que es un ping
-            if ( isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
+            if ( Q4SMessageTools_isPingMessage(udpBuffer, &pingNumber, &receivedTimeStamp) )
             {
                 if (q4SServerConfigFile.showReceivedPingInfo)
                 {
@@ -561,45 +562,4 @@ bool Q4SServerProtocol::manageUdpReceivedData( )
     }
 
     return ok;
-}
-
-bool Q4SServerProtocol::isPingMessage(std::string message, int *pingNumber, unsigned long *timeStamp)
-{
-    bool ok = true;
-
-    // Convert message to a stringstream 
-    std::istringstream messageStream (message);
-
-    std::string method;
-
-    // Get method from message
-    if ( ok )
-    {
-        std::getline(messageStream, method, ' ');
-        // Check if method is ping
-        if ( method.compare("PING") != 0)
-        {
-            ok = false;
-        }
-    }
-
-    // Get pingNumberfrom message
-    if ( ok )
-    {
-        std::string stringPingNumber;
-        std::getline(messageStream, stringPingNumber, ' ');
-
-        *pingNumber = atoi(stringPingNumber.c_str());       
-    }
-    
-    if ( ok )
-    {
-        std::string stringTimeStamp;
-        std::getline(messageStream, stringTimeStamp, ' ');
-
-        *timeStamp= atoi(stringTimeStamp.c_str());
-    }
-
-    return ok;
-
 }

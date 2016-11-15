@@ -83,6 +83,8 @@
     <ClInclude Include="Q4SMessageInfo.h" />
     <ClInclude Include="Q4SMessageManager.h" />
     <ClInclude Include="Q4SMessage.h" />
+    <ClCompile Include="Q4SMessageTools.cpp" />
+    <ClInclude Include="Q4SMessageTools.h" />
     <ClInclude Include="Q4SSDP.h" />
     <ClInclude Include="Q4SSocket.h" />
   </ItemGroup>

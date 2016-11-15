@@ -36,6 +36,12 @@ class Q4SMessage
     bool    init(   Q4SMRequestOrResponse q4SMRequestOrResponse,
                     Q4SMType q4SMType, 
                     std::string host, 
+                    std::string port,
+                    int sequenceNumber,
+                    unsigned long timeStamp);
+    bool    init(   Q4SMRequestOrResponse q4SMRequestOrResponse,
+                    Q4SMType q4SMType, 
+                    std::string host, 
                     std::string port, 
                     Q4SSDP q4SSDP);
     void    done( );
@@ -54,6 +60,7 @@ private:
     void    makeFirstLineRequestURI(std::string host, std::string port);
     void    makeFirstLineRequestVersion();
     void    makeHeaders();
+    void    makeHeaders(int sequenceNumber, unsigned long timeStamp);
     void    makeBody();
 
     std::string mMessage;
