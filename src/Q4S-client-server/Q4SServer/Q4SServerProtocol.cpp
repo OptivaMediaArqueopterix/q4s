@@ -242,9 +242,7 @@ void Q4SServerProtocol::alert()
     {
         lastAlertTimeStamp = actualTime;
 
-        Q4SMessage message;
-        message.init(Q4SMREQUESTORRESPOND_REQUEST, Q4SMTYPE_Q4SALERT, "myIp", q4SServerConfigFile.agentPort);
-        mServerSocket.sendAlertData(message.getMessage().c_str());
+        mServerSocket.sendAlertData("ALERT");
 
         printf("METHOD: alert\n");
     }
