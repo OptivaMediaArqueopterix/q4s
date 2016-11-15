@@ -34,8 +34,8 @@ private:
 
     bool    measureStage0(float maxLatency, float maxJitter);
     bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
-    void    calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showResult, bool showMeasureInfo);
-    void    calculateJitter(float &jitter, bool showResult, bool showMeasureInfo);
+    void    calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showMeasureInfo);
+    void    calculateJitter(float &jitter, bool showMeasureInfo);
     bool    checkLatencyAndJitter(float latency, float jitter, float maxLatency, float maxJitter);
     bool    measureStage1(float minBandWith, float maxPacketLoss);
 

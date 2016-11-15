@@ -25,21 +25,6 @@ float EMathUtils_median( std::vector < float > &vector)
     return median;
 }
 
-float EMathUtils_mean( std::vector < float > &vector)
-{
-    float mean = 0;
-
-    float total = 0;
-
-    std::for_each(vector.begin(), vector.end(), [&](float element) {
-        total += element;
-    });
-
-    mean = total/(float)vector.size();
-            
-    return mean;
-}
-
 float EMathUtils_median( std::vector < unsigned long > &vector)
 {
     float median = 0.f;
@@ -62,3 +47,34 @@ float EMathUtils_median( std::vector < unsigned long > &vector)
             
     return median;
 }
+
+float EMathUtils_mean( std::vector < float > &vector)
+{
+    float mean = 0;
+
+    float total = 0;
+
+    std::for_each(vector.begin(), vector.end(), [&](float element) {
+        total += element;
+    });
+
+    mean = total/(float)vector.size();
+            
+    return mean;
+}
+
+float EMathUtils_mean( std::vector < unsigned long > &vector)
+{
+    float mean = 0;
+
+    float total = 0;
+
+    std::for_each(vector.begin(), vector.end(), [&](float element) {
+        total += element;
+    });
+
+    mean = total/(float)vector.size();
+            
+    return mean;
+}
+

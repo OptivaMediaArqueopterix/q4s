@@ -3,6 +3,7 @@
 
 #include "Q4SServerSocket.h"
 #include "Q4SMessageManager.h"
+#include <vector>
 
 class Q4SServerProtocol
 {
@@ -35,6 +36,10 @@ private:
     void    closeConnections();
 
     bool    measureStage0(float maxLatency, float maxJitter);
+    bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
+    void    calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showMeasureInfo);
+    void    calculateJitter(float &jitter, bool showResult, bool showMeasureInfo);
+    bool    checkLatencyAndJitter(float latency, float jitter, float maxLatency, float maxJitter);
     bool    measureStage1(float minBandWith, float maxPacketLoss);
 
     Q4SServerSocket             mServerSocket;
