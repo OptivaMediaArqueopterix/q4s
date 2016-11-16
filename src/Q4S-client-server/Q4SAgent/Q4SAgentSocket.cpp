@@ -112,7 +112,7 @@ bool Q4SAgentSocket::startActionSender()
     if( ok )
     {
         mq4sActionSocket.setSocket( mActionSocket, SOCK_DGRAM, &q4SAgentConfigFile.ganyConnectorIp, &q4SAgentConfigFile.ganyConnectorPort );
-        printf( "Prepared for sending alerts at: %s\n", q4SAgentConfigFile.ganyConnectorPort.c_str() );
+        printf( "Prepared for sending commands at: %s\n", q4SAgentConfigFile.ganyConnectorPort.c_str() );
     }
 
     return ok;
