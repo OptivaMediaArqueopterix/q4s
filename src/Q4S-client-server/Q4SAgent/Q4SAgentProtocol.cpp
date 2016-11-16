@@ -163,7 +163,10 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
         {
             // TODO: Leer el buffer para ver que alerta es y actuar en consecuencia
             printf( "Received Udp: <%s>\n", udpBuffer );
-            mAgentSocket.sendActionData("SET_BITRATE 1000");
+            char setBitrateText[20];
+            sprintf_s( setBitrateText, "SET_BITRATE 1000");
+            printf( "%s\n",setBitrateText );
+            mAgentSocket.sendActionData(setBitrateText);
         }
     }
 
