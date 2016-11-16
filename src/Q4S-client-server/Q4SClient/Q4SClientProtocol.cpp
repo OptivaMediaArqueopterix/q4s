@@ -136,16 +136,16 @@ bool Q4SClientProtocol::ready()
     return ok;
 }
 
-bool Q4SClientProtocol::measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss)
+bool Q4SClientProtocol::measure(Q4SMeasurementParams params)
 {
     bool measureOk = true;
 
     printf("MEASURING\n");
 
-    measureOk = Q4SClientProtocol::measureStage0(maxLatency, maxJitter);
+    measureOk = Q4SClientProtocol::measureStage0(params.maxLatency, params.maxJitter);
     if (measureOk)
     {
-        measureOk = Q4SClientProtocol::measureStage1( minBandWith, maxPacketLoss);
+        measureOk = Q4SClientProtocol::measureStage1(params.minBandWith, params.maxPacketLoss);
     }
 
     return measureOk;
@@ -158,7 +158,12 @@ void Q4SClientProtocol::continuity(float maxLatency, float maxJitter, float minB
 
     while ( !stop )
     {
-        measureOk = measure(maxLatency, maxJitter, minBandWith, maxPacketLoss);
+        Q4SMeasurementParams params;
+        params.maxLatency = q4SClientConfigFile.maxLatency;
+        params.maxJitter = q4SClientConfigFile.maxJitter;
+        params.minBandWith = 500;
+        params.maxPacketLoss = 10;
+        measureOk = measure(params);
         stop = !measureOk;
     }
 }

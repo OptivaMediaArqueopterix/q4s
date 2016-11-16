@@ -104,7 +104,13 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 {
                     float latency;
                     float jitter;
-                    measureOk = Q4SServerProtocol::measure(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10, latency, jitter);
+                    Q4SMeasurementParams params;
+                    params.maxLatency = q4SServerConfigFile.maxLatency;
+                    params.maxJitter = q4SServerConfigFile.maxJitter;
+                    params.minBandWith = 500;
+                    params.maxPacketLoss = 10;
+
+                    measureOk = Q4SServerProtocol::measure(params, latency, jitter);
                     if (measureOk)
                     {
                         nextState = Q4SSERVERSTATE_CONTINUITY;

@@ -72,6 +72,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Q4SStructs.cpp" />
     <ClInclude Include="ConfigFile.h" />
     <ClInclude Include="EKey.h" />
     <ClInclude Include="EKeyCodes.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="Q4SMessageTools.h" />
     <ClInclude Include="Q4SSDP.h" />
     <ClInclude Include="Q4SSocket.h" />
+    <ClInclude Include="Q4SStructs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfigFile.cpp" />

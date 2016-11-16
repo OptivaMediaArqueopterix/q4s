@@ -178,16 +178,16 @@ bool Q4SServerProtocol::ready()
     return ok;
 }
 
-bool Q4SServerProtocol::measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss, float &latency, float &jitter)
+bool Q4SServerProtocol::measure(Q4SMeasurementParams params, float &latency, float &jitter)
 {
     bool measureOk = true;
 
     printf("MEASURING\n");
 
-    measureOk = Q4SServerProtocol::measureStage0(maxLatency, maxJitter, latency, jitter);
+    measureOk = Q4SServerProtocol::measureStage0(params.maxLatency, params.maxJitter, latency, jitter);
     if (measureOk)
     {
-        measureOk = Q4SServerProtocol::measureStage1( minBandWith, maxPacketLoss);
+        measureOk = Q4SServerProtocol::measureStage1( params.minBandWith, params.maxPacketLoss);
     }
 
     // Check if CANCEL has been received
@@ -216,7 +216,12 @@ void Q4SServerProtocol::continuity(float maxLatency, float maxJitter, float minB
     {
         float latency;
         float jitter;
-        measureOk = measure(maxLatency, maxJitter, minBandWith, maxPacketLoss, latency, jitter);
+        Q4SMeasurementParams params;
+        params.maxLatency = q4SServerConfigFile.maxLatency;
+        params.maxJitter = q4SServerConfigFile.maxJitter;
+        params.minBandWith = 500;
+        params.maxPacketLoss = 10;
+        measureOk = measure(params, latency, jitter);
         if (!measureOk)
         {
             //Alert

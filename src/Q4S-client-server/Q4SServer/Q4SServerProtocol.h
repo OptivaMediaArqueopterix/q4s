@@ -4,6 +4,7 @@
 #include "Q4SServerSocket.h"
 #include "Q4SMessageManager.h"
 #include <vector>
+#include "Q4SStructs.h"
 
 class Q4SServerProtocol
 {
@@ -20,7 +21,7 @@ public:
     // Q4S Methods
     bool    begin();
     bool    ready();
-    bool    measure(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss, float &latency, float &jitter);
+    bool    measure(Q4SMeasurementParams measurementParams, float &latency, float &jitter);
     void    continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
     void    bwidth();
     void    cancel();

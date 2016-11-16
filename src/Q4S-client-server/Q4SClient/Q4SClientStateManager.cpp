@@ -105,7 +105,13 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                 bool readyOk = Q4SClientProtocol::ready();
                 if( readyOk )
                 {
-                    measureOk = Q4SClientProtocol::measure(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter, 500, 10);
+                    Q4SMeasurementParams params;
+                    params.maxLatency = q4SClientConfigFile.maxLatency;
+                    params.maxJitter = q4SClientConfigFile.maxJitter;
+                    params.minBandWith = 500;
+                    params.maxPacketLoss = 10;
+
+                    measureOk = Q4SClientProtocol::measure(params);
 
                     if (measureOk)
                     {
