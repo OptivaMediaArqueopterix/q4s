@@ -102,15 +102,15 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 bool readyOk = Q4SServerProtocol::ready();
                 if( readyOk )
                 {
-                    float latency;
-                    float jitter;
-                    Q4SMeasurementParams params;
-                    params.maxLatency = q4SServerConfigFile.maxLatency;
-                    params.maxJitter = q4SServerConfigFile.maxJitter;
-                    params.minBandWith = 500;
-                    params.maxPacketLoss = 10;
+                    Q4SMeasurementLimits limits;
+                    limits.stage0.maxLatency = q4SServerConfigFile.maxLatency;
+                    limits.stage0.maxJitter = q4SServerConfigFile.maxJitter;
+                    limits.stage1.minBandWith = 500;
+                    limits.stage1.maxPacketLoss = 10;
 
-                    measureOk = Q4SServerProtocol::measure(params, latency, jitter);
+                    Q4SMeasurementResult results;
+
+                    measureOk = Q4SServerProtocol::measure(limits, results);
                     if (measureOk)
                     {
                         nextState = Q4SSERVERSTATE_CONTINUITY;
@@ -118,7 +118,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                     else
                     {
                         std::string alertMessage;
-                        alertMessage= "Latency: " + std::to_string((long double)latency) + " Jitter: " + std::to_string((long double)jitter);
+                        alertMessage= "Latency: " + std::to_string((long double)results.values.latency) + " Jitter: " + std::to_string((long double)results.values.jitter);
 
                         //Alert
                         Q4SServerProtocol::alert(alertMessage);
@@ -138,7 +138,12 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 bool readyOk = Q4SServerProtocol::ready();
                 if (readyOk)
                 {
-                    Q4SServerProtocol::continuity(q4SServerConfigFile.maxLatency, q4SServerConfigFile.maxJitter, 500, 10);
+                    Q4SMeasurementLimits limits;
+                    limits.stage0.maxLatency = q4SServerConfigFile.maxLatency;
+                    limits.stage0.maxJitter = q4SServerConfigFile.maxJitter;
+                    limits.stage1.minBandWith = 500;
+                    limits.stage1.maxPacketLoss = 10;
+                    Q4SServerProtocol::continuity(limits);
                 }
 
                 std::string alertMessage;

@@ -21,8 +21,8 @@ public:
     // Q4S Methods
     bool    begin();
     bool    ready();
-    bool    measure(Q4SMeasurementParams params);
-    void    continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss);
+    bool    measure(Q4SMeasurementLimits limits, Q4SMeasurementResult &results);
+    void    continuity(Q4SMeasurementLimits limits);
     void    bwidth();
     void    cancel();
 
@@ -33,12 +33,12 @@ private:
     bool    openConnections();
     void    closeConnections();
 
-    bool    measureStage0(float maxLatency, float maxJitter);
+    bool    measureStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results);
     bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
     void    calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showMeasureInfo);
     void    calculateJitter(float &jitter, bool showMeasureInfo);
-    bool    checkLatencyAndJitter(float latency, float jitter, float maxLatency, float maxJitter);
-    bool    measureStage1(float minBandWith, float maxPacketLoss);
+    bool    checkStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results);
+    bool    measureStage1(Q4SMeasurementStage1Limits limits, Q4SMeasurementResult &results);
 
     Q4SClientSocket             mClientSocket;
     HANDLE                      marrthrHandle[ 2 ];

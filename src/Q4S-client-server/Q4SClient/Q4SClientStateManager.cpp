@@ -105,13 +105,15 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                 bool readyOk = Q4SClientProtocol::ready();
                 if( readyOk )
                 {
-                    Q4SMeasurementParams params;
-                    params.maxLatency = q4SClientConfigFile.maxLatency;
-                    params.maxJitter = q4SClientConfigFile.maxJitter;
-                    params.minBandWith = 500;
-                    params.maxPacketLoss = 10;
+                    Q4SMeasurementLimits limits;
+                    limits.stage0.maxLatency = q4SClientConfigFile.maxLatency;
+                    limits.stage0.maxJitter = q4SClientConfigFile.maxJitter;
+                    limits.stage1.minBandWith = 500;
+                    limits.stage1.maxPacketLoss = 10;
 
-                    measureOk = Q4SClientProtocol::measure(params);
+                    Q4SMeasurementResult results;
+
+                    measureOk = Q4SClientProtocol::measure(limits, results);
 
                     if (measureOk)
                     {
@@ -139,7 +141,12 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
                 if( readyOk )
                 {
                     printf("Hemos llegado a la continuidad\n");
-                    continuity(q4SClientConfigFile.maxLatency, q4SClientConfigFile.maxJitter, 500, 10);
+                    Q4SMeasurementLimits limits;
+                    limits.stage0.maxLatency = q4SClientConfigFile.maxLatency;
+                    limits.stage0.maxJitter = q4SClientConfigFile.maxJitter;
+                    limits.stage1.minBandWith = 500;
+                    limits.stage1.maxPacketLoss = 10;
+                    continuity(limits);
                     nextState = Q4SCLIENTSTATE_TERMINATION;
                 }
                 else

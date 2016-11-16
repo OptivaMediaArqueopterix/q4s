@@ -136,35 +136,32 @@ bool Q4SClientProtocol::ready()
     return ok;
 }
 
-bool Q4SClientProtocol::measure(Q4SMeasurementParams params)
+bool Q4SClientProtocol::measure(Q4SMeasurementLimits limits, Q4SMeasurementResult &results)
 {
     bool measureOk = true;
 
     printf("MEASURING\n");
 
-    measureOk = Q4SClientProtocol::measureStage0(params.maxLatency, params.maxJitter);
+    measureOk = Q4SClientProtocol::measureStage0(limits.stage0, results);
     if (measureOk)
     {
-        measureOk = Q4SClientProtocol::measureStage1(params.minBandWith, params.maxPacketLoss);
+        measureOk = Q4SClientProtocol::measureStage1(limits.stage1, results);
     }
 
     return measureOk;
 }
 
-void Q4SClientProtocol::continuity(float maxLatency, float maxJitter, float minBandWith, float maxPacketLoss)
+void Q4SClientProtocol::continuity(Q4SMeasurementLimits limits)
 {
     bool stop = false;
     bool measureOk = true;
 
     while ( !stop )
     {
-        Q4SMeasurementParams params;
-        params.maxLatency = q4SClientConfigFile.maxLatency;
-        params.maxJitter = q4SClientConfigFile.maxJitter;
-        params.minBandWith = 500;
-        params.maxPacketLoss = 10;
-        measureOk = measure(params);
-        stop = !measureOk;
+        Q4SMeasurementResult results;
+        measureOk = measure(limits, results);
+        // TODO notificar del error al Server
+        //stop = !measureOk;
     }
 }
 
@@ -181,13 +178,11 @@ void Q4SClientProtocol::cancel()
 
 //--private:-------------------------------------------------------------------------------
 
-bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
+bool Q4SClientProtocol::measureStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results)
 {
     bool ok = true;
 
     std::vector<unsigned long> arrSentPingTimestamps;
-    float latency;
-    float jitter;
 
     if (ok)
     {
@@ -206,15 +201,15 @@ bool Q4SClientProtocol::measureStage0(float maxLatency, float maxJitter)
         Sleep( (DWORD)q4SClientConfigFile.timeStartCalc);
 
         // Calculate Latency
-        calculateLatency(arrSentPingTimestamps, latency, q4SClientConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Latency: %.3f\n", latency );
+        calculateLatency(arrSentPingTimestamps, results.values.latency, q4SClientConfigFile.showMeasureInfo);
+        printf( "MEASURING RESULT - Latency: %.3f\n", results.values.latency );
 
         // Calculate Jitter
-        calculateJitter(jitter, q4SClientConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Jitter: %.3f\n", jitter );
+        calculateJitter(results.values.jitter, q4SClientConfigFile.showMeasureInfo);
+        printf( "MEASURING RESULT - Jitter: %.3f\n", results.values.jitter );
 
         // Check latency and jitter limits
-        ok &= checkLatencyAndJitter(latency, jitter, maxLatency, maxJitter);
+        ok &= checkStage0(limits, results);
     }
     
     return ok;
@@ -327,18 +322,20 @@ void Q4SClientProtocol::calculateJitter(float &jitter, bool showMeasureInfo)
     }
 }
 
-bool Q4SClientProtocol::checkLatencyAndJitter(float latency, float jitter, float maxLatency, float maxJitter)
+bool Q4SClientProtocol::checkStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results)
 {
     bool ok = true;
 
-    if ( latency > maxLatency )
+    if ( results.values.latency > limits.maxLatency )
     {
+        results.latency = true;
         printf( "Lantecy limits not reached\n");
         ok = false;
     }
 
-    if ( jitter > maxJitter)
+    if ( results.values.jitter > limits.maxJitter)
     {
+        results.jitter = true;
         printf( "Jitter limits not reached\n");
         ok = false;
     }
@@ -346,7 +343,7 @@ bool Q4SClientProtocol::checkLatencyAndJitter(float latency, float jitter, float
     return ok;
 }
 
-bool Q4SClientProtocol::measureStage1(float minBandWith, float maxPacketLoss)
+bool Q4SClientProtocol::measureStage1(Q4SMeasurementStage1Limits limits, Q4SMeasurementResult &results)
 {
     bool ok = true;
 
