@@ -1,12 +1,13 @@
 #ifndef _Q4SCLIENTPROTOCOL_H_
 #define _Q4SCLIENTPROTOCOL_H_
 
+#include "Q4SCommonProtocol.h"
 #include "Q4SClientSocket.h"
 #include "Q4SMessageManager.h"
 #include <vector>
 #include "Q4SStructs.h"
 
-class Q4SClientProtocol
+class Q4SClientProtocol: Q4SCommonProtocol
 {
 public:
 
@@ -37,7 +38,6 @@ private:
     bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
     void    calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showMeasureInfo);
     void    calculateJitter(float &jitter, bool showMeasureInfo);
-    bool    checkStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results);
     bool    measureStage1(Q4SMeasurementStage1Limits limits, Q4SMeasurementResult &results);
 
     Q4SClientSocket             mClientSocket;

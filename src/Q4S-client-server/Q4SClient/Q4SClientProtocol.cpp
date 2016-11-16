@@ -322,27 +322,6 @@ void Q4SClientProtocol::calculateJitter(float &jitter, bool showMeasureInfo)
     }
 }
 
-bool Q4SClientProtocol::checkStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results)
-{
-    bool ok = true;
-
-    if ( results.values.latency > limits.maxLatency )
-    {
-        results.latency = true;
-        printf( "Lantecy limits not reached\n");
-        ok = false;
-    }
-
-    if ( results.values.jitter > limits.maxJitter)
-    {
-        results.jitter = true;
-        printf( "Jitter limits not reached\n");
-        ok = false;
-    }
-
-    return ok;
-}
-
 bool Q4SClientProtocol::measureStage1(Q4SMeasurementStage1Limits limits, Q4SMeasurementResult &results)
 {
     bool ok = true;
