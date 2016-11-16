@@ -13,6 +13,8 @@ public:
     std::string ganyConnectorPort;
     std::string listenUDPPort;
     unsigned long timeEndApp;
+    unsigned long initialBitRate;
+    unsigned long bitRateReduceCuantity;
     bool demoMode;
 };
 

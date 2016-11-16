@@ -152,6 +152,7 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
 {
     bool                ok = true;
     char                udpBuffer[ 65536 ];
+    unsigned long       bitRate = q4SAgentConfigFile.initialBitRate;
 
     mAgentSocket.startUdpListening( );
 
@@ -163,8 +164,9 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
         {
             // TODO: Leer el buffer para ver que alerta es y actuar en consecuencia
             printf( "Received Udp: <%s>\n", udpBuffer );
+            bitRate = bitRate - q4SAgentConfigFile.bitRateReduceCuantity;
             char setBitrateText[20];
-            sprintf_s( setBitrateText, "SET_BITRATE 1000");
+            sprintf_s( setBitrateText, "SET_BITRATE %d", bitRate );
             printf( "%s\n",setBitrateText );
             mAgentSocket.sendActionData(setBitrateText);
         }
