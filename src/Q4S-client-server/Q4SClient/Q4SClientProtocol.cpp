@@ -160,8 +160,25 @@ void Q4SClientProtocol::continuity(Q4SMeasurementLimits limits)
     {
         Q4SMeasurementResult results;
         measureOk = measure(limits, results);
+
         // TODO notificar del error al Server
         //stop = !measureOk;
+        if (!measureOk)
+        {
+            //Alert
+            std::string alertMessage = "";
+
+            if ( results.latency )
+            {
+                alertMessage += "Latency: " + std::to_string((long double)results.values.latency);
+            }
+            if ( results.jitter )
+            {
+                alertMessage += " Jitter: " + std::to_string((long double)results.values.jitter);
+            }
+
+            //printf(alertMessage.c_str());
+        }
     }
 }
 

@@ -57,7 +57,7 @@ bool Q4SCommonProtocol::checkStage0(Q4SMeasurementStage0Limits limits, Q4SMeasur
         ok = false;
     }
 
-    if ( results.values.jitter > limits.maxJitter)
+    if (( results.values.jitter > limits.maxJitter) || (results.values.jitter < -limits.maxJitter) )
     {
         results.jitter = true;
         printf( "Jitter limits not reached\n");
