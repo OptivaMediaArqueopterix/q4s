@@ -36,8 +36,6 @@ private:
 
     bool    measureStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results);
     bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
-    void    calculateLatency(std::vector<unsigned long> &arrSentPingTimestamps, float &latency, bool showMeasureInfo);
-    void    calculateJitter(float &jitter, bool showMeasureInfo);
     bool    measureStage1(Q4SMeasurementStage1Limits limits, Q4SMeasurementResult &results);
 
     Q4SClientSocket             mClientSocket;
