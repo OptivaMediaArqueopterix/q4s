@@ -38,7 +38,7 @@ void Q4SCommonProtocol::calculateLatency(Q4SMessageManager &mReceivedMessages, s
         }
         else
         {
-                printf( "PING %d message lost\n", pingIndex);
+                printf( "PING RESPONSE %d message lost\n", pingIndex);
         }
     }
 
