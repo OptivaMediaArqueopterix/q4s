@@ -61,6 +61,7 @@ void Q4SCommonProtocol::calculateJitter(Q4SMessageManager &mReceivedMessages, fl
         if( mReceivedMessages.readPingMessage( pingIndex, messageInfo, true ) == true )
         {
             arrReceivedPingTimestamps.push_back( messageInfo.timeStamp );
+
             if( pingIndex > 0 )
             {
                 // Actual time between this ping and previous calculation
@@ -74,6 +75,10 @@ void Q4SCommonProtocol::calculateJitter(Q4SMessageManager &mReceivedMessages, fl
                     printf( "PING %d ET: %.3f\n", pingIndex, actualPingTimeWithPrevious );
                 }
             }
+        }
+        else
+        {
+            printf( "PING %d message lost\n", pingIndex);
         }
     }
 

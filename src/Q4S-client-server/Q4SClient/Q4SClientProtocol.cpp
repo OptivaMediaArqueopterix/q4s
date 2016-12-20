@@ -105,7 +105,7 @@ bool Q4SClientProtocol::begin()
         ok &= mClientSocket.sendTcpData( message.getMessageCChar() );
     }
 
-    if ( ok ) 
+    if ( ok )
     {
         std::string message;
         mReceivedMessages.readFirst( message );
