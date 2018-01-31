@@ -1,4 +1,5 @@
 #include "Q4SClientSocket.h"
+
 #include "Q4SClientConfigFile.h"
 
 Q4SClientSocket::Q4SClientSocket ()

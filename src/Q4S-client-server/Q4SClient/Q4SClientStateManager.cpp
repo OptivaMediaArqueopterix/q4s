@@ -1,9 +1,10 @@
 #include "Q4SClientStateManager.h"
 
-#include <stdio.h>
-
 #include "Q4SClientConfigFile.h"
-#include "EKey.h"
+
+#include "..\Q4SCommon\EKey.h"
+
+#include <stdio.h>
 
 Q4SClientStateManager::Q4SClientStateManager()
 {
@@ -70,7 +71,7 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
         case Q4SCLIENTSTATE_INIT:
             {
                 // Initialize protocol: thread and sockets
-                bool initOk = Q4SClientProtocol::init();
+				bool initOk = Q4SClientProtocol::init(q4SClientConfigFile.serverConnectionRetryTimes, q4SClientConfigFile.serverConnectionMilisecondsBetweenTimes);
                 if (initOk)
                 {
                     nextState = Q4SCLIENTSTATE_HANDSHAKE;
@@ -86,9 +87,30 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
         case Q4SCLIENTSTATE_HANDSHAKE:
             {
                 // Trigger the establishment of the protocol
-                bool beginOk = Q4SClientProtocol::begin();
+				bool beginOk = Q4SClientProtocol::handshake(mParams);
                 if (beginOk)
                 {
+					printf( "Limits - Latency: %d\n", mParams.latency);
+					printf( "Limits - Jitter Up: %d\n", mParams.jitterUp);
+					printf( "Limits - Jitter Down: %d\n", mParams.jitterDown);
+					printf( "Limits - Bandwidth Up: %d\n", mParams.bandWidthUp);
+					printf( "Limits - Bandwidth Down: %d\n", mParams.bandWidthDown);
+					printf( "Limits - PacketLoss Up: %.3f\n", mParams.packetLossUp);
+					printf( "Limits - PacketLoss Down: %.3f\n", mParams.packetLossDown);
+					printf( "Params - QOSLevelDown: %d\n", mParams.qosLevelDown);
+					printf( "Params - QOSLevelUp: %d\n", mParams.qosLevelUp);
+					printf( "Params - AlertPause: %d\n", mParams.alertPause);
+					printf( "Params - RecoveryPause: %d\n", mParams.recoveryPause);
+					printf( "Params - NegotiationTimeBetweenPings Up: %d\n", mParams.procedure.negotiationTimeBetweenPingsUplink);
+					printf( "Params - NegotiationTimeBetweenPings Down: %d\n", mParams.procedure.negotiationTimeBetweenPingsDownlink);
+					printf( "Params - ContinuityTimeBetweenPings Up: %d\n", mParams.procedure.continuityTimeBetweenPingsUplink);
+					printf( "Params - ContinuityTimeBetweenPings Down: %d\n", mParams.procedure.continuityTimeBetweenPingsDownlink);
+					printf( "Params - BandWidthTime: %d\n", mParams.procedure.bandwidthTime);
+					printf( "Params - WindowSizeLatencyCalc Up: %d\n", mParams.procedure.windowSizeLatencyCalcUplink);
+					printf( "Params - WindowSizeLatencyCalc Down: %d\n", mParams.procedure.windowSizeLatencyCalcDownlink);
+					printf( "Params - WindowSizePacketLossCalc Up: %d\n", mParams.procedure.windowSizePacketLossCalcUplink);
+					printf( "Params - WindowSizePacketLossCalc Down: %d\n", mParams.procedure.windowSizePacketLossCalcDownlink);
+					
                     nextState = Q4SCLIENTSTATE_NEGOTIATION;
                 }
                 else
@@ -101,35 +123,21 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_NEGOTIATION:
             {
-                bool measureOk = false;
-                bool readyOk = Q4SClientProtocol::ready();
-                if( readyOk )
+				Q4SMeasurementResult results;
+
+				bool measureOk = Q4SClientProtocol::negotiation(mParams, results);
+                if (measureOk)
                 {
-                    Q4SMeasurementLimits limits;
-                    limits.stage0.maxLatency = q4SClientConfigFile.maxLatency;
-                    limits.stage0.maxJitter = q4SClientConfigFile.maxJitter;
-                    limits.stage1.minBandWith = 500;
-                    limits.stage1.maxPacketLoss = 10;
+					if (q4SClientConfigFile.waitForLaunchGANY)
+					{
+						waitForLaunchGANY();
+					}
 
-                    Q4SMeasurementResult results;
-
-                    measureOk = Q4SClientProtocol::measure(limits, results);
-
-                    if (measureOk)
-                    {
-                        waitForLaunchGANY();
-                        nextState = Q4SCLIENTSTATE_CONTINUITY;
-                    }
-                    else
-                    {
-                        // TODO: send the measure or the constrains not reached to the server in order to be informed 
-                        //Alert
-                        nextState = Q4SCLIENTSTATE_TERMINATION;
-                    }
+                    nextState = Q4SCLIENTSTATE_CONTINUITY;
                 }
                 else
                 {
-                    // TODO: launch error
+                    //Alert
                     nextState = Q4SCLIENTSTATE_TERMINATION;
                 }
             }  
@@ -137,16 +145,10 @@ bool Q4SClientStateManager::stateInit (Q4SClientState state)
 
         case Q4SCLIENTSTATE_CONTINUITY:
             {
-                bool readyOk = Q4SClientProtocol::ready();
+                bool readyOk = Q4SClientProtocol::ready(0);
                 if( readyOk )
                 {
-                    printf("Hemos llegado a la continuidad\n");
-                    Q4SMeasurementLimits limits;
-                    limits.stage0.maxLatency = q4SClientConfigFile.maxLatency;
-                    limits.stage0.maxJitter = q4SClientConfigFile.maxJitter;
-                    limits.stage1.minBandWith = 500;
-                    limits.stage1.maxPacketLoss = 10;
-                    continuity(limits);
+                    continuity(mParams);
                     nextState = Q4SCLIENTSTATE_TERMINATION;
                 }
                 else

@@ -83,7 +83,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
 
         case Q4SSERVERSTATE_HANDSHAKE:
             {
-                bool beginOk = Q4SServerProtocol::begin();
+				bool beginOk = Q4SServerProtocol::handshake(mParams);
                 if (beginOk)
                 {
                     nextState = Q4SSERVERSTATE_NEGOTIATION;
@@ -98,37 +98,24 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
 
         case Q4SSERVERSTATE_NEGOTIATION:
             {
-                bool measureOk = false;
-                bool readyOk = Q4SServerProtocol::ready();
-                if( readyOk )
+				Q4SMeasurementResult results;
+
+				bool measureOk = Q4SServerProtocol::negotiation(mParams, results);
+                if (measureOk)
                 {
-                    Q4SMeasurementLimits limits;
-                    limits.stage0.maxLatency = q4SServerConfigFile.maxLatency;
-                    limits.stage0.maxJitter = q4SServerConfigFile.maxJitter;
-                    limits.stage1.minBandWith = 500;
-                    limits.stage1.maxPacketLoss = 10;
-
-                    Q4SMeasurementResult results;
-
-                    measureOk = Q4SServerProtocol::measure(limits, results);
-                    if (measureOk)
-                    {
-                        nextState = Q4SSERVERSTATE_CONTINUITY;
-                    }
-                    else
-                    {
-                        std::string alertMessage;
-                        alertMessage= "Latency: " + std::to_string((long double)results.values.latency) + " Jitter: " + std::to_string((long double)results.values.jitter);
-
-                        //Alert
-                        Q4SServerProtocol::alert(alertMessage);
-                        nextState = Q4SSERVERSTATE_TERMINATION;
-                    }
+                    nextState = Q4SSERVERSTATE_CONTINUITY;
                 }
                 else
                 {
+                    std::string alertMessage;
+                    alertMessage= "Latency: " + std::to_string((long double)results.values.latency) + " Jitter: " + std::to_string((long double)results.values.jitter);
+
+                    //Alert
+                    Q4SServerProtocol::alert(alertMessage);
+                    nextState = Q4SSERVERSTATE_TERMINATION;
+
                     // TODO: launch error
-                    stop = true;
+                    // stop = true;
                 }
             }
         break;
@@ -138,12 +125,7 @@ bool Q4SServerStateManager::stateInit (Q4SServerState state)
                 bool readyOk = Q4SServerProtocol::ready();
                 if (readyOk)
                 {
-                    Q4SMeasurementLimits limits;
-                    limits.stage0.maxLatency = q4SServerConfigFile.maxLatency;
-                    limits.stage0.maxJitter = q4SServerConfigFile.maxJitter;
-                    limits.stage1.minBandWith = 500;
-                    limits.stage1.maxPacketLoss = 10;
-                    Q4SServerProtocol::continuity(limits);
+					Q4SServerProtocol::continuity(mParams);
                 }
 
                 std::string alertMessage;

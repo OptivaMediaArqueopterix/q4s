@@ -1,0 +1,16 @@
+# Ignore CI build directory
+build/
+xcuserdata
+cmake-build-debug/
+.idea/
+bazel-bin
+bazel-genfiles
+bazel-googletest
+bazel-out
+bazel-testlogs
+
+googletest/msvc/2010/gtest/Win32-Debug/
+Win32-Release/
+
+# python
+*.pyc

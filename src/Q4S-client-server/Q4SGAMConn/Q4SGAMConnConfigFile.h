@@ -1,7 +1,7 @@
 #ifndef _Q4SGAMCONNCONFIGFILE_H_
 #define _Q4SGAMCONNCONFIGFILE_H_
 
-#include "ConfigFile.h"
+#include "..\Q4SCommon\ConfigFile.h"
 
 class Q4SGAMConnConfigFile
 {

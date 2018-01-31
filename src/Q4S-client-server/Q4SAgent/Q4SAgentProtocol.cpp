@@ -4,8 +4,8 @@
 #include <vector>
 #include <sstream>
 
-#include "ETime.h"
-#include "Q4SMathUtils.h"
+#include "..\Q4SCommon\ETime.h"
+#include "..\Q4SCommon\Q4SMathUtils.h"
 #include "Q4SAgentConfigFile.h"
 
 #define     DEFAULT_CONN_ID     1

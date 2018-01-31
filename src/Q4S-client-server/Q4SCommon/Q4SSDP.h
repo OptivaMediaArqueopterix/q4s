@@ -3,73 +3,23 @@
 
 #include <string>
 
-enum Q4SSDPAlertingMode
-{ Q4SSDPALERTINGMODE_INVALID
-, Q4SSDPALERTINGMODE_Q4SAWARENETWORK
-, Q4SSDPALERTINGMODE_POLICYSERVER
-};
+#include "Q4SSDPParams.h"
 
-struct Q4SSDPProcedure
-{
-    unsigned long negotiationTimeBetweenPingsUplink;
-    unsigned long negotiationTimeBetweenPingsDownlink;
-    unsigned long continuityTimeBetweenPingsUplink;
-    unsigned long continuityTimeBetweenPingsDownlink;
-    unsigned long bandWithTime;
-    unsigned long windowSizeLatencyCalcUplink;
-    unsigned long windowSizeLatencyCalcDownlink;
-    unsigned long windowSizePacketLossCalcUplink;
-    unsigned long windowSizePacketLossCalcDownlink;
-};
+#define QOSLEVEL_PATTERN "a=qos-level:"
+#define ALERTINGMODE_PATTERN "a=alerting-mode:"
+#define ALERTPAUSE_PATTERN "a=alert-pause:"
+#define RECOVERYPAUSE_PATTERN "a=recovery-pause:"
+#define APPLATENCY_PATTERN "a=application:latency:"
+#define APPJITTER_PATTERN "a=application:jitter:"
+#define APPBANDWIDTH_PATTERN "a=application:bandwidth:"
+#define APPPACKETLOSS_PATTERN "a=application:packetloss:"
+#define PROCEDURE_PATTERN "a=measurement:procedure default("
+#define PROCEDURE_CLOSE_PATTERN ")"
 
-struct Q4SSDPMeasurement
-{
-    Q4SSDPProcedure procedure;
-    float latency;
-    float jitter;
-    float bandWith;
-    float packetLoss;
-};
+#define Q4SSDPALERTINGMODE_Q4SAWARENETWORK_PATTERN "Q4S-aware-network"
+#define Q4SSDPALERTINGMODE_REACTIVE_PATTERN "Reactive"
 
-struct Q4SSDPParams
-{
-    int qosLevelup; 
-    int qosLeveldown; 
-    Q4SSDPAlertingMode q4SSDPAlertingMode; 
-    unsigned long networkAlertPause;
-    unsigned long appAlertPause;
-    std::string clientAddress;
-    std::string serverAddress;
-    unsigned long networkLatency;
-    unsigned long networkJitter;
-    unsigned long networkBandWidth;
-    unsigned long networkPacketLoss;
-    unsigned long applicationLatency;
-    unsigned long applicationJitter;
-    unsigned long applicationBandWidth;
-    unsigned long applicationPacketLoss;
-};
-
-class Q4SSDP
-{
-    public:
-
-    // Constructor-Destructor
-    Q4SSDP( );
-    ~Q4SSDP( );
-
-    // Init-Done
-    bool    init( Q4SSDPParams q4SSDPParams );
-    void    done( );
-
-    // Get Message
-    std::string getMessage();
-
-private:
-
-    void    clear( );
-
-    std::string mMessage;
-};
+std::string Q4SSDP_create(Q4SSDPParams q4SSDPParams);
+bool Q4SSDP_parse(std::string message, Q4SSDPParams& params);
 
 #endif  // _Q4SSDP_H_

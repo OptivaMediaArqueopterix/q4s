@@ -2,7 +2,6 @@
 #define _Q4SAGENTSTATEMANAGER_H_
 
 #include "Q4SAgentState.h"
-
 #include "Q4SAgentProtocol.h"
 
 class Q4SAgentStateManager : Q4SAgentProtocol

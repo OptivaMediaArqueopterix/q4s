@@ -1,11 +1,14 @@
 #ifndef _Q4SCLIENTPROTOCOL_H_
 #define _Q4SCLIENTPROTOCOL_H_
 
-#include "Q4SCommonProtocol.h"
 #include "Q4SClientSocket.h"
-#include "Q4SMessageManager.h"
+
+#include "..\Q4SCommon\Q4SCommonProtocol.h"
+#include "..\Q4SCommon\Q4SMessageManager.h"
+#include "..\Q4SCommon\Q4SStructs.h"
+#include "..\Q4SCommon\Q4SSDP.h"
+
 #include <vector>
-#include "Q4SStructs.h"
 
 class Q4SClientProtocol: Q4SCommonProtocol
 {
@@ -16,16 +19,16 @@ public:
     ~Q4SClientProtocol ();
 
     // Init-Done
-    bool    init();
+    bool    init(unsigned long times, unsigned long milisecondsBetweenTimes);
     void    done();
 
     // Q4S Methods
-    bool    begin();
-    bool    ready();
-    bool    measure(Q4SMeasurementLimits limits, Q4SMeasurementResult &results);
-    void    continuity(Q4SMeasurementLimits limits);
-    void    bwidth();
-    void    cancel();
+    bool    ready(unsigned long stage);
+
+	// Q4S Phases
+    bool    handshake(Q4SSDPParams &params);
+	bool	negotiation(Q4SSDPParams params, Q4SMeasurementResult &results);
+    void    continuity(Q4SSDPParams params);
 
 private:
 
@@ -33,10 +36,16 @@ private:
 
     bool    openConnections();
     void    closeConnections();
+	bool	tryOpenConnectionsTimes(unsigned long times, unsigned long milisecondsBetweenTimes);
 
-    bool    measureStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results);
-    bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
-    bool    measureStage1(Q4SMeasurementStage1Limits limits, Q4SMeasurementResult &results);
+    void    bwidth();
+    void    cancel();
+
+	bool    measureStage0(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &downResults,unsigned long pingsToSend);
+    bool	measureContinuity(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &downResults, unsigned long pingsToSend);
+	bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps, unsigned long pingsToSend, unsigned long timeBetweenPings);
+    bool    measureStage1(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &downResults);
+	bool	interchangeMeasurementProcedure(Q4SMeasurementValues &downMeasurements, Q4SMeasurementResult results);
 
     Q4SClientSocket             mClientSocket;
     HANDLE                      marrthrHandle[ 2 ];
@@ -46,6 +55,7 @@ private:
     static DWORD WINAPI         manageUdpReceivedDataFn( LPVOID lpData );
 
     Q4SMessageManager           mReceivedMessages;
+	Q4SMeasurementResult		mResults;
 };
 
 #endif  // _Q4SCLIENTPROTOCOL_H_

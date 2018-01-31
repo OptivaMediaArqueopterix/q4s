@@ -2,7 +2,8 @@
 #define _Q4SGAMCONNPROTOCOL_H_
 
 #include "Q4SGAMConnSocket.h"
-#include "Q4SMessageManager.h"
+
+#include "..\Q4SCommon\Q4SMessageManager.h"
 
 
 class Q4SGAMConnProtocol

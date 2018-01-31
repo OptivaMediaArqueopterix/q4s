@@ -1,7 +1,7 @@
 #ifndef _Q4SGAMCONNSOCKET_H_
 #define _Q4SGAMCONNSOCKET_H_
 
-#include "Q4SSocket.h"
+#include "..\Q4SCommon\Q4SSocket.h"
 
 #include <stdio.h>
 #include <list>

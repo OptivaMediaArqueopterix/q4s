@@ -1,11 +1,14 @@
 #ifndef _Q4SSERVERPROTOCOL_H_
 #define _Q4SSERVERPROTOCOL_H_
 
-#include "Q4SCommonProtocol.h"
 #include "Q4SServerSocket.h"
-#include "Q4SMessageManager.h"
+
+#include "..\Q4SCommon\Q4SCommonProtocol.h"
+#include "..\Q4SCommon\Q4SMessageManager.h"
+#include "..\Q4SCommon\Q4SStructs.h"
+#include "..\Q4SCommon\Q4SSDP.h"
+
 #include <vector>
-#include "Q4SStructs.h"
 
 
 class Q4SServerProtocol:Q4SCommonProtocol
@@ -21,14 +24,15 @@ public:
     void    done();
 
     // Q4S Methods
-    bool    begin();
     bool    ready();
-    bool    measure(Q4SMeasurementLimits measurementLimits, Q4SMeasurementResult &results);
-    void    continuity(Q4SMeasurementLimits limits);
-    void    bwidth();
-    void    cancel();
-    void    alert(std::string alertMessage);
     void    end();
+    void    alert(std::string alertMessage);
+    void    recovery(std::string alertMessage);
+
+	// Q4S Phases
+    bool    handshake(Q4SSDPParams &params);
+	bool    negotiation(Q4SSDPParams params, Q4SMeasurementResult &results);
+    void    continuity(Q4SSDPParams params);
 
 private:
 
@@ -37,10 +41,15 @@ private:
     bool    openConnectionListening();
     void    closeConnectionListening();
     void    closeConnections();
+	
+    void    bwidth();
+    void    cancel();
 
-    bool    measureStage0(Q4SMeasurementStage0Limits limits, Q4SMeasurementResult &results);
-    bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps);
-    bool    measureStage1(Q4SMeasurementStage1Limits limits, Q4SMeasurementResult &results);
+    bool    measureStage0(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &upResults, unsigned long pingsToSend);
+	bool	measureContinuity(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &upResults, unsigned long pingsToSend);
+    bool    sendRegularPings(std::vector<unsigned long> &arrSentPingTimestamps, unsigned long pingsToSend, unsigned long timeBetweenPings);
+    bool    measureStage1(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult upResults);
+	bool	interchangeMeasurementProcedure(Q4SMeasurementValues &upMeasurements, Q4SMeasurementResult results);
 
     Q4SServerSocket             mServerSocket;
     HANDLE                      marrthrListenHandle[ 2 ];
@@ -64,6 +73,9 @@ private:
     Q4SMessageManager           mReceivedMessages;
 
     unsigned long               lastAlertTimeStamp;
+    unsigned long               recoveryTimeStamp;
+
+	int							qosLevel;
 };
 
 #endif  // _Q4SSERVERPROTOCOL_H_
