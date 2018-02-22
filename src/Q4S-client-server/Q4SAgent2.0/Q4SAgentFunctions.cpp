@@ -145,7 +145,7 @@ void Actuator::TestRules (float Jitter, float Latency, unsigned int Packetloss){
 			break;
 		}
 		//if (Packetloss == 0){(Packetloss > PacketlossMin[CurrentValues+i] && Packetloss<PacketlossMax[CurrentValues+i])
-		if (Packetloss > PacketlossMin[CurrentValues+i] && Packetloss<PacketlossMax[CurrentValues+i]){
+		if (Packetloss >= PacketlossMin[CurrentValues+i] && Packetloss<PacketlossMax[CurrentValues+i]){
 			UpdatePacketloss=false;
 		}
 		else{
@@ -165,13 +165,16 @@ bool Actuator::PathAlert (float Jitter, float Latency, unsigned int Packetloss, 
 		
 	SearchState( TypeAlerIn);
 
-	TestRules (Jitter , Jitter , 0);
+	TestRules (Jitter , Jitter , Packetloss);
 
 	if (UpdateJitter==true || UpdateLatency==true || UpdatePacketloss==true)
 	{
 		UpdateState();
+		action=Action[CurrentValues];
 	}
-	action=Action[CurrentValues];
+	else
+		action="No action";
+	
 	return ok;
 }
 

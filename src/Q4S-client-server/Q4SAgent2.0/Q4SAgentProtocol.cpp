@@ -196,7 +196,7 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
         {
 
 			std::stringstream ss(udpBuffer);
-			ss >> TypeAlert >> StrLatency >> Latency >> StrJitter >> Jitter;
+			ss >> TypeAlert >> StrLatency >> Latency >> StrJitter >> Jitter >> StrPacketloss >> Packetloss ;
 			/*printf(" Latency=> %f \n", Latency);
 			printf(" Jitter=> %f \n", Jitter);
 			printf(" TypeAlert=> %s \n", TypeAlert);*/
@@ -210,7 +210,7 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
 			actuator.ReadConfigFile();
 			if (TypeAlert.compare("ALERT") == 0){
 				cout << "Rx Alert " << endl;
-				actuator.PathAlert(Jitter, Latency, 0, action, TypeAlert);
+				actuator.PathAlert(Jitter, Latency, Packetloss, action, TypeAlert);
 				printf("Action ALERT=> %s \n", action.c_str());
 				if(q4SAgentConfigFile.demoConnSocket){
 					mAgentSocket.sendActionData(action.c_str());
