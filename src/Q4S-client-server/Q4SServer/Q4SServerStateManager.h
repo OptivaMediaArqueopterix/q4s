@@ -2,7 +2,6 @@
 #define _Q4SSERVERSTATEMANAGER_H_
 
 #include "Q4SServerState.h"
-
 #include "Q4SServerProtocol.h"
 
 class Q4SServerStateManager: Q4SServerProtocol
@@ -31,7 +30,7 @@ private:
     bool stop;
     Q4SServerState q4SServerState;
     Q4SServerState nextState;
-    
+	Q4SSDPParams mParams;    
 };
 
 #endif  // _Q4SSERVERSTATEMANAGER_H_

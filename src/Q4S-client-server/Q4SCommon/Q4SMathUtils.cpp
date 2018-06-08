@@ -12,15 +12,18 @@ float EMathUtils_median( std::vector < float > &vector)
 
     int size = vectorToSort.size();
 
-    // size is even
-    if ( size%2 == 0 )
-    {
-        median = ( vectorToSort[size/2] + vectorToSort[(size/2) - 1] ) / 2.0f;
-    }
-    else
-    {
-        median = (float)vectorToSort[size/2];
-    }
+	if (size > 0 )
+	{
+		// size is even
+		if ( size%2 == 0 )
+		{
+			median = ( vectorToSort[size/2] + vectorToSort[(size/2) - 1] ) / 2.0f;
+		}
+		else
+		{
+			median = (float)vectorToSort[size/2];
+		}
+	}
             
     return median;
 }

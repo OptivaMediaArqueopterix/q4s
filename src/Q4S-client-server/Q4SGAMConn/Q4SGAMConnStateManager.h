@@ -2,7 +2,6 @@
 #define _Q4SGAMCONNSTATEMANAGER_H_
 
 #include "Q4SGAMConnState.h"
-
 #include "Q4SGAMConnProtocol.h"
 
 class Q4SGAMConnStateManager : Q4SGAMConnProtocol

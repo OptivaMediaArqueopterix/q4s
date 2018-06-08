@@ -1,7 +1,7 @@
 #ifndef _Q4SCLIENTCONFIGFILE_H_
 #define _Q4SCLIENTCONFIGFILE_H_
 
-#include "ConfigFile.h"
+#include "..\Q4SCommon\ConfigFile.h"
 
 class Q4SClientConfigFile
 {
@@ -12,14 +12,14 @@ public:
     std::string serverIP;
     std::string defaultTCPPort;
     std::string defaultUDPPort;
-    unsigned long timeBetweenPings;
     unsigned long timeStartCalc;
     unsigned long timeEndApp;
-    float maxLatency;
-    float maxJitter;
     bool showMeasureInfo;
     bool showReceivedPingInfo;
     bool showSocketReceivedInfo;
+	unsigned long serverConnectionRetryTimes;
+	unsigned long serverConnectionMilisecondsBetweenTimes;
+	bool waitForLaunchGANY;
 };
 
 extern Q4SClientConfigFile q4SClientConfigFile;

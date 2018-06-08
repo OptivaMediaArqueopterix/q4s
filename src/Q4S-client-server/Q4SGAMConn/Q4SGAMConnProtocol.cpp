@@ -1,12 +1,13 @@
 #include "Q4SGAMConnProtocol.h"
 
+#include "Q4SGAMConnConfigFile.h"
+
+#include "..\Q4SCommon\ETime.h"
+#include "..\Q4SCommon\Q4SMathUtils.h"
+
 #include <stdio.h>
 #include <vector>
 #include <sstream>
-
-#include "ETime.h"
-#include "Q4SMathUtils.h"
-#include "Q4SGAMConnConfigFile.h"
 
 #define     DEFAULT_CONN_ID     1
 

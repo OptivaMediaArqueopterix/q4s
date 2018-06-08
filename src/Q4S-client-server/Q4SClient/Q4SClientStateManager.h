@@ -2,7 +2,6 @@
 #define _Q4SCLIENTSTATEMANAGER_H_
 
 #include "Q4SClientState.h"
-
 #include "Q4SClientProtocol.h"
 
 class Q4SClientStateManager : Q4SClientProtocol
@@ -31,6 +30,7 @@ private:
     bool stop;
     Q4SClientState q4SClientState;
     Q4SClientState nextState;
+	Q4SSDPParams mParams;
     
     void    waitForLaunchGANY();
 };

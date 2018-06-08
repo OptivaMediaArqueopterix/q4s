@@ -5,38 +5,22 @@ struct Q4SMeasurementValues
 {
     float latency;
     float jitter;
-    float bandWith;
+    float bandwidth;
     float packetLoss;
+	bool operator ==(const Q4SMeasurementValues compare) const;
 };
 
 class Q4SMeasurementResult
 {
 public:
-    Q4SMeasurementResult() {latency = false; jitter = false; bandWith = false; packetLoss = false;}
+    Q4SMeasurementResult() {latencyAlert = false; jitterAlert = false; bandwidthAlert = false; packetLossAlert = false;}
     ~Q4SMeasurementResult() {}
     Q4SMeasurementValues values;
-    bool latency;
-    bool jitter;
-    bool bandWith;
-    bool packetLoss;
-};
-
-struct Q4SMeasurementStage0Limits
-{
-    float maxLatency;
-    float maxJitter;
-};
-
-struct Q4SMeasurementStage1Limits
-{
-    float minBandWith;
-    float maxPacketLoss;
-};
-
-struct Q4SMeasurementLimits
-{
-    Q4SMeasurementStage0Limits stage0;
-    Q4SMeasurementStage1Limits stage1;
+    bool latencyAlert;
+    bool jitterAlert;
+    bool bandwidthAlert;
+    bool packetLossAlert;
+	bool operator ==(const Q4SMeasurementResult compare) const;
 };
 
 #endif //_Q4SSTRUCT_H_

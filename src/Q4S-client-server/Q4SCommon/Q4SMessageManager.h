@@ -25,8 +25,10 @@ class Q4SMessageManager
     bool readFirst( std::string &firstMessage );
     bool readMessage( std::string& pattern, Q4SMessageInfo& messageInfo, bool erase );
     bool readPingMessage( int pingIndex, Q4SMessageInfo& messageInfo, bool erase );
+    bool read200OKMessage( Q4SMessageInfo& messageInfo, bool erase );
+    bool readBandWidthMessage(unsigned long &sequenceNumber, bool erase );
 
-    int size();
+    int size() const;
 
 private:
 

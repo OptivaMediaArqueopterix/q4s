@@ -1,7 +1,7 @@
 #ifndef _Q4SSERVERSOCKET_H_
 #define _Q4SSERVERSOCKET_H_
 
-#include "Q4SSocket.h"
+#include "..\Q4SCommon\Q4SSocket.h"
 
 #include <stdio.h>
 #include <list>

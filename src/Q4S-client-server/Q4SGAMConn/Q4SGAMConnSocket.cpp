@@ -1,4 +1,5 @@
 #include "Q4SGAMConnSocket.h"
+
 #include "Q4SGAMConnConfigFile.h"
 
 Q4SGAMConnSocket::Q4SGAMConnSocket ()
