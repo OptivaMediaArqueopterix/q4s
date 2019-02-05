@@ -17,6 +17,7 @@ public:
     unsigned long bitRateReduceCuantity;
     bool demoMode;
     bool demoConnSocket;
+	bool PSCEnabled;
 };
 
 extern Q4SAgentConfigFile q4SAgentConfigFile;

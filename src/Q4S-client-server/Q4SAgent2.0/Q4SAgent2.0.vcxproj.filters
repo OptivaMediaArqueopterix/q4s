@@ -19,12 +19,6 @@
     <None Include="Q4SAgent2.0" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Q4SAgentFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -1,0 +1,14 @@
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Connection: keep-alive
+Date: Wed, 30 Jan 2019 09:50:42 GMT
+Pragma: no-cache
+Content-Length: 0
+Expires: 0
+Server: WildFly/10
+X-Powered-By: Undertow/1
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: DENY
+Authorization: Arqueopterix eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJvcHRpdmEiLCJleHAiOjE1NDk3MDU4NDJ9.3pj96TxY3XQ7GiMqmSjDcKFKnrB6n-ppvHZmmSZWxMn1BndXCGDbWQis-O0U258Ich-6bDZlA9B_M69Lzum5ow
+X-Content-Type-Options: nosniff
+
+Content-Type: application/json

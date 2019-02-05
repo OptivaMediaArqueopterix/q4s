@@ -1,6 +1,15 @@
 #include "Q4SAgentFunctions.h"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+
+#include "rapidjson/istreamwrapper.h"
+#include <fstream>
+#include "rapidjson/ostreamwrapper.h"
 
 
+
+#include <cstdio>
 
 #include <stdio.h>	
 #include <stdlib.h>     
@@ -10,6 +19,8 @@
 #include <fstream>
 #include <vector>
 
+using namespace rapidjson;
+using namespace std;
 
 int	   Actuator::CountSameStates=0;
 string Actuator::CurrentState ="S0";
@@ -82,6 +93,40 @@ void Actuator::ReadConfigFile()
 	else  cout << "Unable to open file";  
 }
 
+void Actuator::PolicyServerComunication()
+{
+
+	/**TODO: REALIZAR CONTROL DE ERRORES**/
+	int Authentication, StartSesion;
+	printf ("Policy Server Enabled");
+	Authentication=system ("REQ1_startLogin.bat");
+	/*if (Authentication!=0){
+		printf("Authentication Error \n");
+	
+	}*/
+	StartSesion=system ("REQ2_startSession.bat");
+	
+	
+	ifstream ifst("response.file");
+	IStreamWrapper iswr(ifst);
+	Document dd;
+	dd.ParseStream(iswr);
+	
+	ifstream ifs("alert.json");
+	IStreamWrapper isw(ifs);
+	Document d;
+	d.ParseStream(isw);
+
+	Value& sesionIDResponse= dd["sessionID"];
+	Value& sesionIDAlert = d["session"]["sessionID"];
+	sesionIDAlert=sesionIDResponse;
+
+	ofstream ofs("alerttest.json");
+	OStreamWrapper osw(ofs);
+	Writer<OStreamWrapper> writer(osw);
+	d.Accept(writer);
+
+}
 
 void Actuator::Print (){
 
@@ -120,6 +165,28 @@ void Actuator::UpdateState(){
 	cout << "Current State: "<< Nextstate[CurrentValues] << " - Previous State: " << State[CurrentValues] << endl;
 	CurrentState=Nextstate[CurrentValues];
 	//cout << "Current State "<< CurrentState << endl;
+}
+
+void Actuator::JsonFile(float Jitter, float Latency, unsigned int Packetloss){
+
+	 
+	ifstream ifs("alert.json");
+	IStreamWrapper isw(ifs);
+	Document d;
+	d.ParseStream(isw);
+
+	Value& sLantency = d["latency"];
+	sLantency=Latency;
+	Value& sJitter = d["jitter"];
+	sJitter=Jitter;
+	Value& sPacketloss = d["packetloss"];
+	sPacketloss=Packetloss;
+
+	ofstream ofs("alertupdate.json");
+	OStreamWrapper osw(ofs);
+	Writer<OStreamWrapper> writer(osw);
+	d.Accept(writer);
+	
 }
 
 void Actuator::TestRules (float Jitter, float Latency, unsigned int Packetloss){
@@ -165,7 +232,7 @@ bool Actuator::PathAlert (float Jitter, float Latency, unsigned int Packetloss, 
 		
 	SearchState( TypeAlerIn);
 
-	TestRules (Jitter , Jitter , Packetloss);
+	TestRules (Jitter , Latency , Packetloss);
 
 	if (UpdateJitter==true || UpdateLatency==true || UpdatePacketloss==true)
 	{
@@ -173,7 +240,7 @@ bool Actuator::PathAlert (float Jitter, float Latency, unsigned int Packetloss, 
 		action=Action[CurrentValues];
 	}
 	else
-		action="No action";
+		action="echo No action";
 	
 	return ok;
 }

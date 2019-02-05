@@ -211,6 +211,7 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
 			if (TypeAlert.compare("ALERT") == 0){
 				cout << "Rx Alert " << endl;
 				actuator.PathAlert(Jitter, Latency, Packetloss, action, TypeAlert);
+				actuator.JsonFile(Jitter,Latency,Packetloss);
 				printf("Action ALERT=> %s \n", action.c_str());
 				if(q4SAgentConfigFile.demoConnSocket){
 					mAgentSocket.sendActionData(action.c_str());
@@ -222,6 +223,7 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
 			else if (TypeAlert.compare("RECOVERY") == 0){
 				cout << "Rx Recovery " << endl;
 				actuator.PathRecovery(action, TypeAlert);
+				actuator.JsonFile(Jitter,Latency,Packetloss);
 				printf("Action RECOVERY=> %s \n", action.c_str());
 				if(q4SAgentConfigFile.demoConnSocket){
 					mAgentSocket.sendActionData(action.c_str());

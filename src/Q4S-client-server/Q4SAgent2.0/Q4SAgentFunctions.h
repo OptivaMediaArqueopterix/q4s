@@ -37,6 +37,8 @@ class Actuator{
 
 	static float				inf;
 
+	bool						PSCEnabled;
+
 public:
 	//Actuator ();
 	//~Actuator ();
@@ -47,6 +49,8 @@ public:
 	void						TestRules (float, float, unsigned int );
 	bool						PathAlert (float, float, unsigned int, std::string &, std::string);
 	bool						PathRecovery (std::string &, std::string );
+	void						PolicyServerComunication ( );
+	void						JsonFile(float, float, unsigned int);
 
 };
 

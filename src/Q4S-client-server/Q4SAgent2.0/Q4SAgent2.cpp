@@ -28,6 +28,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	bool ok = true;
 	Q4SAgentStateManager q4SAgentStateManager;
 	actuator.ReadConfigFile();
+	if (q4SAgentConfigFile.PSCEnabled)
+	{
+		actuator.PolicyServerComunication();
+	}
 	//actuator.Print();
 
 	ok &= q4SAgentStateManager.init();
