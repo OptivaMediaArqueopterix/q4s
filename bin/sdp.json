@@ -1,0 +1,6 @@
+{
+  "originIP": "192.168.1.2",
+  "destinationIP": "80.50.50.3",
+  "portOriginIP": "5540",
+  "portDestinationIP": "554"
+}
