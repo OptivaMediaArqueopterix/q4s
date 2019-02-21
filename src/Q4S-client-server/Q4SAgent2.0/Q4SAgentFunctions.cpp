@@ -55,7 +55,10 @@ void Actuator::ReadConfigFile()
 	           	 	TypeAlert.push_back(value);
           		}
 	          	if( std::getline(is_line, value,';') ) {
-	           	 	LatencyMin.push_back(stof(value));
+					if(value.compare("*")!=0)
+	           	 		LatencyMin.push_back(stof(value));
+					else
+						LatencyMin.push_back(0);
 	          	}
 	          	if( std::getline(is_line, value,';') ) {
 					if(value.compare("*")!=0)
@@ -64,7 +67,11 @@ void Actuator::ReadConfigFile()
 						LatencyMax.push_back(inf);
 	          	}   
 	          	if( std::getline(is_line, value,';') ) {
-	           	 	JitterMin.push_back(stof(value));
+	           	 	if(value.compare("*")!=0)
+	           	 		JitterMin.push_back(stof(value));
+					else
+						JitterMin.push_back(0);
+					printf("JitterMin %f",JitterMin);
 	          	}        
 	          	if( std::getline(is_line, value,';') ) {
 					if(value.compare("*")!=0)
@@ -73,7 +80,10 @@ void Actuator::ReadConfigFile()
 						JitterMax.push_back(inf);
           		}  
           		if( std::getline(is_line, value,';') ) {
-	           	 	PacketlossMin.push_back(stof(value));
+	           	 	if(value.compare("*")!=0)
+	           	 		PacketlossMin.push_back(stof(value));
+					else
+						PacketlossMin.push_back(0);
           		} 
           		if( std::getline(is_line, value,';') ) {
 					if(value.compare("*")!=0)
@@ -162,7 +172,7 @@ void Actuator::SearchState(std::string TypeAlertIn){
 
 void Actuator::UpdateState(){
 	
-	cout << "Current State: "<< Nextstate[CurrentValues] << " - Previous State: " << State[CurrentValues] << endl;
+	//cout << "Current State: "<< Nextstate[CurrentValues] << " - Previous State: " << State[CurrentValues] << endl;
 	CurrentState=Nextstate[CurrentValues];
 	//cout << "Current State "<< CurrentState << endl;
 }
@@ -230,29 +240,45 @@ bool Actuator::PathAlert (float Jitter, float Latency, unsigned int Packetloss, 
 	bool ok=true;
 	//printf("Path\n");
 		
-	SearchState( TypeAlerIn);
+	SearchState(TypeAlerIn);
+	cout << "Current State: "<< Nextstate[CurrentValues] << " - Previous State: " << State[CurrentValues] << endl;
+	//	cout << "@VIC athis Current State: "<< CurrentState << " - @VIC athis Previous State: " << PreviousState << endl;
+	//if (/*PreviousState!=CurrentState*/1){
+		TestRules (Jitter, Latency, Packetloss);
 
-	TestRules (Jitter , Latency , Packetloss);
-
-	if (UpdateJitter==true || UpdateLatency==true || UpdatePacketloss==true)
+		if (UpdateJitter==true || UpdateLatency==true || UpdatePacketloss==true)
+		{
+			UpdateState();
+			action=Action[CurrentValues];
+		}
+		else
+		{
+			action="echo No action";
+		}
+	//}
+	/*else
 	{
-		UpdateState();
-		action=Action[CurrentValues];
-	}
-	else
 		action="echo No action";
-	
-	return ok;
+	}*/
+	/*PreviousState=CurrentState;
+	cout << "@VICCurrent State: "<< CurrentState << " - @VICPrevious State: " << PreviousState << endl;
+	*/return ok;
 }
 
 bool Actuator::PathRecovery (std::string &action, std::string TypeAlerIn )
 {
 	bool ok=true;
 	//printf("Path\n");
-		
 	SearchState(TypeAlerIn);
-	UpdateState();
-	
-	action=Action[CurrentValues];
+	cout << "Current State: "<< Nextstate[CurrentValues] << " - Previous State: " << State[CurrentValues] << endl;
+	if (/*PreviousState!=CurrentState*/1){	
+		UpdateState();
+		action=Action[CurrentValues];
+	}
+	else
+	{
+		action="echo No action";
+	}
+	//PreviousState=CurrentState;
 	return ok;
 }

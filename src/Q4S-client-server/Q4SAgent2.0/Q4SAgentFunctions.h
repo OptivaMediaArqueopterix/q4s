@@ -30,6 +30,7 @@ class Actuator{
 //	vector <int>				CondPacketloss;
 	vector <string>				TypeAlert;
 	static string				CurrentState;
+	string						PreviousState;
 	int							CurrentValues;
 	static int					CountSameStates;
 	bool						UpdateJitter,UpdateLatency, UpdatePacketloss;
