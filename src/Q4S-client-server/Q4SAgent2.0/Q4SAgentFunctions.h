@@ -44,6 +44,7 @@ public:
 	//Actuator ();
 	//~Actuator ();
 	void						ReadConfigFile();
+	void						CleanVectors();
 	void						Print ();
 	void						SearchState (std::string);
 	void						UpdateState ();

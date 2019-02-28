@@ -1,2 +1,12 @@
-S0;ALERT;10;25;*;*;*;*;"curl -X PUT ""138.4.7.173:8080/procs/1.json?ql=0""";S1
-S1;RECOVERY;50;*;*;*;*;*;"curl -X PUT ""138.4.7.173:8080/procs/1.json?ql=0""";S0
+S0;ALERT;1;50;0;*;0;*;quality med;S1
+S1;ALERT;1;50;0;*;0;*;quality low;S2
+S2;ALERT;1;50;0;*;0;*;quality shit;S3
+S3;ALERT;1;50;0;*;0;*;quality low;S4
+S4;ALERT;1;50;0;*;0;*;quality asdasdasd;S5
+S5;ALERT;1;50;0;*;0;*;quality eqweqw;S6
+S1;RECOVERY;0;0;0;*;0;*;caca;S0
+S2;RECOVERY;0;0;0;*;0;*;21;S1
+S3;RECOVERY;0;0;0;*;0;*;32;S2
+S4;RECOVERY;0;0;0;*;0;*;43;S3
+S5;RECOVERY;0;0;0;*;0;*;54;S4
+S6;RECOVERY;0;0;0;*;0;*;65;S5

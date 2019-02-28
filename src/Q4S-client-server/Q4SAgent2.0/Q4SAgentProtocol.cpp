@@ -198,19 +198,17 @@ bool Q4SAgentProtocol::manageUdpReceivedData( )
 			std::stringstream ss(udpBuffer);
 			ss >> TypeAlert >> StrLatency >> Latency >> StrJitter >> Jitter >> StrPacketloss >> Packetloss ;
 
-			/*printf(" Latency=> %f \n", Latency);
-			printf(" Jitter=> %f \n", Jitter);
-			printf(" TypeAlert=> %s \n", TypeAlert);*/
-
-
-
 			// El mensaje de entrada debe ser siempre <ALERT Latency: xxx Jitter: xxxxxxx>
 			// ALERT Latency: xxxx
 			//	ALERT Jitter: xxxx
             // <ALERT Latency: 121.5 Jitter: 4.89473>
 
-
+			
+			actuator.CleanVectors();
 			actuator.ReadConfigFile();
+#if DEBUG
+			actuator.Print();
+#endif
 			if (TypeAlert.compare("ALERT") == 0){
 				cout << "Rx Alert " << endl;
 				actuator.PathAlert(Jitter, Latency, Packetloss, action, TypeAlert);

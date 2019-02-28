@@ -39,7 +39,6 @@ Actuator::~Actuator ()
 
 void Actuator::ReadConfigFile()
 {
-	//cout << "Reading..."<< endl;
 	ifstream config ("Rules.csv");
 	std::string line;
 	std::string key;	
@@ -103,6 +102,21 @@ void Actuator::ReadConfigFile()
 	else  cout << "Unable to open file";  
 }
 
+void Actuator::CleanVectors(){
+
+	State.clear();		        
+	TypeAlert.clear();
+	LatencyMin.clear();
+	LatencyMax.clear();
+	JitterMin.clear();
+	JitterMax.clear();
+	PacketlossMin.clear();
+	PacketlossMax.clear();
+	Action.clear();
+	Nextstate.clear();
+          		
+}
+
 void Actuator::PolicyServerComunication()
 {
 
@@ -157,7 +171,11 @@ void Actuator::Print (){
 void Actuator::SearchState(std::string TypeAlertIn){
 
 	bool FirstTime=true;
+	CountSameStates=0;
 	for (int i=0; i<State.size();i++){
+#if DEBUG
+		cout << "State i " << State[i] << "Current" << CurrentState << "type alert i" << TypeAlert[i] <<"rype alert in " <<TypeAlertIn<< "State.size()"<< State.size()<< endl;
+#endif
 		if ( State[i] == CurrentState && TypeAlert[i]==TypeAlertIn){
 			if (FirstTime){
 				CurrentValues=i;
@@ -167,19 +185,20 @@ void Actuator::SearchState(std::string TypeAlertIn){
 			CountSameStates++;
 		}
 	}
-	//cout << "CurrentValues esta en la posicion=> " << CurrentValues << endl;
 }
 
 void Actuator::UpdateState(){
 	
-	//cout << "Current State: "<< Nextstate[CurrentValues] << " - Previous State: " << State[CurrentValues] << endl;
-	
-	if (PreviousState!=Nextstate[CurrentValues])
-	{
+//	if (PreviousState!=Nextstate[CurrentValues])
+//	{
 		PreviousState=CurrentState;
 		CurrentState=Nextstate[CurrentValues];
-	}
+//	}
+#if DEBUG
 	cout << "Current State: "<< CurrentState << " - Previous State: " << PreviousState << endl;
+
+#endif
+	cout << "Current State: "<< CurrentState << endl;
 }
 
 void Actuator::JsonFile(float Jitter, float Latency, unsigned int Packetloss){
@@ -205,9 +224,7 @@ void Actuator::JsonFile(float Jitter, float Latency, unsigned int Packetloss){
 }
 
 void Actuator::TestRules (float Jitter, float Latency, unsigned int Packetloss){
-#if DEBUG
-	cout << "AQUI "<< TypeAlert[CurrentValues] << endl;
-#endif
+
 	for (int i=0;i<CountSameStates;i++){
 		if (Jitter > JitterMin[CurrentValues+i] && Jitter<JitterMax[CurrentValues+i]){
 			UpdateJitter=false;
@@ -219,14 +236,19 @@ void Actuator::TestRules (float Jitter, float Latency, unsigned int Packetloss){
 		}
 		
 		if (Latency > LatencyMin[CurrentValues+i] && Latency<LatencyMax[CurrentValues+i]){
+#if DEBUG
+			printf("if Latency=%f, Latencymin %f, LatencyMax %f\n",Latency, LatencyMin[CurrentValues+i], LatencyMax[CurrentValues+i]);
+#endif		
 			UpdateLatency=false;
 		}
 		else{
+#if DEBUG
+			printf("else Latency=%f, Latencymin %f, LatencyMax %f\n",Latency, LatencyMin[CurrentValues+i], LatencyMax[CurrentValues+i]);
+#endif
 			UpdateLatency=true;
 			CurrentValues=CurrentValues+i;
 			break;
 		}
-		//if (Packetloss == 0){(Packetloss > PacketlossMin[CurrentValues+i] && Packetloss<PacketlossMax[CurrentValues+i])
 		if (Packetloss >= PacketlossMin[CurrentValues+i] && Packetloss<PacketlossMax[CurrentValues+i]){
 			UpdatePacketloss=false;
 		}
@@ -245,7 +267,10 @@ bool Actuator::PathAlert (float Jitter, float Latency, unsigned int Packetloss, 
 	bool ok=true;
 	SearchState(TypeAlerIn);
 	TestRules (Jitter, Latency, Packetloss);
-
+#if DEBUG
+	printf("Lmin=%f Lmax=%f  State.size() %d \n",  LatencyMin, LatencyMax, State.size());
+	printf("J=%f L=%f P=%d, UJ=%d, UL=%d, UPL=%d \n", Jitter, Latency, Packetloss, UpdateJitter, UpdateLatency, UpdatePacketloss);
+#endif
 	if (UpdateJitter==true || UpdateLatency==true || UpdatePacketloss==true)
 	{
 		UpdateState();
@@ -254,7 +279,6 @@ bool Actuator::PathAlert (float Jitter, float Latency, unsigned int Packetloss, 
 	else
 	{
 		action="echo No action need it";
-		//printf("J=%f L=%f P=%d", Jitter, Latency, Packetloss);
 	}
 	return ok;
 }
