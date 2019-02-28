@@ -24,7 +24,7 @@ using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	
+	printf("Version 2.10 Date 25/2/19 \n");
 	bool ok = true;
 	Q4SAgentStateManager q4SAgentStateManager;
 	actuator.ReadConfigFile();

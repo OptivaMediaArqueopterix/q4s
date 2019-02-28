@@ -30,13 +30,13 @@ class Actuator{
 //	vector <int>				CondPacketloss;
 	vector <string>				TypeAlert;
 	static string				CurrentState;
-	string						PreviousState;
+	static string				PreviousState;
 	int							CurrentValues;
 	static int					CountSameStates;
 	bool						UpdateJitter,UpdateLatency, UpdatePacketloss;
 	Q4SAgentSocket              mAgentSocket;
-
 	static float				inf;
+
 
 	bool						PSCEnabled;
 
