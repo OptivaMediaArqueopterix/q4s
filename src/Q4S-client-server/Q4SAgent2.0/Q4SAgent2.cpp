@@ -24,10 +24,14 @@ using namespace std;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	
+	printf("Version 2.10 Date 28/2/19 \n");
 	bool ok = true;
 	Q4SAgentStateManager q4SAgentStateManager;
 	actuator.ReadConfigFile();
+	if (q4SAgentConfigFile.PSCEnabled)
+	{
+		actuator.PolicyServerComunication();
+	}
 	//actuator.Print();
 
 	ok &= q4SAgentStateManager.init();

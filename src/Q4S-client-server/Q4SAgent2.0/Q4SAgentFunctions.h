@@ -30,23 +30,29 @@ class Actuator{
 //	vector <int>				CondPacketloss;
 	vector <string>				TypeAlert;
 	static string				CurrentState;
+	static string				PreviousState;
 	int							CurrentValues;
 	static int					CountSameStates;
 	bool						UpdateJitter,UpdateLatency, UpdatePacketloss;
 	Q4SAgentSocket              mAgentSocket;
-
 	static float				inf;
+
+
+	bool						PSCEnabled;
 
 public:
 	//Actuator ();
 	//~Actuator ();
 	void						ReadConfigFile();
+	void						CleanVectors();
 	void						Print ();
 	void						SearchState (std::string);
 	void						UpdateState ();
 	void						TestRules (float, float, unsigned int );
 	bool						PathAlert (float, float, unsigned int, std::string &, std::string);
 	bool						PathRecovery (std::string &, std::string );
+	void						PolicyServerComunication ( );
+	void						JsonFile(float, float, unsigned int);
 
 };
 

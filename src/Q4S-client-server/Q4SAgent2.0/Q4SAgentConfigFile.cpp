@@ -14,4 +14,5 @@ Q4SAgentConfigFile::Q4SAgentConfigFile(const std::string &fName)
     bitRateReduceCuantity = configFile.getValueOfKey<unsigned long>("BITRATE_REDUCE_CUANTITY", 500);
     demoMode= configFile.keyExists("DEMO_MODE");
     demoConnSocket= configFile.keyExists("DEMO_CONN_SOCKET");
+	PSCEnabled=configFile.keyExists("POLICY_SERVER");
 }
