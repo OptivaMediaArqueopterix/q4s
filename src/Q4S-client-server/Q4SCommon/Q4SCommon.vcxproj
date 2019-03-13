@@ -77,6 +77,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ObtainMyIP.cpp" />
     <ClCompile Include="Q4SCommonProtocol.cpp" />
     <ClCompile Include="Q4SSDPParams.cpp" />
     <ClCompile Include="Q4SStructs.cpp" />
@@ -85,6 +86,7 @@
     <ClInclude Include="EKeyCodes.h" />
     <ClInclude Include="ETime.h" />
     <ClInclude Include="fmt\format.h" />
+    <ClInclude Include="ObtainMyIP.h" />
     <ClInclude Include="Q4SCommonProtocol.h" />
     <ClInclude Include="Q4SMathUtils.h" />
     <ClInclude Include="Q4SCriticalSection.h" />

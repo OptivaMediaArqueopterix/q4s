@@ -1,6 +1,8 @@
 #ifndef _Q4SSDPPARAMS_H_
 #define _Q4SSDPPARAMS_H_
 
+#include <string>
+
 enum Q4SSDPAlertingMode
 { Q4SSDPALERTINGMODE_INVALID
 , Q4SSDPALERTINGMODE_Q4SAWARENETWORK
@@ -46,6 +48,8 @@ struct Q4SSDPParams
     float packetLossUp;
     float packetLossDown;
 	Q4SSDPProcedure procedure;
+	std::string publicClientAddress;
+	std::string publicServerAddress;
 	
 	bool operator ==(const Q4SSDPParams p) const;
 };

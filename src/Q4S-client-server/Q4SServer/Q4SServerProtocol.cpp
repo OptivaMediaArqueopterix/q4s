@@ -11,6 +11,7 @@
 #include "Q4SMessage.h"
 #include "Q4SMessageTools.h"
 #include "..\Q4SCommon\Q4SSDPParams.h"
+#include "..\Q4SCommon\ObtainMyIP.h"
 
 #define     DEFAULT_CONN_ID     1
 
@@ -45,6 +46,11 @@ bool Q4SServerProtocol::init()
     {
         ok &= mServerSocket.startAlertSender();
     }
+
+	if (ok)
+	{
+		obtainMyIP(mIP);
+	}
 
     return ok;
 }
@@ -486,7 +492,7 @@ bool Q4SServerProtocol::interchangeMeasurementProcedure(Q4SMeasurementValues &up
     {
 		// Send Info Ping with sequenceNumber 0
 		Q4SMessage infoPingMessage;
-		ok &= infoPingMessage.initPing("myIp", q4SServerConfigFile.defaultUDPPort, 0, 0, results.values);
+		ok &= infoPingMessage.initPing(mIP, q4SServerConfigFile.defaultUDPPort, 0, 0, results.values);
 		ok &= mServerSocket.sendTcpData(DEFAULT_CONN_ID, infoPingMessage.getMessageCChar());
     }
 
@@ -592,7 +598,7 @@ bool Q4SServerProtocol::sendRegularPings(std::vector<unsigned long> &arrSentPing
         arrSentPingTimestamps.push_back( timeStamp );
 
         // Prepare message and send
-        message.initPing("myIp", q4SServerConfigFile.defaultUDPPort, pingNumber, timeStamp);
+        message.initPing(mIP, q4SServerConfigFile.defaultUDPPort, pingNumber, timeStamp);
         ok &= mServerSocket.sendUdpData( DEFAULT_CONN_ID, message.getMessageCChar() );
 
         // Wait the established time between pings
@@ -615,7 +621,7 @@ bool Q4SServerProtocol::measureStage1(Q4SSDPParams params, Q4SMeasurementResult 
 	unsigned long sequenceNumber = 0;
 	while(ok && (ETime_getTime() < initialTimeStamp + params.procedure.bandwidthTime))
 	{
-		ok &= message.initRequest(Q4SMTYPE_BWIDTH, "myIp", q4SServerConfigFile.defaultUDPPort, true, sequenceNumber, true, ETime_getTime());
+		ok &= message.initRequest(Q4SMTYPE_BWIDTH, mIP, q4SServerConfigFile.defaultUDPPort, true, sequenceNumber, true, ETime_getTime());
 		ok &= mServerSocket.sendUdpData(DEFAULT_CONN_ID, message.getMessageCChar());
 
 		sequenceNumber++;

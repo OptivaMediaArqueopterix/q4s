@@ -66,6 +66,9 @@
     <ClInclude Include="Q4SSDPParams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ObtainMyIP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Q4SSocket.cpp">
@@ -108,6 +111,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Q4SSDPParams.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ObtainMyIP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -430,5 +430,13 @@ std::string Q4SCommonProtocol::generateNotificationAlertMessage(Q4SSDPParams par
 
 	alertMessage += "PacketLoss: " + packetLossString;
 
+	alertMessage += " ";
+
+	alertMessage += "ClientAddress: " + params.publicClientAddress;
+
+	alertMessage += " ";
+
+	alertMessage += "ServerAddress: " + params.publicServerAddress;
+
 	return alertMessage;
 }

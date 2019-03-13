@@ -51,6 +51,8 @@ class Q4SCommonProtocol
 		void showCheckMessage(Q4SMeasurementResult &upResults, Q4SMeasurementResult &downResults) const;
 		std::string generateAlertMessage(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &upResults) const;
 		std::string generateNotificationAlertMessage(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &upResults) const;
+
+		char mIP[15];
 		
 	private:
 
@@ -97,6 +99,7 @@ class Q4SCommonProtocol
 		FRIEND_TEST(Q4SCommonProtocol_test_case, testQ4SCommonProtocolCheckStage1BandwidthAlert);
 		FRIEND_TEST(Q4SCommonProtocol_test_case, testQ4SCommonProtocolCheckStage1PacketLossAlert);
 		FRIEND_TEST(Q4SCommonProtocol_test_case, testQ4SCommonProtocolCheckStage1NoAlert);
+		FRIEND_TEST(Q4SCommonProtocol_test_case, testQ4SCommonProtocolGenerateNotificationAlertMessage);
 };
 
 #endif  // _Q4SCOMMONPROTOCOL_H_

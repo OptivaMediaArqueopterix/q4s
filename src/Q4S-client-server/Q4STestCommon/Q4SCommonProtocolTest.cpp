@@ -553,3 +553,17 @@ TEST(Q4SCommonProtocol_test_case, testQ4SCommonProtocolCheckStage1NoAlert)
 	EXPECT_EQ(results.bandwidthAlert, false);
     EXPECT_EQ(results.packetLossAlert, false);
 }
+
+TEST(Q4SCommonProtocol_test_case, testQ4SCommonProtocolGenerateNotificationAlertMessage)
+{
+	Q4SCommonProtocol q4SCommonProtocol;
+	Q4SMeasurementResult results;
+	results.values.latency= 1.f;
+	results.values.jitter = 3.f;
+	results.values.packetLoss = 1.f;
+	Q4SSDPParams params;
+	params.publicClientAddress = "127.0.0.1";
+	params.publicServerAddress = "127.0.0.2";
+	std::string notificationAlertMessage = q4SCommonProtocol.generateNotificationAlertMessage(params, results, results);
+    EXPECT_EQ(notificationAlertMessage, "Latency: 1 Jitter: 3 PacketLoss: 1 ClientAddress: 127.0.0.1 ServerAddress: 127.0.0.2");
+}
