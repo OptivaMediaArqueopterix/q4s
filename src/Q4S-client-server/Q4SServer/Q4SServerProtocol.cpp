@@ -150,7 +150,13 @@ bool Q4SServerProtocol::handshake(Q4SSDPParams &params)
         }
 		else
 		{
-			//ok = Q4SSDP_parsePublicClineServerAddress(message, params);
+			//leer la ip del begin y meterla en el params
+			//leer la ip del begin y meterla en el params
+			//leer la ip del begin y meterla en el params
+			//leer la ip del begin y meterla en el params
+			//leer la ip del begin y meterla en el params
+			//leer la ip del begin y meterla en el params
+			//leer la ip del begin y meterla en el params
 		}
     }
     

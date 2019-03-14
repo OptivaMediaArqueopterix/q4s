@@ -167,6 +167,8 @@ bool Q4SClientProtocol::handshake(Q4SSDPParams &params)
         ok &= mReceivedMessages.readFirst( message );
 		ok &= Q4SMessageTools_is200OKMessage(message);
 		ok &= Q4SSDP_parse(message, params);
+		ok &= Q4SSDP_parsePublicServerAddress(message, params);
+		ok &= Q4SSDP_parsePublicClientAddress(message, params);
     }
 
     return ok;
