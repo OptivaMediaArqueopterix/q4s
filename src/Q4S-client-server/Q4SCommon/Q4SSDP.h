@@ -15,11 +15,15 @@
 #define APPPACKETLOSS_PATTERN "a=application:packetloss:"
 #define PROCEDURE_PATTERN "a=measurement:procedure default("
 #define PROCEDURE_CLOSE_PATTERN ")"
+#define PUBLIC_ADDRESS_CLIENT_PATTERN "a=public-address:client"
+#define PUBLIC_ADDRESS_SERVER_PATTERN "a=public-address:server"
 
 #define Q4SSDPALERTINGMODE_Q4SAWARENETWORK_PATTERN "Q4S-aware-network"
 #define Q4SSDPALERTINGMODE_REACTIVE_PATTERN "Reactive"
 
 std::string Q4SSDP_create(Q4SSDPParams q4SSDPParams);
 bool Q4SSDP_parse(std::string message, Q4SSDPParams& params);
+bool Q4SSDP_parsePublicServerAddress(std::string message, Q4SSDPParams& params);
+bool Q4SSDP_parsePublicClientAddress(std::string message, Q4SSDPParams& params);
 
 #endif  // _Q4SSDP_H_

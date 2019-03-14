@@ -153,6 +153,24 @@ std::string makeProcedureLine(Q4SSDPProcedure procedure)
 	return line;
 }
 
+std::string makePublicServerAddress(std::string address)
+{
+	std::string line;
+	line.append(PUBLIC_ADDRESS_SERVER_PATTERN);
+	line.append(address);
+    line.append("\n");
+	return line;
+}
+
+std::string makePublicClientAddress(std::string address)
+{
+	std::string line;
+	line.append(PUBLIC_ADDRESS_CLIENT_PATTERN);
+	line.append(address);
+    line.append("\n");
+	return line;
+}
+
 bool Q4SSDP_parseOneElementLine(std::string message, std::string pattern, std::string &paramText)
 {
 	bool ok = true;
@@ -463,6 +481,14 @@ std::string Q4SSDP_create(Q4SSDPParams params)
 	message.append( makeBandWidthLine(params.bandWidthUp, params.bandWidthDown));
 	message.append( makePacketLossLine(params.packetLossUp, params.packetLossDown));
 	message.append( makeProcedureLine(params.procedure));
+	if (params.publicServerAddress != "")
+	{
+		message.append( makePublicServerAddress(params.publicServerAddress));
+	}
+	if (params.publicClientAddress != "")
+	{
+		message.append( makePublicClientAddress(params.publicClientAddress));
+	}
 	
 	return message;
 }
@@ -484,3 +510,36 @@ bool Q4SSDP_parse(std::string message, Q4SSDPParams& params)
 	return ok;
 }
 
+bool Q4SSDP_parsePublicServerAddress(std::string message, Q4SSDPParams& params)
+{
+	bool ok = true;
+
+	std::string pattern = PUBLIC_ADDRESS_SERVER_PATTERN;
+	std::string paramText;
+
+	ok &= Q4SSDP_parseOneElementLine (message, pattern, paramText); 
+
+	if (ok)
+	{
+		params.publicServerAddress = paramText;
+	}
+
+	return ok;
+}
+
+bool Q4SSDP_parsePublicClientAddress(std::string message, Q4SSDPParams& params)
+{
+	bool ok = true;
+
+	std::string pattern = PUBLIC_ADDRESS_CLIENT_PATTERN;
+	std::string paramText;
+
+	ok &= Q4SSDP_parseOneElementLine (message, pattern, paramText); 
+
+	if (ok)
+	{
+		params.publicClientAddress = paramText;
+	}
+
+	return ok;
+}

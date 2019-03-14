@@ -148,6 +148,10 @@ bool Q4SServerProtocol::handshake(Q4SSDPParams &params)
         {
             ok = false;
         }
+		else
+		{
+			//ok = Q4SSDP_parsePublicClineServerAddress(message, params);
+		}
     }
     
     if( ok )
@@ -182,6 +186,7 @@ bool Q4SServerProtocol::handshake(Q4SSDPParams &params)
 		params.procedure.windowSizeLatencyCalcDownlink= q4SServerConfigFile.numberOfPingsDown;
 		params.procedure.windowSizePacketLossCalcUplink= q4SServerConfigFile.numberOfBwidthsUp;
 		params.procedure.windowSizePacketLossCalcDownlink= q4SServerConfigFile.numberOfBwidthsDown;
+		params.publicServerAddress = mIP;
 
 		ok &= message200.init200OKBeginResponse(params);
 		ok &= mServerSocket.sendTcpData( DEFAULT_CONN_ID, message200.getMessageCChar());
