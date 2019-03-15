@@ -151,3 +151,19 @@ void Q4SMessageTools_fillBodyToASize(std::string &message, int size)
 		message.append(toAppend);
 	}	
 }
+
+void Q4SMessageTools_obtainIPFromRequest(std::string message, std::string &ip)
+{
+    // Auxiliar string
+    std::string extracted;
+
+    // Convert message to a stringstream 
+    std::istringstream messageStream (message);
+
+    // Get ip from message
+    std::getline(messageStream, extracted, ' ');
+    std::getline(messageStream, extracted, ' ');
+	extracted = extracted.substr(6);
+	std::size_t dotsPos = extracted.find(':');
+	ip = extracted.substr(0, dotsPos);
+}

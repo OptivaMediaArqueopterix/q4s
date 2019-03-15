@@ -151,12 +151,7 @@ bool Q4SServerProtocol::handshake(Q4SSDPParams &params)
 		else
 		{
 			//leer la ip del begin y meterla en el params
-			//leer la ip del begin y meterla en el params
-			//leer la ip del begin y meterla en el params
-			//leer la ip del begin y meterla en el params
-			//leer la ip del begin y meterla en el params
-			//leer la ip del begin y meterla en el params
-			//leer la ip del begin y meterla en el params
+			Q4SMessageTools_obtainIPFromRequest(message, params.publicClientAddress);
 		}
     }
     
