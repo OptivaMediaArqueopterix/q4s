@@ -20,6 +20,7 @@ public:
 	unsigned long serverConnectionRetryTimes;
 	unsigned long serverConnectionMilisecondsBetweenTimes;
 	bool waitForLaunchGANY;
+	bool showPublicIPAddress;
 };
 
 extern Q4SClientConfigFile q4SClientConfigFile;

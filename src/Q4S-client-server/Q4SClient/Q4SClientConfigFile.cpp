@@ -17,4 +17,5 @@ Q4SClientConfigFile::Q4SClientConfigFile(const std::string &fName)
     serverConnectionRetryTimes = configFile.getValueOfKey<unsigned long>("CONNECTION_RETRY_TIMES", 20);
     serverConnectionMilisecondsBetweenTimes = configFile.getValueOfKey<unsigned long>("TIME_BETWEEN_RETRYS", 500);
     waitForLaunchGANY = configFile.keyExists("WAIT_FOR_LAUNCH_GANY");
+    showPublicIPAddress = configFile.keyExists("SHOW_PUBLIC_IP_ADDRESS");
 }

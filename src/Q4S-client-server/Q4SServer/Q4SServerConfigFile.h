@@ -36,6 +36,7 @@ public:
     bool showMeasureInfo;
     bool showReceivedPingInfo;
     bool showSocketReceivedInfo;
+	bool showPublicIPAddress;
 };
 
 extern Q4SServerConfigFile q4SServerConfigFile;

@@ -33,4 +33,5 @@ Q4SServerConfigFile::Q4SServerConfigFile(const std::string &fName)
     showMeasureInfo = configFile.keyExists("SHOW_MEASURE_INFO");
     showReceivedPingInfo = configFile.keyExists("SHOW_RECEIVED_PING_INFO");
     showSocketReceivedInfo = configFile.keyExists("SHOW_SOCKET_RECEIVED_INFO");
+    showPublicIPAddress = configFile.keyExists("SHOW_PUBLIC_IP_ADDRESS");
 }

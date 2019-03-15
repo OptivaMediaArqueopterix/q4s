@@ -8,5 +8,6 @@ struct IPv4
 
 bool obtainMyIP(IPv4 & myIP);
 bool obtainMyIP(char* myIP);
+bool obtainMyPublicIP(char* myIP);
 
 #endif //_OBTAIN_MY_IP_H_

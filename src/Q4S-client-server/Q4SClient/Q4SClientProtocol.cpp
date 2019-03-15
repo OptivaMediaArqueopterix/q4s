@@ -41,7 +41,14 @@ bool Q4SClientProtocol::init(unsigned long times, unsigned long milisecondsBetwe
 
 	if (ok)
 	{
-		obtainMyIP(mIP);
+		if (q4SClientConfigFile.showPublicIPAddress)
+		{
+			obtainMyPublicIP(mIP);
+		}
+		else
+		{
+			obtainMyIP(mIP);
+		}
 	}
 
     return ok;

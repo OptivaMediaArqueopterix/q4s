@@ -49,7 +49,14 @@ bool Q4SServerProtocol::init()
 
 	if (ok)
 	{
-		obtainMyIP(mIP);
+		if (q4SServerConfigFile.showPublicIPAddress)
+		{
+			obtainMyPublicIP(mIP);
+		}
+		else
+		{
+			obtainMyIP(mIP);
+		}
 	}
 
     return ok;
