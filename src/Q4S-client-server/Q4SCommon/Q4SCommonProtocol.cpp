@@ -440,3 +440,21 @@ std::string Q4SCommonProtocol::generateNotificationAlertMessage(Q4SSDPParams par
 
 	return alertMessage;
 }
+
+void Q4SCommonProtocol::showMeasure(
+	bool firstUp, bool showPacketLoss, bool showBandwithPacketLoss,
+	float latencyUp, float latencyDown, float jitterUp, float jitterDown, float packetLoss, float bandwith) const
+{
+	if (firstUp){
+		printf( "MEASURING RESULT - Latency Up: %.3f\n", latencyUp );
+        printf( "MEASURING RESULT - Jitter Up: %.3f\n", jitterUp );
+		printf( "MEASURING RESULT - Latency Down: %.3f\n", latencyDown );
+		printf( "MEASURING RESULT - Jitter Down: %.3f\n", jitterDown);
+	}
+	else {
+		printf( "MEASURING RESULT - Latency Down: %.3f\n", latencyDown );
+		printf( "MEASURING RESULT - Jitter Down: %.3f\n", jitterDown);
+		printf( "MEASURING RESULT - Latency Up: %.3f\n", latencyUp );
+        printf( "MEASURING RESULT - Jitter Up: %.3f\n", jitterUp );
+	}
+}

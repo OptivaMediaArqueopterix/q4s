@@ -438,7 +438,6 @@ bool Q4SServerProtocol::measureStage0(Q4SSDPParams params, Q4SMeasurementResult 
 			results.values.latency, 
 			pingsToSend, 
 			q4SServerConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Latency Down: %.3f\n", results.values.latency );
 
         // Calculate Jitter
         calculateJitterStage0(
@@ -447,14 +446,9 @@ bool Q4SServerProtocol::measureStage0(Q4SSDPParams params, Q4SMeasurementResult 
 			params.procedure.negotiationTimeBetweenPingsDownlink, 
 			pingsToSend,
 			q4SServerConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Jitter Down: %.3f\n", results.values.jitter );
-    }
-
-    if ( ok ) 
-    {
 		ok &= interchangeMeasurementProcedure(upMeasurements, results);
-		printf( "MEASURING RESULT - Latency Up: %.3f\n", upMeasurements.latency );
-		printf( "MEASURING RESULT - Jitter Up: %.3f\n", upMeasurements.jitter );
+		// Show
+		showMeasure(false, false, false, upMeasurements.latency, results.values.latency, upMeasurements.jitter, results.values.jitter, 0.f, 0.f);
     }
 
     if ( ok )

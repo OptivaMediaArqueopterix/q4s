@@ -51,6 +51,9 @@ class Q4SCommonProtocol
 		void showCheckMessage(Q4SMeasurementResult &upResults, Q4SMeasurementResult &downResults) const;
 		std::string generateAlertMessage(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &upResults) const;
 		std::string generateNotificationAlertMessage(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &upResults) const;
+		void	showMeasure(
+			bool firstUp, bool showPacketLoss, bool showBandwithPacketLoss,
+			float latencyUp, float latencyDown, float jitterUp, float jitterDown, float packetLoss, float bandwith) const;
 
 		char mIP[15];
 		

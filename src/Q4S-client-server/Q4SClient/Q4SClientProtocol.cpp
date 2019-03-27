@@ -11,6 +11,19 @@
 
 #include <stdio.h>
 #include <sstream>
+#include <time.h>
+
+const std::string currentDateTime() {
+	struct tm tstruct;
+    time_t now = time(0);
+    char buf[80];
+	localtime_s(&tstruct, &now);
+    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+    // for more information about date/time format
+    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+
+    return buf;
+}
 
 Q4SClientProtocol::Q4SClientProtocol ()
 {
@@ -288,7 +301,6 @@ bool Q4SClientProtocol::measureStage0(Q4SSDPParams params, Q4SMeasurementResult 
 			results.values.latency, 
 			pingsToSend, 
 			q4SClientConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Latency Up: %.3f\n", results.values.latency );
 
         // Calculate Jitter
 		float packetLoss = 0.f;
@@ -298,14 +310,11 @@ bool Q4SClientProtocol::measureStage0(Q4SSDPParams params, Q4SMeasurementResult 
 			params.procedure.negotiationTimeBetweenPingsUplink, 
 			pingsToSend,
 			q4SClientConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Jitter Up: %.3f\n", results.values.jitter );
-	}
 
-    if ( ok ) 
-    {
 		ok &= interchangeMeasurementProcedure(downMeasurements, results);
-		printf( "MEASURING RESULT - Latency Down: %.3f\n", downMeasurements.latency );
-		printf( "MEASURING RESULT - Jitter Down: %.3f\n", downMeasurements.jitter );
+
+		// Show
+		showMeasure(true, false, false, results.values.latency, downMeasurements.latency, results.values.jitter, downMeasurements.jitter, 0.f, 0.f);
     }
     
 	if ( ok ) 
@@ -321,6 +330,7 @@ bool Q4SClientProtocol::measureStage0(Q4SSDPParams params, Q4SMeasurementResult 
 
     return ok;
 }
+
 
 bool Q4SClientProtocol::interchangeMeasurementProcedure(Q4SMeasurementValues &downMeasurements, Q4SMeasurementResult results)
 {
@@ -392,6 +402,7 @@ bool Q4SClientProtocol::measureContinuity(Q4SSDPParams params, Q4SMeasurementRes
 			pingsToSend, 
 			q4SClientConfigFile.showMeasureInfo);
         printf( "MEASURING RESULT - Latency Up: %.3f\n", results.values.latency );
+		printf( "Date: %s\n", currentDateTime().c_str());
 
         // Calculate Jitter
         calculateJitterAndPacketLossContinuity(
