@@ -446,9 +446,11 @@ bool Q4SServerProtocol::measureStage0(Q4SSDPParams params, Q4SMeasurementResult 
 			params.procedure.negotiationTimeBetweenPingsDownlink, 
 			pingsToSend,
 			q4SServerConfigFile.showMeasureInfo);
+
 		ok &= interchangeMeasurementProcedure(upMeasurements, results);
+
 		// Show
-		showMeasure(false, false, false, upMeasurements.latency, results.values.latency, upMeasurements.jitter, results.values.jitter, 0.f, 0.f);
+		showMeasure(false, false, false, upMeasurements.latency, results.values.latency, upMeasurements.jitter, results.values.jitter, 0.f, 0.f, 0.f, 0.f);
     }
 
     if ( ok )
@@ -547,7 +549,6 @@ bool Q4SServerProtocol::measureContinuity(Q4SSDPParams params, Q4SMeasurementRes
 			results.values.latency, 
 			pingsToSend, 
 			q4SServerConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Latency Down: %.3f\n", results.values.latency );
 
         // Calculate Jitter
         calculateJitterAndPacketLossContinuity(
@@ -557,16 +558,15 @@ bool Q4SServerProtocol::measureContinuity(Q4SSDPParams params, Q4SMeasurementRes
 			pingsToSend,
 			results.values.packetLoss,
 			q4SServerConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Jitter Down: %.3f\n", results.values.jitter );
-        printf( "MEASURING RESULT - PacketLoss Down: %.3f\n", results.values.packetLoss );
-    }
 
-	if (ok)
-	{
 		ok &= interchangeMeasurementProcedure(upMeasurements, results);
-        printf( "MEASURING RESULT - Latency Up: %.3f\n", upMeasurements.latency );
-        printf( "MEASURING RESULT - Jitter Up: %.3f\n", upMeasurements.jitter );
-		printf( "MEASURING RESULT - PacketLoss Up: %.3f\n", upMeasurements.packetLoss );
+
+		// Show
+		showMeasure(
+			false, true, false, 
+			upMeasurements.latency, results.values.latency, 
+			upMeasurements.jitter, results.values.jitter, 
+			upMeasurements.packetLoss, results.values.packetLoss, 0.f, 0.f);
 	}
 
 	if (ok)
@@ -634,14 +634,15 @@ bool Q4SServerProtocol::measureStage1(Q4SSDPParams params, Q4SMeasurementResult 
 		sequenceNumber++;
 	}
 
+    if(!ok)
+    {
+        printf( "ERROR:sendUdpData BWidth.\n" );
+    }
+
 	if (ok)
     {
 		calculateBandwidthStage1(sequenceNumber, params.procedure.bandwidthTime, results.values.bandwidth);
-		printf( "MEASURING RESULT - BandWidth Down: %0.2f\n", results.values.bandwidth );
-	}
 
-	if (ok)
-	{
 		// Calculate PacketLoss
         bool okCalculated = calculatePacketLossStage1(mReceivedMessages, results.values.packetLoss);
 		if (!okCalculated)
@@ -649,19 +650,15 @@ bool Q4SServerProtocol::measureStage1(Q4SSDPParams params, Q4SMeasurementResult 
 			printf( "PacketLoss Calculation Error");
 		}
 
-		printf( "MEASURING RESULT - PacketLoss Down: %.3f\n", results.values.packetLoss );
-	}
-
-    if(!ok)
-    {
-        printf( "ERROR:sendUdpData BWidth.\n" );
-    }
-
-	if (ok)
-	{
 		ok &= interchangeMeasurementProcedure(upMeasurements, results);
-		printf( "MEASURING RESULT - Bandwidth Up: %.3f\n", upMeasurements.bandwidth);
-		printf( "MEASURING RESULT - PacketLoss Up: %.3f\n", upMeasurements.packetLoss );
+
+		// Show
+		showMeasure(
+			false, false, true, 
+			0.f, 0.f,
+			0.f, 0.f,
+			upMeasurements.packetLoss, results.values.packetLoss, 
+			upMeasurements.bandwidth, results.values.bandwidth);
 	}
 
 	if (ok)

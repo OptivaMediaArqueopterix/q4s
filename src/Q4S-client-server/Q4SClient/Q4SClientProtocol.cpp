@@ -11,19 +11,6 @@
 
 #include <stdio.h>
 #include <sstream>
-#include <time.h>
-
-const std::string currentDateTime() {
-	struct tm tstruct;
-    time_t now = time(0);
-    char buf[80];
-	localtime_s(&tstruct, &now);
-    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-    // for more information about date/time format
-    strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-
-    return buf;
-}
 
 Q4SClientProtocol::Q4SClientProtocol ()
 {
@@ -314,7 +301,7 @@ bool Q4SClientProtocol::measureStage0(Q4SSDPParams params, Q4SMeasurementResult 
 		ok &= interchangeMeasurementProcedure(downMeasurements, results);
 
 		// Show
-		showMeasure(true, false, false, results.values.latency, downMeasurements.latency, results.values.jitter, downMeasurements.jitter, 0.f, 0.f);
+		showMeasure(true, false, false, results.values.latency, downMeasurements.latency, results.values.jitter, downMeasurements.jitter, 0.f, 0.f, 0.f, 0.f);
     }
     
 	if ( ok ) 
@@ -401,8 +388,6 @@ bool Q4SClientProtocol::measureContinuity(Q4SSDPParams params, Q4SMeasurementRes
 			results.values.latency, 
 			pingsToSend, 
 			q4SClientConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Latency Up: %.3f\n", results.values.latency );
-		printf( "Date: %s\n", currentDateTime().c_str());
 
         // Calculate Jitter
         calculateJitterAndPacketLossContinuity(
@@ -412,16 +397,15 @@ bool Q4SClientProtocol::measureContinuity(Q4SSDPParams params, Q4SMeasurementRes
 			pingsToSend,
 			results.values.packetLoss,
 			q4SClientConfigFile.showMeasureInfo);
-        printf( "MEASURING RESULT - Jitter Up: %.3f\n", results.values.jitter );
-        printf( "MEASURING RESULT - PacketLoss Up: %.3f\n", results.values.packetLoss );
-	}
 
-	if (ok)
-	{
 		ok &= interchangeMeasurementProcedure(downMeasurements, results);
-        printf( "MEASURING RESULT - Latency Down: %.3f\n", downMeasurements.latency );
-        printf( "MEASURING RESULT - Jitter Down: %.3f\n", downMeasurements.jitter );
-		printf( "MEASURING RESULT - PacketLoss Down: %.3f\n", downMeasurements.packetLoss );
+
+		// Show
+		showMeasure(
+			true, true, false, 
+			results.values.latency, downMeasurements.latency, 
+			results.values.jitter, downMeasurements.jitter, 
+			results.values.packetLoss, downMeasurements.packetLoss, 0.f, 0.f);
 	}
 
 	if (ok)
@@ -489,14 +473,15 @@ bool Q4SClientProtocol::measureStage1(Q4SSDPParams params, Q4SMeasurementResult 
 		sequenceNumber++;
 	}
 
+    if(!ok)
+    {
+        printf( "ERROR:sendUdpData BWidth.\n" );
+    }
+
 	if (ok)
     {
 		calculateBandwidthStage1(sequenceNumber, params.procedure.bandwidthTime, results.values.bandwidth);
-		printf( "MEASURING RESULT - Bandwidth Up: %0.2f\n", results.values.bandwidth );
-	}
 
-	if (ok)
-	{
 		// Calculate PacketLoss
         bool okCalculated = calculatePacketLossStage1(mReceivedMessages, results.values.packetLoss);
 		if (!okCalculated)
@@ -504,19 +489,16 @@ bool Q4SClientProtocol::measureStage1(Q4SSDPParams params, Q4SMeasurementResult 
 			printf( "PacketLoss Calculation Error");
 		}
 
-        printf( "MEASURING RESULT - PacketLoss Up: %.3f\n", results.values.packetLoss );
-	}
-
-    if(!ok)
-    {
-        printf( "ERROR:sendUdpData BWidth.\n" );
-    }
-
-	if (ok)
-	{
 		ok &= interchangeMeasurementProcedure(downMeasurements, results);
-		printf( "MEASURING RESULT - Bandwidth Down: %.3f\n", downMeasurements.bandwidth);
-		printf( "MEASURING RESULT - PacketLoss Down: %.3f\n", downMeasurements.packetLoss );
+
+				// Show
+		showMeasure(
+			true, false, true, 
+			0.f, 0.f,
+			0.f, 0.f,
+			results.values.packetLoss, downMeasurements.packetLoss, 
+			results.values.bandwidth, downMeasurements.bandwidth);
+
 	}
 
 	if (ok)

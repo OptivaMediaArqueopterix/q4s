@@ -53,7 +53,7 @@ class Q4SCommonProtocol
 		std::string generateNotificationAlertMessage(Q4SSDPParams params, Q4SMeasurementResult &results, Q4SMeasurementResult &upResults) const;
 		void	showMeasure(
 			bool firstUp, bool showPacketLoss, bool showBandwithPacketLoss,
-			float latencyUp, float latencyDown, float jitterUp, float jitterDown, float packetLoss, float bandwith) const;
+			float latencyUp, float latencyDown, float jitterUp, float jitterDown, float packetLossUp, float packetLossDown, float bandwithUp, float bandwithDown) const;
 
 		char mIP[15];
 		
@@ -71,6 +71,7 @@ class Q4SCommonProtocol
 								float &packetLoss, 
 								bool showMeasureInfo) const;
 		std::set<unsigned long> Q4SCommonProtocol::obtainSortedSequenceNumberList(Q4SMessageManager &mReceivedMessages) const;
+		const std::string Q4SCommonProtocol::currentDateTime() const;
 
 	// TEST
 		FRIEND_TEST(Q4SCommonProtocol_test_case, testQ4SCommonProtocolcalculateJitterAndPacketLossContinuityTwoMessagesWithoutJitter);
