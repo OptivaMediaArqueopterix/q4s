@@ -456,44 +456,50 @@ void Q4SCommonProtocol::showMeasure(
 	bool firstUp, bool showPacketLoss, bool showBandwithPacketLoss,
 	float latencyUp, float latencyDown, float jitterUp, float jitterDown, float packetLossUp, float packetLossDown, float bandwithUp, float bandwithDown) const
 {
-	printf( "Time: %s\n", currentDateTime().c_str());
+	printf( "MEASURING RESULT at %s:\n", currentDateTime().c_str());
 	if (showBandwithPacketLoss) {
 		if (firstUp) {
-			printf( "MEASURING RESULT - Bandwidth Up: %.3f\n", bandwithUp );
-			printf( "MEASURING RESULT - PacketLoss Up: %.3f\n", packetLossUp );
-			printf( "MEASURING RESULT - Bandwidth Down: %.3f\n", bandwithDown );
-			printf( "MEASURING RESULT - PacketLoss Down: %.3f\n", packetLossDown );
+			printf( "Bandwidth Up: %.3f - ", bandwithUp );
+			printf( "PacketLoss Up: %.3f - ", packetLossUp );
+			printf( "Bandwidth Down: %.3f - ", bandwithDown );
+			printf( "PacketLoss Down: %.3f\n", packetLossDown );
 		}
 		else {
-			printf( "MEASURING RESULT - Bandwidth Down: %.3f\n", bandwithDown );
-			printf( "MEASURING RESULT - PacketLoss Down: %.3f\n", packetLossDown );
-			printf( "MEASURING RESULT - Bandwidth Up: %.3f\n", bandwithUp );
-			printf( "MEASURING RESULT - PacketLoss Up: %.3f\n", packetLossUp );
+			printf( "Bandwidth Down: %.3f - ", bandwithDown );
+			printf( "PacketLoss Down: %.3f - ", packetLossDown );
+			printf( "Bandwidth Up: %.3f - ", bandwithUp );
+			printf( "PacketLoss Up: %.3f\n", packetLossUp );
 		}
 	}
 	else {
 		if (firstUp){
-			printf( "MEASURING RESULT - Latency Up: %.3f\n", latencyUp );
-			printf( "MEASURING RESULT - Jitter Up: %.3f\n", jitterUp );
+			printf( "Latency Up: %.3f - ", latencyUp );
+			printf( "Jitter Up: %.3f - ", jitterUp );
 			if (showPacketLoss) {
-				printf( "MEASURING RESULT - PacketLoss Up: %.3f\n", packetLossUp );
+				printf( "PacketLoss Up: %.3f - ", packetLossUp );
 			}
-			printf( "MEASURING RESULT - Latency Down: %.3f\n", latencyDown );
-			printf( "MEASURING RESULT - Jitter Down: %.3f\n", jitterDown);
+			printf( "Latency Down: %.3f - ", latencyDown );
 			if (showPacketLoss) {
-				printf( "MEASURING RESULT - PacketLoss Down: %.3f\n", packetLossDown);
+				printf( "Jitter Down: %.3f - ", jitterDown);
+				printf( "PacketLoss Down: %.3f\n", packetLossDown);
+			}
+			else {
+				printf( "Jitter Down: %.3f\n", jitterDown);
 			}
 		}
 		else {
-			printf( "MEASURING RESULT - Latency Down: %.3f\n", latencyDown );
-			printf( "MEASURING RESULT - Jitter Down: %.3f\n", jitterDown);
+			printf( "Latency Down: %.3f - ", latencyDown );
+			printf( "Jitter Down: %.3f - ", jitterDown);
 			if (showPacketLoss) {
-				printf( "MEASURING RESULT - PacketLoss Down: %.3f\n", packetLossDown);
+				printf( "PacketLoss Down: %.3f - ", packetLossDown);
 			}
-			printf( "MEASURING RESULT - Latency Up: %.3f\n", latencyUp );
-			printf( "MEASURING RESULT - Jitter Up: %.3f\n", jitterUp );
+			printf( "Latency Up: %.3f - ", latencyUp );
 			if (showPacketLoss) {
-				printf( "MEASURING RESULT - PacketLoss Up: %.3f\n", packetLossUp );
+				printf( "Jitter Up: %.3f - ", jitterUp );
+				printf( "PacketLoss Up: %.3f\n", packetLossUp );
+			}
+			else {
+				printf( "Jitter Up: %.3f\n", jitterUp );
 			}
 		}
 	}
